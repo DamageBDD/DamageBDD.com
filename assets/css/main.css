@@ -42,6 +42,7 @@ body {
     margin: 0;
     background-repeat: no-repeat;
     background-attachment: fixed;
+    transition: background-color 0.3s, color 0.3s; /* Added for smooth theme switch */
 }
 
 #preamble{
@@ -67,7 +68,7 @@ body {
      margin: auto;
   width: 80%;
   padding: 10px;
-	float: none !important; 
+    float: none !important; 
 }
 
 .footer {
@@ -252,6 +253,7 @@ body.dark h1, body.dark a, body.dark p, body.dark h2 , body.dark ul{
   background-color: #fff;
   width: 22px;
   height: 22px;
+
   position: absolute;
   left: 2px;
   top: 2px;
@@ -266,6 +268,4 @@ body.dark h1, body.dark a, body.dark p, body.dark h2 , body.dark ul{
     float:left;
     padding-right:3em;
     height: 300px;
-
 }
-
