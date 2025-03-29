@@ -13,26 +13,29 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href='/assets/css/toast.css'/>
 #+HTML_HEAD: <script>hljs.highlightAll();</script>
 #+BEGIN_EXPORT html
-<div class="header" >
+<div class="header">
 <br>
+  <a href="/" class="logo">
+    <img src="/assets/img/logo.png" alt="Logo" id="logo">
+  </a>
   <div id='mainmenudiv'>
-    <ul id="mainmenu" >
-        <li ><a href="/">Home</a></li>
-        <li ><a href="/manual">Get Started!</a></li>
-        <li ><a href="/pricing">Pricing</a></li>
-        <li ><a href="/articles">Articles</a></li>
-        <!--<li ><a href="/accounts.html">Accounts</a></li>-->
-        <li ><a href="/about">About</a></li>
-        <li >
-    <div>
-        <input type="checkbox" class="checkbox" id="checkbox">
-        <label for="checkbox" class="checkbox-label">
-            <i class="fas fa-moon"></i>
-            <i class="fas fa-sun"></i>
-            <span class="ball"></span>
-        </label>
+    <ul id="mainmenu">
+        <li><a href="/">Home</a></li>
+        <li><a href="/manual">Get Started!</a></li>
+        <li><a href="/pricing">Pricing</a></li>
+        <li><a href="/articles">Articles</a></li>
+        <!--<li><a href="/accounts.html">Accounts</a></li>-->
+        <li><a href="/about">About</a></li>
+        <li>
+        <div>
+            <input type="checkbox" class="checkbox" id="checkbox">
+            <label for="checkbox" class="checkbox-label">
+                <i class="fas fa-moon"></i>
+                <i class="fas fa-sun"></i>
+                <span class="ball"></span>
+            </label>
+        </div>
         </li>
-    </div>
     </ul>
   </div>
 <br>
