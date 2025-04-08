@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DamageBDD - Behaviour verification at planetary scale</title>
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <link rel="stylesheet" href="./assets/css/base.css">
+</head>
+<body>
+    <nav class="navbar">
+        <ul class="nav-links">
+            <li><a href="./index.html">Home</a></li>
+            <li><a href="./manual.html">Get Started!</a></li>
+            <li><a href="./pricing.html">Pricing</a></li>
+            <li><a href="./articles.html/">Articles</a></li>
+            <li><a href="./about.html">About</a></li>
+        </ul>
+    </nav>
+    
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 A7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+    <main>
+        <section id="hero" class="hero-section">
+            <img src="./assets/img/logo.png" alt="DamageBDD Logo" class="hero-logo">
+            <h1>DamageBDD</h1>
+            <h2 class="subtitle">Behaviour verification at planetary scale</h2>
+        </section>
+
+        <div class="intro-features-grid">
+            <section id="intro" class="content-section">
+                <h3>DamageBDD is a platform that unlocks the cross functional collaborative power of <a href="https://en.wikipedia.org/wiki/Behavior-driven_development">BDD</a> (Behaviour Driven Development).</h3>
+                
+                <h3>DamageBDD allows humans to define software behaviour in the human-readable Gherkin syntax. Unlike other testing systems that require a deep understanding of testing tools, DamageBDD enables anyone to define expected software behaviour in plain language. This makes it easy for teams with varying levels of technical and communication skills to collaborate effectively towards building high quality software products.</h3>
+            </section>
+
+            <section id="features" class="content-section">
+                <h2>Key Features</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3>Performance Testing</h3>
+                        <p>Test performance and scalability of target systems with large-scale load testing capabilities.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>CI/CD Integration</h3>
+                        <p>Seamlessly integrate with existing CI/CD workflows for automated load testing.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <section id="demo" class="content-section">
+            <h2>How does it work?</h2>
+            <p>Consider this simple test case:</p>
+            <pre class="code-block"><code class="language-gherkin">
+Feature: Test echo json functionality of JsonTest.com using HTTP API
+
+  Scenario: GET request to JsonTest.com
+    Given I am using server "http://echo.jsontest.com"
+    When I make a GET request to "/key/value/one/two"
+    Then the json at path "$.one" must be "one"</code></pre>
+        </section>
+
+        <section id="features-table" class="content-section">
+            <h2>Current Features Status</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>DamageBDD Feature</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>HTTP/REST API for submitting features for execution with simple result.</td>
+                            <td>done</td>
+                        </tr>
+                        <tr>
+                            <td>Scheduled test execution and continuous testing configuration.</td>
+                            <td>testing</td>
+                        </tr>
+                        <tr>
+                            <td>Bitcoin + DeFi Smartcontract based accounting and payment system.</td>
+                            <td>in-progress</td>
+                        </tr>
+                        <tr>
+                            <td>Account management for KYC/AML regulatory compliance.</td>
+                            <td>testing</td>
+                        </tr>
+                        <tr>
+                            <td>Secrets management and variable templatization.</td>
+                            <td>testing</td>
+                        </tr>
+                        <tr>
+                            <td>Ipfs Reporting and report management API.</td>
+                            <td>testing</td>
+                        </tr>
+                        <tr>
+                            <td>Events triggers for outbound Webhooks.</td>
+                            <td>testing</td>
+                        </tr>
+                        <tr>
+                            <td>Metrics and Analytics Dashboard.</td>
+                            <td>in-progress</td>
+                        </tr>
+                        <tr>
+                            <td>Selenium integration for browser Testing.</td>
+                            <td>analysis</td>
+                        </tr>
+                        <tr>
+                            <td>Appium integration for mobile ecosystem support.</td>
+                            <td>analysis</td>
+                        </tr>
+                        <tr>
+                            <td>SSH Reverse tunneling for localhost testing.</td>
+                            <td>testing</td>
+                        </tr>
+                        <tr>
+                            <td>AI assisted BDD scenario generation.</td>
+                            <td>analysis</td>
+                        </tr>
+                        <tr>
+                            <td>AI code generation and modification based on features, and self verification.</td>
+                            <td>testing</td>
+                        </tr>
+                        <tr>
+                            <td>"Super Step" user defined high level abstractions.</td>
+                            <td>analysis</td>
+                        </tr>
+                        <tr>
+                            <td>Zero Knowledge Proof based contracts to validate tests and approve payouts.</td>
+                            <td>analysis</td>
+                        </tr>
+                        <tr>
+                            <td>DamageBDD DeFi market making for test writers and stakeholders.</td>
+                            <td>analysis</td>
+                        </tr>
+                        <tr>
+                            <td><a href="./whitepaper.html">Damage Tokens</a> to power collaborative testing at scale ensuring continuous resilience.</td>
+                            <td>analysis</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="use-cases" class="content-section">
+            <h2>Use Cases</h2>
+            <ul class="use-case-list">
+                <li>Web2 application server and browser performance, quality and availability</li>
+                <li>Web3 Smartcontract continuous auditing</li>
+                <li>Infrastructure availability expectation management</li>
+                <li>General Process Execution orchestration</li>
+                <li>General Behaviour verification based on custom input sources</li>
+            </ul>
+        </section>
+
+        <section id="links" class="content-section">
+            <h2>Links</h2>
+            <ul class="links-list">
+                <li><a href="./whitepaper.html">DAMAGE Token Whitepaper</a></li>
+                <li><a href="https://aescan.io/contracts/ct_m3Cty31JxWHmJFMGuFCTpedDHuMLCit2Qup57qawmEWmcJnCk?type=call-transactions">Explore Token Activity</a></li>
+                <li><a href="https://discord.gg/ZQHnDqAg">Discord</a></li>
+                <li><a href="https://snort.social/damagebdd">Nostr</a></li>
+                <li><a href="https://github.com/DamageBDD/DamageBDD">DamageBDD Repo</a></li>
+                <li><a href="https://www.linkedin.com/company/damagebdd/">DamageBDD Linkedin Page</a></li>
+                <li><a href="https://run.damagebdd.com/api-docs/">DamageBDD API</a></li>
+                <li><a href="https://youtu.be/T70txXsSxig">Better Smart Contracts with Behaviour-Driven Development</a></li>
+                <li><a href="https://medium.com/coinmonks/design-of-smart-contracts-using-bdd-and-cucumber-4533162fc235">Design of Smart contracts using BDD and Cucumber</a></li>
+            </ul>
+        </section>
+    </main>
+    <script src="./assets/js/theme.js"></script>
+</body>
+</html>
+
+

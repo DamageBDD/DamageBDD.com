@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - DamageBDD</title>
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <link rel="stylesheet" href="./assets/css/base.css">
+</head>
+<body>
+    <main class="account-page">
+        <div class="form-container">
+            <h1>Create an Account</h1>
+            <p class="intro-text">To fully utilize the capabilities of DamageBDD, you need to create an account.</p>
+
+            <form id="kycForm" action="/accounts/create" method="post" class="signup-form">
+                <input type="hidden" name="csrf_token" value="your_csrf_token_here">
+                
+                <div class="form-group">
+                    <label for="full_name">Full Name</label>
+                    <input type="text" id="full_name" name="full_name">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email<span class="required">*</span></label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="terms-agreement">
+                    <p>By clicking submit you are agreeing to the <a href="/tac.html">terms & conditions</a>.</p>
+                </div>
+
+                <button type="submit" class="submit-btn">Create Account</button>
+            </form>
+
+            <div class="post-submit-info">
+                <p>After submitting the form, you will receive a confirmation link in your email. 
+                Click on the link to set your password.</p>
+                <p>See our <a href="manual.html">Getting Started</a> guide for steps to get an AUTH_TOKEN and use the API.</p>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
+

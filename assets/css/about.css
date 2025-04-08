@@ -1,0 +1,120 @@
+.about-content {
+    max-width: 800px;
+    margin: 6rem auto 4rem;
+    padding: 0 2rem;
+}
+
+.about-content h1 {
+    font-size: 2.5rem;
+    color: var(--heading-color);
+    margin-bottom: 2rem;
+    text-align: center;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.about-content section {
+    margin: 2.5rem 0;
+}
+
+.about-content p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+}
+
+.intro p {
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.journey, .solution, .vision {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s ease;
+}
+
+.journey:hover, .solution:hover, .vision:hover {
+    transform: translateY(-5px);
+}
+
+.call-to-action {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+    border-radius: 1rem;
+    margin: 4rem 0;
+}
+
+.call-to-action p {
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.tagline {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-top: 2rem;
+}
+
+/* Add navigation from index page */
+.navbar {
+    position: fixed;
+    top: 0;
+    right: 4rem;
+    padding: 1.5rem 2rem;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 0.5rem 0;
+    transition: all 0.2s ease;
+}
+
+.nav-links a:hover {
+    color: var(--primary-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .about-content {
+        margin: 4rem auto 2rem;
+        padding: 0 1rem;
+    }
+
+    .about-content h1 {
+        font-size: 2rem;
+    }
+
+    .journey, .solution, .vision {
+        padding: 1.5rem;
+    }
+
+    .call-to-action {
+        padding: 2rem 1rem;
+        margin: 2rem 0;
+    }
+
+    .tagline {
+        font-size: 1.2rem;
+    }
+}

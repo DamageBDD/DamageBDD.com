@@ -1,0 +1,180 @@
+/* Manual Layout */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.manual-container {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 6rem auto 4rem;
+    padding: 0 2rem;
+}
+
+/* Main Content */
+.manual-content {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: var(--card-shadow);
+}
+
+.manual-content h1 {
+    font-size: 2.5rem;
+    color: var(--heading-color);
+    margin-bottom: 2rem;
+}
+
+.intro {
+    margin-bottom: 3rem;
+}
+
+.intro p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+}
+
+.note {
+    background: var(--code-bg);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    border-left: 4px solid var(--primary-color);
+    margin: 2rem 0;
+}
+
+/* Manual Sections */
+.manual-section {
+    margin: 3rem 0;
+}
+
+.manual-section h2 {
+    font-size: 2rem;
+    color: var(--heading-color);
+    margin-bottom: 1.5rem;
+}
+
+.manual-section p {
+    color: var(--text-color);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+/* Code Blocks */
+.code-block {
+    background: var(--code-bg);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    margin: 1.5rem 0;
+    border: 1px solid var(--border-color);
+}
+
+.code-block pre {
+    margin: 0;
+}
+
+.code-block code {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--text-color);
+}
+
+/* Table of Contents */
+.table-of-contents {
+    position: sticky;
+    top: 2rem;
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border-color);
+}
+
+.table-of-contents h3 {
+    color: var(--heading-color);
+    margin-bottom: 1rem;
+}
+
+.table-of-contents ul {
+    list-style: none;
+    padding: 0;
+}
+
+.table-of-contents li {
+    margin: 0.75rem 0;
+}
+
+.table-of-contents a {
+    color: var(--link-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.table-of-contents a:hover {
+    color: var(--primary-color);
+}
+
+/* Links */
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .manual-container {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+        margin: 4rem auto 2rem;
+        gap: 2rem;
+    }
+
+    .manual-content {
+        padding: 1.5rem;
+    }
+
+    .manual-content h1 {
+        font-size: 2rem;
+    }
+
+    .table-of-contents {
+        position: relative;
+        top: 0;
+    }
+
+    .code-block {
+        margin: 1.5rem -1rem;
+        border-radius: 0;
+    }
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    .note {
+        background: var(--accent-color-dark);
+    }
+
+    .table-of-contents {
+        background: var(--bg-color-dark);
+    }
+}
+
+/* Add navigation from index page */
+.navbar {
+    position: fixed;
+    top: 0;
+    right: 4rem;
+    padding: 1.5rem 2rem;
+    z-index: 1000;
+    background: var(--bg-color);
+}
