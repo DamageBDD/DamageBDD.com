@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DamageBDD</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="/assets/inter/inter.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/humanoid-light.css">
+    <link rel="stylesheet" href="/assets/css/toast.css">
+    
+    <!-- Scripts -->
+    <script src="/assets/js/three.min.js" defer></script>
+    <script src="/assets/js/toasts.js" defer></script>
+    <script src="/assets/js/highlight.min.js" defer></script>
+    <script src="/assets/js/main.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            hljs.highlightAll();
+        });
+    </script>
+</head>
+<body>
+    <header class="site-header">
+        <nav class="main-nav">
+            <div class="nav-container">
+                <h1 class="site-title">DamageBDD</h1>
+                
+                <ul class="nav-menu">
+                    <li><a href="/" class="nav-link">Home</a></li>
+                    <li><a href="/manual" class="nav-link">Get Started!</a></li>
+                    <li><a href="/pricing" class="nav-link">Pricing</a></li>
+                    <li><a href="/articles" class="nav-link">Articles</a></li>
+                    <li><a href="/about" class="nav-link">About</a></li>
+                    <li class="theme-toggle">
+                        <input type="checkbox" class="theme-checkbox" id="theme-toggle">
+                        <label for="theme-toggle" class="theme-label">
+                            <span class="theme-icon moon">🌙</span>
+                            <span class="theme-icon sun">☀️</span>
+                            <span class="toggle-ball"></span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+</body>
+</html>

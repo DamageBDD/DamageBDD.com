@@ -1,0 +1,96 @@
+.steps-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.steps-container h1 {
+    color: var(--heading-color);
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--accent-color);
+}
+
+.steps-intro {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 3rem;
+}
+
+.available-steps, .step-details {
+    margin: 3rem 0;
+}
+
+.step-group {
+    margin: 2rem 0;
+}
+
+.step-group h4 {
+    color: var(--heading-color);
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.step-link {
+    display: block;
+    padding: 0.5rem 0;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.step-link:hover {
+    color: var(--accent-color);
+}
+
+.step-item {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: var(--bg-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.step-item h5 {
+    color: var(--heading-color);
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.step-example {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: var(--code-bg);
+    border-radius: 4px;
+    font-family: monospace;
+    overflow-x: auto;
+}
+
+.back-to-top {
+    display: inline-block;
+    margin-top: 0.5rem;
+    color: var(--text-color-light);
+    font-size: 0.9rem;
+    text-decoration: none;
+    font-style: italic;
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    .step-item {
+        background: var(--bg-color-dark);
+    }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .steps-container {
+        margin: 1rem auto;
+    }
+
+    .step-item {
+        padding: 1rem;
+    }
+}

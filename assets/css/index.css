@@ -1,0 +1,46 @@
+.index-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.index-container h1 {
+    color: var(--heading-color);
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--accent-color);
+}
+
+#index-content {
+    display: grid;
+    gap: 1rem;
+}
+
+.index-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.index-item a {
+    color: var(--text-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.index-item a:hover {
+    color: var(--accent-color);
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    .index-item {
+        border-color: var(--border-color-dark);
+    }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .index-container {
+        margin: 1rem auto;
+    }
+}

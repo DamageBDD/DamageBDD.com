@@ -1,0 +1,171 @@
+/* Main Container */
+.pricing-container {
+    max-width: 1200px;
+    margin: 6rem auto 4rem;
+    padding: 0 2rem;
+}
+
+.pricing-container h1 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Pricing Introduction */
+.pricing-intro {
+    max-width: 800px;
+    margin: 0 auto 4rem;
+}
+
+.pricing-intro p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+}
+
+.notice {
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    border-left: 4px solid var(--primary-color);
+    margin: 2rem 0;
+    box-shadow: var(--card-shadow);
+}
+
+/* Pricing Table Section */
+.pricing-table-section {
+    margin: 4rem 0;
+}
+
+.pricing-table-section h2 {
+    font-size: 2rem;
+    color: var(--heading-color);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.token-info {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+}
+
+.table-container {
+    background: var(--card-bg);
+    border-radius: 1rem;
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+}
+
+.pricing-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.pricing-table th,
+.pricing-table td {
+    padding: 1.25rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.pricing-table th {
+    background: var(--table-header-bg);
+    font-weight: 600;
+    color: var(--heading-color);
+}
+
+.pricing-table tr:hover {
+    background: var(--table-stripe);
+}
+
+.pricing-table td:last-child {
+    font-family: monospace;
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+/* Support Note */
+.support-note {
+    text-align: center;
+    color: var(--text-color);
+    margin: 2rem 0;
+    font-style: italic;
+}
+
+/* Consultation Section */
+.consultation-section {
+    text-align: center;
+    margin: 4rem 0;
+    padding: 3rem;
+    background: var(--card-bg);
+    border-radius: 1rem;
+    box-shadow: var(--card-shadow);
+}
+
+.consultation-section h2 {
+    font-size: 2rem;
+    color: var(--heading-color);
+    margin-bottom: 1.5rem;
+}
+
+.consultation-section p {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .pricing-container {
+        margin: 4rem auto 2rem;
+        padding: 0 1rem;
+    }
+
+    .pricing-container h1 {
+        font-size: 2rem;
+    }
+
+    .table-container {
+        margin: 0 -1rem;
+        border-radius: 0;
+    }
+
+    .pricing-table th,
+    .pricing-table td {
+        padding: 1rem;
+    }
+
+    .consultation-section {
+        padding: 2rem 1rem;
+        margin: 2rem 0;
+    }
+
+    .cta-button {
+        padding: 0.875rem 1.75rem;
+    }
+}

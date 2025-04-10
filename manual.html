@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DamageBDD User Manual</title>
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <link rel="stylesheet" href="./assets/css/manual.css">
+    <link rel="stylesheet" href="./assets/css/prism.css">
+</head>
+<body>
+    <nav class="navbar">
+        <ul class="nav-links">
+            <li><a href="./index.html">Home</a></li>
+            <li><a href="./manual.html">Get Started!</a></li>
+            <li><a href="./pricing.html">Pricing</a></li>
+            <li><a href="./articles/">Articles</a></li>
+            <li><a href="./about.html">About</a></li>
+        </ul>
+    </nav>
+    
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <!-- SVG content -->
+        </svg>
+        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <!-- SVG content -->
+        </svg>
+    </button>
+
+    <main class="manual-container">
+    <!-- Table of Contents on the left -->
+    <nav class="table-of-contents">
+        <h3>Contents</h3>
+        <ul>
+            <li><a href="#account">Create an Account</a></li>
+            <li><a href="#token">Get a Bearer Token</a></li>
+            <li><a href="#gherkin">Quick Introduction to Gherkin</a></li>
+            <li><a href="#test">Running a Test</a></li>
+            <!-- Add more TOC items -->
+        </ul>
+    </nav>
+
+    <!-- Main Content on the right -->
+    <article class="manual-content">
+        <h1>Get Started with Behavior Testing in Minutes!</h1>
+
+        <div class="intro">
+            <p>Welcome to DamageBDD, the powerful and user-friendly behavior testing platform designed to help you automate your application testing process.</p>
+            <p>In this quick start guide, we'll walk you through setting up an account, writing a simple test and running it.</p>
+          <p class="note">Please read usage <a href="./tac.html" style="color: #6F75F3;">terms & conditions here</a></p>
+        </div>
+
+        <section id="account" class="manual-section">
+            <h2>Create an Account</h2>
+            <p>To get started with DamageBDD, you need to create an account.</p>
+            <p>You can do this by signing up using the web UI at <a href="https://run.damagebdd.com">run.damagebdd.com</a> or using the curl command:</p>
+
+            <div class="code-block">
+                <pre><code class="language-bash">curl \
+    'https://run.damagebdd.com/accounts/create' \
+    -H 'Content-Type: application/x-yaml' \
+    -d 'email: john.doe@example.com'</code></pre>
+            </div>
+        </section>
+
+        <!-- More sections -->
+    </article>
+</main>
+
+
+
+    <script src="./assets/js/theme.js"></script>
+    <script src="./assets/js/prism.js"></script>
+</body>
+</html>
