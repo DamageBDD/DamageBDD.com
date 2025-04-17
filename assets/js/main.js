@@ -50,10 +50,14 @@
 			});
 		}
 		var menuItems = document.querySelectorAll("#mainmenu li");
+		function normalizePath(path) {
+			return path.replace(/\/+$/, ''); // remove trailing slash(es)
+		}
+
 
 		menuItems.forEach(function(item) {
 			var link = item.querySelector("a");
-			if (link && link.getAttribute("href") === window.location.pathname) {
+			if (link && normalizePath(link.getAttribute("href")) === normalizePath(window.location.pathname)) {
 				item.classList.add("active"); // Add the "active" class if the href matches the current URL path
 			}
 		});

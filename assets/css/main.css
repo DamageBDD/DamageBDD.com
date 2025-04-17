@@ -54,13 +54,13 @@ body {
 
 #preamble{
     width: 100%;
-    height: calc(84vh - 100px);
-    float:left;
+/*  height: calc(84vh - 100px);
+    float: left;*/
     z-index: -110;
 }
 .preamble{
     font-size: 2em;
-    float: left;
+ /*   float: left;*/
     margin-top:calc(34vh - 100px);
     margin-left:calc(4vh - 10px);
 }
@@ -154,9 +154,9 @@ button {
 #table-of-contents > h2{
     display:none;
 }
-#page1 {
+/*#page1 {
     margin-top: 620px;
-}
+}*/
 #text-table-of-contents > ul > li > ul > li > ul >li:before {
   content: "- ";
   text-indent: -5px;
@@ -1937,3 +1937,28 @@ td:last-child:matches([content="analysis"]) { color: var(--status-analysis); }
         height: 36px;
     }
 }
+
+li.new::after {
+      content: "new";
+      font-size: 0.6em;
+      vertical-align: super;
+      margin-left: 4px;
+      padding: 0 2px;
+      color: #000;
+      border: 1px solid yellow;
+      border-radius: 3px;
+      background-color: #fff8b3;
+      font-weight: bold;
+    }
+
+  .new-label {
+    font-size: 0.6em;
+    vertical-align: super;
+    margin-left: 4px;
+    padding: 0 3px;
+    color: #000;
+    border: 1px solid yellow;
+    border-radius: 3px;
+    background-color: #fff8b3;
+    font-weight: bold;
+  }

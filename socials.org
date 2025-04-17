@@ -1,0 +1,20 @@
+#+TITLE: Social Media - DamageBDD
+#+HTML_HEAD: <link rel="stylesheet" href="/assets/css/nostr-scroll.css">
+
+#+INCLUDE: "header.org"
+* DamageBDD on Nostr
+
+
+#+BEGIN_EXPORT html
+<div id="nostr-feed"></div>
+
+<script type="module">
+    import { initNostrScroll } from '/assets/js/nostr-scroll.js';
+
+    initNostrScroll({
+      containerId: "nostr-feed",
+      pubkey: ["ae6ce958e804be86b145e6a73cdcda8a42bb5e5427d5049fe6259b6dd0f02c7d"], // your hex pubkey
+      limit: 30
+    });
+</script>
+#+END_EXPORT

@@ -1,0 +1,6 @@
+#+TITLE: Index
+#+INCLUDE: "../header.org"
+
+
+#+INCLUDE: "index.inc"
+

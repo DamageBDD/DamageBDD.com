@@ -16,7 +16,7 @@
 (defvar damagebdd-html-preamble
   "<div class='preamble'>
         <div class='columns'>
-            <a href='/'><img src='assets/img/logo.avif' id='logo' alt='Logo' /></a>
+            <a href='/'><img src='/assets/img/logo.avif' id='logo' alt='Logo' /></a>
             <h1> DamageBDD</h1>
             <h2>
                 Behaviour Driven Development At Planetary Scale.
@@ -89,3 +89,43 @@
            )
 
 
+(setq org-confirm-babel-evaluate nil
+      org-html-validate-link nil
+      org-export-in-background nil
+      org-export-use-babel nil
+      org-publish-use-timestamps-flag nil
+      org-publish-list-skipped-files nil
+      org-publish-timestamp-directory "~/.org-timestamps/"
+      org-publish-project-alist org-publish-project-alist
+      vc-handled-backends nil)
+
+(setq-default noninteractive-init t
+              inhibit-startup-screen t
+              inhibit-startup-message t)
+
+;; Disable yes/no prompts in batch mode
+(fset 'yes-or-no-p (lambda (&rest args) t))
+(fset 'y-or-n-p (lambda (&rest args) t))
+
+
+(defun publish-and-serve ()
+  "Publish the org project and serve the output directory via simple-httpd."
+  (interactive)
+  ;; Run the org-publish command
+  (org-publish-project "damagebdd" t)
+
+  ;; Add current directory to load-path and require simple-httpd
+  (add-to-list 'load-path
+               (file-name-directory (or load-file-name buffer-file-name default-directory)))
+  (require 'simple-httpd)
+
+  ;; Set the root directory for the web server to the published HTML output
+  (setq httpd-root (expand-file-name "public"))  ;; Change "public" if needed
+
+  ;; Optional: set port (default is 8080)
+  (setq httpd-port 8081)
+
+  ;; Start the server if not already running
+  (unless (process-status "httpd")
+    (message "Starting Emacs web server on http://localhost:8081")
+    (httpd-start)))
