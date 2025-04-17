@@ -116,7 +116,7 @@
 
   ;; Add current directory to load-path and require simple-httpd
   (add-to-list 'load-path
-               (file-name-directory (or load-file-name buffer-file-name default-directory)))
+                (expand-file-name "scripts"))
   (require 'simple-httpd)
 
   ;; Set the root directory for the web server to the published HTML output

@@ -41,6 +41,10 @@ export function initNostrScroll({ containerId, pubkey, limit = 50, hashtags = nu
       if (data[0] === "EVENT" && data[1] === subId) {
         const ev = data[2];
 		since = ev.created_at - 1;
+		  // 🔥 Exclude replies
+		const isReply = ev.tags?.some(tag => tag[0] === "e");
+		if (isReply) return;
+
 
         // Filter by hashtags if provided
         if (normalizedHashtags.length > 0) {
