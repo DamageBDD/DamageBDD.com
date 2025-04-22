@@ -28,7 +28,7 @@
             <sup class="new-label">new</sup>
             </a>
         </li>
-        <li ><a href="https://run.staging.damagebdd.com" target="_blank">Login</a></li>-->
+        <li ><a href="https://run.damagebdd.com" target="_blank">Login</a></li>
         <li >
     <div>
         <input type="checkbox" class="checkbox" id="checkbox">
