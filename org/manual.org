@@ -1,4 +1,4 @@
-#+Title: DamageBDD User Manual: Get Started with Behavior Testing in Minutes!
+#+Title: User Manual: Get Started with Behavior Testing in Minutes!
 
 #+INCLUDE: "header.org"
 

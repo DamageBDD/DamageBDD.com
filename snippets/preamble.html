@@ -7,12 +7,18 @@
     </div>
   </div>
 
-  <ul id='mainmenu'>
+  <ul id='mainmenu' class='nav-menu'>
     <li><a href='/'><span class='nav-icon'>🏠</span> Home</a></li>
-    <li><a href='/manual'><span class='nav-icon'>🚀</span> Docs</a></li>
+    <li class="has-submenu">
+      <a href="#" class="submenu-trigger"><span class="nav-icon">📚</span> Learn</a>
+      <ul class="nav-menu submenu">
+        <li><a href="/manual"><span class="nav-icon">🚀</span> Manual</a></li>
+        <li><a href="/articles"><span class="nav-icon">📚</span> Articles</a></li>
+        <li><a href="/socials"><span class="nav-icon">🌐</span> Socials</a></li>
+      </ul>
+    </li>
+
     <li><a href='/pricing'><span class='nav-icon'>💸</span> Pricing</a></li>
-    <li><a href='/articles'><span class='nav-icon'>📚</span> Articles</a></li>
-    <li><a href='/socials'><span class='nav-icon'>🌐</span> Socials</a></li>
     <li><a href='/ecai' class='new'><span class='nav-icon'>🧠</span> ECAI <sup class='badge new'>new</sup></a></li>
     <li><a href='https://run.damagebdd.com' target='_blank'><span class='nav-icon'>🔐</span> Login</a></li>
   </ul>

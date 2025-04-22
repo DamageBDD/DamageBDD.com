@@ -11,6 +11,7 @@
   --code-bg: #f4f4f4;
   --code-fg: #111111;
   --pre-bg: #f0f0f0;
+  --bg-alt: #666666; 
 }
 
 body.dark {
@@ -24,6 +25,7 @@ body.dark {
   --code-bg: #222222;
   --code-fg: #f8f8f8;
   --pre-bg: #1a1a1a;
+  --bg-alt: #666666; 
 }
 
 
@@ -113,51 +115,8 @@ footer {
 }
 
 
-.nav-icon {
-  margin-right: 0.4em;
-  transition: transform 0.3s ease, color 0.3s ease;
-  color: var(--meta);
-}
 
-#mainmenu li a:hover .nav-icon {
-  transform: scale(1.2) rotate(3deg);
-  color: var(--link);
-}
 
-#mainmenu li a.active .nav-icon {
-  color: var(--verified);
-}
-#mainmenu {
-  list-style: none;
-  padding: 0;
-  margin: 2rem 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
-}
-
-#mainmenu li {
-  display: flex;
-  align-items: center;
-}
-
-#mainmenu li a {
-  display: inline-flex;
-  align-items: center;
-  font-weight: 500;
-  font-size: 1rem;
-  padding: 0.3em 0.6em;
-  border-radius: 5px;
-  background: transparent;
-  color: var(--fg);
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-#mainmenu li a:hover {
-  background: rgba(127,127,127,0.1);
-  color: var(--link);
-}
 
 
 h1 {
