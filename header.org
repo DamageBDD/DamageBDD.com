@@ -7,6 +7,7 @@
 #+HTML_HEAD: <script src='/assets/js/main.js'></script>
 #+HTML_HEAD: <link rel="stylesheet" href="/assets/inter/inter.css">
 #+HTML_HEAD: <script src='/assets/js/highlight.min.js'></script>
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href='/assets/css/nostr-scroll.css'>
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href='/assets/css/humanoid-light.css'>
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href='/assets/css/main.css'/>
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href='/assets/css/toast.css'/>

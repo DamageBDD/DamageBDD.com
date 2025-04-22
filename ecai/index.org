@@ -126,13 +126,23 @@ Start building intelligence you can *verify*, not just believe.
 
 Learn about the latest [[/ecai/ekef-v0.3.org][ECAI Knowledge Encoding Format]] @@html:<sup class="new-label">new</sup>@@
 
-* Read more articles 
-#+BEGIN_EXPORT html
-<div id="nostr-feed">
-</div>
-#+END_EXPORT
+* Read more articles about ECAI on Nostr.
+
+These articles are fetched live from the *[[https://nostr.org][Nostr]]* network — an open protocol for decentralized publishing.
+
+You can follow or interact with the author using any Nostr-compatible client:
+
+- 🧠 Author: =npub14ekwjk8gqjlgdv29u6nnehx63fptkhj5yl2sf8lxykdkm58s937sjw99u8=
+- - 🏷️ Hashtags: =#ecai=, =#bitcoin=, =#damagebdd=
+- 🔗 Open in Nostr clients:
+  - [[https://njump.me/npub14ekwjk8gqjlgdv29u6nnehx63fptkhj5yl2sf8lxykdkm58s937sjw99u8][View on njump.me]]
+  - [[https://iris.to/npub14ekwjk8gqjlgdv29u6nnehx63fptkhj5yl2sf8lxykdkm58s937sjw99u8][View on iris.to]]
+
 
 #+BEGIN_EXPORT html
+<div id="nostr-feed"></div>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
 <script type="module">
     import { initNostrScroll } from '/assets/js/nostr-scroll.js';
 

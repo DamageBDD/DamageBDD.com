@@ -36,6 +36,18 @@ export function initNostrScroll({ containerId, pubkey, limit = 50, hashtags = nu
 							'<img src="$1" style="max-width: 100%; margin-top: 0.5rem;" />');
 		return text;
 	}
+	function preprocessMarkdown(content) {
+		return content
+			.split('\n')
+			.map(line => {
+				if (/^(https?:\/\/[^\s]+\.(?:png|jpe?g|gif|webp))$/.test(line.trim())) {
+					return `![](${line.trim()})`;
+				}
+				return line;
+			})
+			.join('\n');
+	}
+
 
 	function loadPosts() {
 		if (loading) return;
@@ -77,7 +89,8 @@ export function initNostrScroll({ containerId, pubkey, limit = 50, hashtags = nu
 
 				const div = document.createElement("div");
 				div.className = "nostr-post";
-				div.innerHTML = parseMarkdown(ev.content);
+				div.innerHTML = marked.parse(preprocessMarkdown(ev.content));
+
 				contentEl.appendChild(div);
 			} else if (data[0] === "EOSE" && data[1] === subId) {
 				relay.removeEventListener("message", handler);

@@ -248,6 +248,26 @@ body.dark h1, body.dark a, body.dark p, body.dark h2 , body.dark ul{
 .checkbox:checked + .checkbox-label .ball {
   transform: translateX(24px);
 }
+
+#mainmenu li {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.checkbox-label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding-top: 3px;  /* visually align with text */
+  padding-bottom: 3px;
+  margin-top: 1px;
+}
+
+
+
 #logo{
     float:left;
     padding-right:3em;
