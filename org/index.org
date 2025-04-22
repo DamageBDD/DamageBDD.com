@@ -36,18 +36,14 @@ This means DamageBDD isn’t just about testing – it’s about *trust, transpa
 
 * Example
 
-#+BEGIN_EXPORT html
-<pre>
-<code class="language-gherkin">
+#+BEGIN_SRC gherkin
 Feature: Test echo json functionality of JsonTest.com using HTTP API
 
   Scenario: GET request to JsonTest.com
     Given I am using server "http://echo.jsontest.com"
     When I make a GET request to "/key/value/one/two"
     Then the json at path "$.one" must be "one"
-</code>
-</pre>
-#+END_EXPORT
+#+END_SRC
 
 This tells DamageBDD what to test – and it does the heavy lifting behind the scenes, checking servers, APIs, and even entire apps.
 

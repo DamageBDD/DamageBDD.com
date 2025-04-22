@@ -1,0 +1,3 @@
+#+TITLE: DamageBDD - BDD At Planetary Scale.
+
+- {{{timestamp(2025-04-23)}}} [[file:theindex.org][Index]]

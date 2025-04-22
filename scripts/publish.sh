@@ -2,6 +2,7 @@
 
 PROJECT_NAME="damagebdd"
 PUBLISH_FILE="scripts/publish.el"
+mkdir -p public
 
 # Normalize PWD for Docker on Windows (Git Bash/WSL compatible)
 case "$(uname -s)" in
@@ -18,7 +19,7 @@ if command -v emacs >/dev/null 2>&1; then
   echo "Emacs found. Running locally..."
   emacs --batch \
         -l "$PUBLISH_FILE" \
-        --eval "(org-publish-project \"$PROJECT_NAME\" t)"
+        --eval "(damagebdd-publish)"
 
 # Fallback to Docker
 elif command -v docker >/dev/null 2>&1; then
@@ -29,10 +30,18 @@ elif command -v docker >/dev/null 2>&1; then
     silex/emacs:latest \
     emacs --batch \
           -l /project/"$PUBLISH_FILE" \
-          --eval "(org-publish-project \"$PROJECT_NAME\" t)"
+          --eval "(damagebdd-publish)"
 
 else
   echo "Error: Neither Emacs nor Docker is available." >&2
   exit 1
 fi
 
+sync_to_nginx() {
+  echo "Syncing to Nginx..."
+  sudo rsync -av --delete "$PROJECT_DIR/public/" /srv/http/damagebdd/
+}
+
+if [ "$1" = "sync" ]; then
+  sync_to_nginx
+fi
