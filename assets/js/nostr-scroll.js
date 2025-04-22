@@ -6,10 +6,12 @@ export function initNostrScroll({ containerId, pubkey, limit = 50, hashtags = nu
 	let since = Date.now();
   let loading = false;
 
-  // Normalize hashtags
-  const normalizedHashtags = (Array.isArray(hashtags)
-    ? hashtags
-    : hashtags ? [hashtags] : []).map(h => h.toLowerCase());
+const normalizedHashtags = (Array.isArray(hashtags)
+  ? hashtags
+  : hashtags ? [hashtags] : [])
+  .map(h => h.toLowerCase().trim())
+  .filter(h => !h.startsWith("-")); // ⛔ exclude negative tags
+
 
   function parseMarkdown(text) {
     // basic markdown and image embedding

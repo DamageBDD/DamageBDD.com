@@ -142,7 +142,7 @@ Learn about the latest [[/ecai/ekef-v0.3.org][ECAI Knowledge Encoding Format]] @
             "ae6ce958e804be86b145e6a73cdcda8a42bb5e5427d5049fe6259b6dd0f02c7d"
             ,"16d114303d8203115918ca34a220e925c022c09168175a5ace5e9f3b61640947"
         ],
-        hashtags: ["ecai"],
+        hashtags: ["ecai", "-cocd", "-churchofchristdenied"],
         limit: 300
     });
 </script>
