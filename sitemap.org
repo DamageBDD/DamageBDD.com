@@ -22,6 +22,11 @@
 - {{{timestamp(2024-05-05)}}} [[file:todo.org][todo]]
 - {{{timestamp(2024-02-18)}}} [[file:run.org][Damagebdd - Web UI]]
 - {{{timestamp(2023-11-22)}}} [[file:register-business.org][Business Registration - DamageBDD]]
+- *ecai/*
+  - {{{timestamp(2025-04-22)}}} [[file:ecai/index.org][ECAI – The End of Probabilistic AI]]
+  - {{{timestamp(2025-04-07)}}} [[file:ecai/prompt.org][**Bootstrap Prompt for ChatGPT to Teach and Implement ECAI**]]
+  - {{{timestamp(2025-04-07)}}} [[file:ecai/ekef-v0.3.org][ECAI Knowledge Encoding Format (EKEF v0.3)]]
+  - {{{timestamp(2025-03-16)}}} [[file:ecai/research.org][research]]
 - *articles/*
   - {{{timestamp(2025-04-14)}}} [[file:articles/dark_matter.org][dark_matter]]
   - {{{timestamp(2025-04-07)}}} [[file:articles/damage_vs_tradition.org][DamageBDD vs Traditional Testing Tools]]
@@ -42,10 +47,5 @@
   - {{{timestamp(2024-04-18)}}} [[file:articles/threebodyproblem.org][threebodyproblem]]
   - {{{timestamp(2024-04-17)}}} [[file:articles/usecase_generic.org][usecase_generic]]
   - {{{timestamp(2024-04-01)}}} [[file:articles/quantum_of_verification.org][quantum_of_verification]]
-- *ecai/*
-  - {{{timestamp(2025-04-15)}}} [[file:ecai/index.org][ECAI – The End of Probabilistic AI]]
-  - {{{timestamp(2025-04-07)}}} [[file:ecai/prompt.org][**Bootstrap Prompt for ChatGPT to Teach and Implement ECAI**]]
-  - {{{timestamp(2025-04-07)}}} [[file:ecai/ekef-v0.3.org][ECAI Knowledge Encoding Format (EKEF v0.3)]]
-  - {{{timestamp(2025-03-16)}}} [[file:ecai/research.org][research]]
 - *jobs/*
   - {{{timestamp(2025-04-14)}}} [[file:jobs/index.org][index]]
