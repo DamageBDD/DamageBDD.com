@@ -1,8 +1,8 @@
 #+TITLE: DamageBDD - BDD At Planetary Scale.
 
+- {{{timestamp(2025-04-23)}}} [[file:socials.org][Social Media - DamageBDD]]
 - {{{timestamp(2025-04-23)}}} [[file:header.org][header]]
 - {{{timestamp(2025-04-23)}}} [[file:index.org][DamageBDD – Verifying Software Behaviour at Planetary Scale]]
-- {{{timestamp(2025-04-22)}}} [[file:socials.org][Social Media - DamageBDD]]
 - {{{timestamp(2025-03-29)}}} [[file:checklist.org][🧑💻 Task Submission Checklist - Code Like a Pro 🚀]]
 - {{{timestamp(2025-03-28)}}} [[file:manual.org][DamageBDD User Manual: Get Started with Behavior Testing in Minutes!]]
 - {{{timestamp(2025-03-27)}}} [[file:about.org][About - DamageBDD]]
@@ -17,17 +17,14 @@
 - {{{timestamp(2024-05-06)}}} [[file:theindex.org][Index]]
 - {{{timestamp(2024-05-05)}}} [[file:todo.org][todo]]
 - {{{timestamp(2023-11-22)}}} [[file:register-business.org][Business Registration - DamageBDD]]
-- *ecai/*
-  - {{{timestamp(2025-04-22)}}} [[file:ecai/index.org][ECAI – The End of Probabilistic AI]]
-  - {{{timestamp(2025-04-07)}}} [[file:ecai/prompt.org][**Bootstrap Prompt for ChatGPT to Teach and Implement ECAI**]]
-  - {{{timestamp(2025-04-07)}}} [[file:ecai/ekef-v0.3.org][ECAI Knowledge Encoding Format (EKEF v0.3)]]
-  - {{{timestamp(2025-03-16)}}} [[file:ecai/research.org][research]]
 - *articles/*
+  - {{{timestamp(2025-04-23)}}} [[file:articles/whydamagetoken.org][Why Damage Tokens?]]
+  - {{{timestamp(2025-04-23)}}} [[file:articles/whatisdamage.org][What is damage?]]
+  - {{{timestamp(2025-04-23)}}} [[file:articles/index.org][Articles]]
   - {{{timestamp(2025-04-14)}}} [[file:articles/dark_matter.org][dark_matter]]
   - {{{timestamp(2025-04-07)}}} [[file:articles/damage_vs_tradition.org][DamageBDD vs Traditional Testing Tools]]
   - {{{timestamp(2024-12-01)}}} [[file:articles/skeptics_guide.org][The Skeptic's Essential Guide to DamageBDD]]
   - {{{timestamp(2024-11-29)}}} [[file:articles/simplepaymentfeature.org][simplepaymentfeature]]
-  - {{{timestamp(2024-09-25)}}} [[file:articles/whydamagetoken.org][What is damage?]]
   - {{{timestamp(2024-09-23)}}} [[file:articles/payments.org][DamageBDD: Incentivizing Quality Assurance with Transparent Payouts and Immediate Liquidity Exit]]
   - {{{timestamp(2024-09-18)}}} [[file:articles/debugging_web.org][Manual: Using Chrome Inspector to Capture Request Results]]
   - {{{timestamp(2024-08-21)}}} [[file:articles/lightning_channels.org][Connect - DamageBDD]]
@@ -35,12 +32,15 @@
   - {{{timestamp(2024-05-07)}}} [[file:articles/power_of_bdd.org][Unleashing the Power of Software Behaviour Testing at Scale: Building Reliable Highly Scalable Systems with BDD]]
   - {{{timestamp(2024-05-07)}}} [[file:articles/ticket_to_oblivion.org][The Unfortunate Fate of Good Ideas: Ticket Tracking and Document Management Systems]]
   - {{{timestamp(2024-05-06)}}} [[file:articles/gherkin.org][A Friendly Introduction to Gherkin Syntax: Write Effective Behavior-Driven Development Tests]]
-  - {{{timestamp(2024-05-06)}}} [[file:articles/whatisdamage.org][What is damage?]]
   - {{{timestamp(2024-05-06)}}} [[file:articles/usecase_insurance.org][usecase_insurance]]
-  - {{{timestamp(2024-05-06)}}} [[file:articles/index.org][Index]]
   - {{{timestamp(2024-05-06)}}} [[file:articles/developerzen.org][developerzen]]
   - {{{timestamp(2024-04-18)}}} [[file:articles/threebodyproblem.org][threebodyproblem]]
   - {{{timestamp(2024-04-17)}}} [[file:articles/usecase_generic.org][usecase_generic]]
   - {{{timestamp(2024-04-01)}}} [[file:articles/quantum_of_verification.org][quantum_of_verification]]
+- *ecai/*
+  - {{{timestamp(2025-04-22)}}} [[file:ecai/index.org][ECAI – The End of Probabilistic AI]]
+  - {{{timestamp(2025-04-07)}}} [[file:ecai/prompt.org][**Bootstrap Prompt for ChatGPT to Teach and Implement ECAI**]]
+  - {{{timestamp(2025-04-07)}}} [[file:ecai/ekef-v0.3.org][ECAI Knowledge Encoding Format (EKEF v0.3)]]
+  - {{{timestamp(2025-03-16)}}} [[file:ecai/research.org][research]]
 - *jobs/*
   - {{{timestamp(2025-04-14)}}} [[file:jobs/index.org][index]]

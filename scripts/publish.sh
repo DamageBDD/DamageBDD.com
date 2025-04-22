@@ -42,6 +42,15 @@ sync_to_nginx() {
   sudo rsync -av --delete "$PROJECT_DIR/public/" /srv/http/damagebdd/
 }
 
+
 if [ "$1" = "sync" ]; then
   sync_to_nginx
+fi
+
+sync_to_nginx_prod() {
+  echo "Syncing to Nginx Prod..."
+  rsync -avz --delete -e ssh public/ root@node0:/var/www/damagebdd/
+}
+if [ "$1" = "sync_prod" ]; then
+  sync_to_nginx_prod
 fi

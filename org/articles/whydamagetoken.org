@@ -1,4 +1,4 @@
-#+Title: What is damage?
+#+Title: Why Damage Tokens?
 #+INCLUDE: "../header.org"
 
 * How does DamageBDD use Bitcoin for payouts and DamageToken for infrastructure ?

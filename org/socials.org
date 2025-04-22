@@ -1,5 +1,4 @@
 #+TITLE: Social Media - DamageBDD
-#+HTML_HEAD: <link rel="stylesheet" href="/assets/css/nostr-scroll.css">
 
 #+INCLUDE: "header.org"
 * Read more articles about DamageBDD on Nostr.

@@ -1,5 +1,8 @@
+
 * Damage Tokens: Resilience Tokenized!
 
+
+📜 *DamageBDD Whitepaper:* A blueprint for incentivized adversarial testing using Damage Tokens. Learn how BDD meets crypto to verify software at planetary scale.
 
 [[file:../whitepaper.org::* Damage Tokens Whitepaper: Introducing Damage Tokens for Continuous Collaborative Software Testing][Whitepaper]]
 
@@ -55,7 +58,7 @@ Published on Aug 21, 2024
 [[file:lightning_channels.org][Connect to DamageBDD's Public Bitcoin Lightning Node]]
 * Why Damage Tokens?
 
-[[file:whydamagetokens.org][How does DamageBDD use Bitcoin for payouts and DamageToken for infrastructure ?]]
+[[file:whydamagetoken.org][How does DamageBDD use Bitcoin for payouts and DamageToken for infrastructure ?]]
 
 * Debugging Web
 
