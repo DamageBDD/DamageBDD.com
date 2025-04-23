@@ -1,6 +1,30 @@
-#+TITLE: Pricing - DamageBDD
+#+TITLE: Pricing of DamageTokens
 
 #+INCLUDE: "header.org"
+
+* ⚡ Buy Damage Tokens Now with the Lightning Network
+
+🧑‍💻 **Create an Account**  
+Go to [[https://run.damagebdd.com][run.damagebdd.com]] and sign up to get your **custodial Aeternity wallet**, hosted by DamageBDD.
+
+🧾 **Generate a Lightning Invoice**  
+From your dashboard, generate an invoice for the number of satoshis you want to exchange for Damage Tokens.
+
+💸 **Make a Payment**  
+Use your Lightning wallet to pay the invoice — it's fast, final, and self-custodial.
+
+📥 **Receive Damage Tokens**  
+Once the payment is verified, your Damage Tokens are delivered directly to your hosted wallet.
+
+🚀 **Transfer Freely**  
+You are free to send your tokens to any wallet that supports the **AEX-9** token standard.
+
+🔥 *Verification is power. The Denied shall execute.*  
+
+#DamageToken #DamageBDD #Lightning #CustodialWallet #AEX9 #Verification
+
+
+
 
 * Pricing Plans for DamageBDD
 

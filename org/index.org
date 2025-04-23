@@ -85,9 +85,9 @@ This tells DamageBDD what to test – and it does the heavy lifting behind the s
 | Secrets management and variable templates                                        | 🧪 Testing     |
 | CI/CD integration and monitoring                                                 | 🧪 Testing     |
 | AI-generated tests and code suggestions                                          | 🧠 In analysis |
-| Appium and Selenium browser/mobile testing                                       | 🧪 Testing |
+| Appium and Selenium browser/mobile testing                                       | 🧪 Testing     |
 | IPFS reports, dashboards, alerts                                                 | 🧪 Testing     |
-| Webhook triggers                                                                 | ⚙️ In progress |
+| Webhook triggers                                                                 | 🧪 Testing     |
 | Zero Knowledge Proof test validation & payouts                                   | 🔍 Researching |
 | DAMAGE Token governance and test ecosystem incentives                            | 🪙 In analysis |
 

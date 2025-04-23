@@ -1,10 +1,10 @@
 #+TITLE: DamageBDD - BDD At Planetary Scale.
 
+- {{{timestamp(2025-04-23)}}} [[file:index.org][DamageBDD – Verifying Software Behaviour at Planetary Scale]]
+- {{{timestamp(2025-04-23)}}} [[file:pricing.org][Pricing of DamageTokens]]
 - {{{timestamp(2025-04-23)}}} [[file:manual.org][User Manual: Get Started with Behavior Testing in Minutes!]]
 - {{{timestamp(2025-04-23)}}} [[file:socials.org][Social Media - DamageBDD]]
-- {{{timestamp(2025-04-23)}}} [[file:pricing.org][Pricing - DamageBDD]]
 - {{{timestamp(2025-04-23)}}} [[file:header.org][header]]
-- {{{timestamp(2025-04-23)}}} [[file:index.org][DamageBDD – Verifying Software Behaviour at Planetary Scale]]
 - {{{timestamp(2025-03-29)}}} [[file:checklist.org][🧑💻 Task Submission Checklist - Code Like a Pro 🚀]]
 - {{{timestamp(2025-03-27)}}} [[file:about.org][About - DamageBDD]]
 - {{{timestamp(2025-02-07)}}} [[file:register-individual.org][Individual Registration - DamageBDD]]

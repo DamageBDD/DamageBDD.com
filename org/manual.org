@@ -2,7 +2,9 @@
 
 #+INCLUDE: "header.org"
 
-#+OPTIONS: toc:2      
+#+OPTIONS: toc:nil
+#+TOC: headlines 2
+
 #+BEGIN_EXPORT html
 <section id="page1">
 #+END_EXPORT
@@ -347,10 +349,6 @@ curl \
 ** REST Api & Swagger UI
 
 Swagger UI for the REST API can be found [[https://run.damagebdd.com/api-docs/][here]].
-
-** WebInterface (experimental)
-
-[[https://run.damagebdd.com][Here]] is the link to the experimental web interface, using curl is the current recommended method.
 
 #+BEGIN_EXPORT html
 </section>
