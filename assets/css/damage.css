@@ -130,7 +130,6 @@ h2 {
   margin-top: 2em;
   margin-bottom: 0.5em;
   color: var(--fg-strong);
-  border-bottom: 1px dashed var(--meta);
   padding-bottom: 0.3em;
 }
 
@@ -246,7 +245,6 @@ h2 {
 @keyframes fade-new {
   0%   { opacity: 1; transform: scale(1); }
   50%  { opacity: 0.8; transform: scale(1.05); }
-  100% { opacity: 0; transform: scale(1); }
 }
 
 .badge.new {
@@ -262,5 +260,68 @@ h2 {
   letter-spacing: 0.4px;
   line-height: 1;
   animation: fade-new 6s ease-out forwards;
+}
+
+
+#table-of-contents {
+  float: right;
+  width: 280px;
+  margin: 2rem 0 2rem 2rem;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(127,127,127,0.2);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: var(--fg);
+  font-size: 0.95rem;
+}
+
+#table-of-contents h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.75rem;
+}
+
+#table-of-contents ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+#table-of-contents li {
+  margin: 0.25em 0;
+}
+
+#table-of-contents li > a {
+  color: var(--fg-muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+#table-of-contents li > a:hover {
+  color: var(--link);
+  text-decoration: underline;
+}
+
+#table-of-contents ul ul {
+  margin-left: 1rem;
+  border-left: 2px solid var(--meta);
+  padding-left: 0.75rem;
+}
+#table-of-contents li::before {
+  margin-right: 0.4em;
+  font-size: 0.9em;
+  color: var(--meta);
+}
+
+@media (max-width: 768px) {
+  #table-of-contents {
+    float: none;
+    width: 100%;
+    margin: 2rem 0;
+  }
+}
+
+#text-table-of-contents > ul > li:first-child > a {
+  display: none;
 }
 
