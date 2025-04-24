@@ -1,0 +1,23 @@
+#+Title: Use DamageBDD
+
+#+INCLUDE: "header.org"
+
+#+OPTIONS: toc:nil
+#+TOC: headlines 2
+
+#+BEGIN_EXPORT html
+<div id="damage-wallet"></div>
+<div class="container fullscreen">
+  <div class="editor-controls">
+    <button id="move-up">⬆️</button>
+    <button id="move-down">⬇️</button>
+  </div>
+  <textarea id="editor" placeholder="Tap to begin divine verification..." autofocus></textarea>
+  <div id="completer" class="completer hidden"></div>
+  <div id="mic-input" class="mic-input hidden">
+    <input id="feature-name" type="text" placeholder="Feature name...">
+    <button id="mic-record">🎤</button>
+  </div>
+</div>
+
+#+END_EXPORT

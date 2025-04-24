@@ -39,7 +39,7 @@ fi
 
 sync_to_nginx() {
   echo "Syncing to Nginx..."
-  sudo rsync -av --delete "$PROJECT_DIR/public/" /srv/http/damagebdd/
+  sudo rsync -av --delete "$PROJECT_DIR/public/" /var/www/damagebdd/
 }
 
 
