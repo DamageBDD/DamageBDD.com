@@ -1,6 +1,6 @@
 #+TITLE: DamageBDD - BDD At Planetary Scale.
 
-- {{{timestamp(2025-04-24)}}} [[file:use.org][Use DamageBDD]]
+- {{{timestamp(2025-04-25)}}} [[file:use.org][Use DamageBDD]]
 - {{{timestamp(2025-04-24)}}} [[file:whitepaper.org][DamageBDD - Whitepaper]]
 - {{{timestamp(2025-04-24)}}} [[file:token_tos.org][Terms and Conditions for Damage Token Sales]]
 - {{{timestamp(2025-04-24)}}} [[file:todo.org][todo]]

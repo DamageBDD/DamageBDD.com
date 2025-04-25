@@ -325,3 +325,25 @@ h2 {
   display: none;
 }
 
+#damage-amount {
+  background: #222;
+  color: #fff;
+  border: 1px solid #555;
+}
+label {
+  display: block;
+  margin: 1em 0 0.5em;
+  font-weight: bold;
+}
+#amount-selector button {
+  font-size: 1em;
+  padding: 0.5em 1em;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 0.5em;
+  cursor: pointer;
+}
+#amount-selector button:hover {
+  background: #555;
+}
