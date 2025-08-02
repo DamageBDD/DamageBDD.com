@@ -1,6 +1,13 @@
 #+TITLE: DamageBDD – Verifying Software Behaviour at Planetary Scale
 
 #+INCLUDE: "header.org"
+#+BEGIN_EXPORT html
+<div class="centered-image">
+  <a href="https://www.coinstore.com/spot/DAMAGEUSDT" target="_blank" style="display:inline-block; margin-top:10px;">
+    <img src="/assets/img/coinstore1.png" alt="Coinstore Announcement" style="vertical-align: middle;">
+  </a>
+</div>
+#+END_EXPORT
 
 #+BEGIN_COMMENT
 This version simplifies and strengthens the pitch for lay readers and business stakeholders,
@@ -110,4 +117,5 @@ This tells DamageBDD what to test – and it does the heavy lifting behind the s
 - [[https://run.damagebdd.com/api-docs/][API Docs]]
 - [[https://youtu.be/T70txXsSxig][Video: Better Smart Contracts with BDD]]
 - [[https://medium.com/coinmonks/design-of-smart-contracts-using-bdd-and-cucumber-4533162fc235][Smart Contract BDD Article]]
-- [[https://bddbooks.com/][BDD Books]]
+- [[https://www.coinstore.com/spot/DAMAGEUSDT][DAMAGE/USDT on Coinstore]]
+- [[https://microlancer.io/?page=1&length=25&status=my&showCompleted=1&showHidden=1&minimumAmount=0&user=asyncmind&tag=&category=&search=][DamageBDD Tasks on Microlancer]]

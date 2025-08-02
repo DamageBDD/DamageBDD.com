@@ -347,3 +347,11 @@ label {
 #amount-selector button:hover {
   background: #555;
 }
+.centered-image {
+  text-align: center;
+}
+
+.centered-image img {
+  max-width: 100%;
+  height: auto;
+}
