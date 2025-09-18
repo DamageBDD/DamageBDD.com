@@ -121,10 +121,35 @@ Start building intelligence you can *verify*, not just believe.
 
 🚀 *ECAI is the new baseline. The future doesn't guess—it retrieves.*
 
----
 * 📘 ECAI Knowledge Encoding Format
 
-Learn about the latest [[/ecai/ekef-v0.3.org][ECAI Knowledge Encoding Format]] @@html:<sup class="new-label">new</sup>@@
+Learn about the latest [[file:ekef-v0.3.org][ECAI Knowledge Encoding Format]] @@html:<sup class="new-label">new</sup>@@
+* ECAI Red Lines & Guardrails Policy
+:PROPERTIES:
+:CUSTOM_ID: ecai-redlines
+:END:
+
+Elliptic Curve AI (ECAI) is powerful, but with power comes responsibility.
+To ensure it always serves human flourishing, we have published the
+**ECAI Red Lines & Guardrails Policy**.
+
+This document establishes:
+- **Red Lines** — actions that ECAI must never cross
+- **Guardrails** — safeguards that must always be enforced
+
+You can read the full executive release here:  
+[[file:../papers/redlines.pdf][Download the ECAI Red Lines & Guardrails Policy (PDF)]]
+
+
+* Articles
+
+DamageBDD laid the foundation: deterministic behavior verification on-chain.
+ECAI takes the same principle further — encoding *all knowledge* as elliptic curve points.
+Where DamageBDD proves software truth, ECAI proves *intelligence itself* — no guesses, no hallucinations, just cryptographic certainty.
+
+[[file:what-is-ecai.org][What is EcAI]]
+
+
 
 * Read more articles about ECAI on Nostr.
 

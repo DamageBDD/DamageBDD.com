@@ -109,7 +109,7 @@ This tells DamageBDD what to test – and it does the heavy lifting behind the s
 * Links
 
 - [[./whitepaper.html][DAMAGE Token Whitepaper]]
-- [[https://aescan.io/contracts/ct_m3Cty31JxWHmJFMGuFCTpedDHuMLCit2Qup57qawmEWmcJnCk?type=call-transactions][Explore Token Activity]]
+- [[https://aescan.io/tokens/ct_m3Cty31JxWHmJFMGuFCTpedDHuMLCit2Qup57qawmEWmcJnCk?type=holders][Explore Token Stats]]
 - [[https://discord.gg/ZQHnDqAg][Discord]]
 - [[https://njump.me/npub14ekwjk8gqjlgdv29u6nnehx63fptkhj5yl2sf8lxykdkm58s937sjw99u8][Nostr]]
 - [[https://github.com/DamageBDD/DamageBDD][GitHub Repository]]

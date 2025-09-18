@@ -76,7 +76,7 @@
   (damagebdd-load-html-snippets)
   (setq org-publish-project-alist
         `(
-          ("damagebdd" :components ("damagebdd.pages" "damagebdd.static" "damagebdd.articles"))
+          ("damagebdd" :components ("damagebdd.pages" "damagebdd.static" "damagebdd.articles" "damagebdd.papers"))
           ("damagebdd.pages"
            :base-directory ,(expand-file-name "org" damagebdd-project-root)
 
@@ -100,6 +100,12 @@
            :html-head ,damagebdd-html-head
            :html-preamble ,damagebdd-html-preamble
            :html-postamble ,damagebdd-html-postamble)
+          ("damagebdd.papers"
+           :base-directory ,(expand-file-name "org/papers" damagebdd-project-root)
+           :base-extension "jpeg\\|pdf"
+           :publishing-directory ,(expand-file-name "public/papers" damagebdd-project-root)
+           :recursive t
+           :publishing-function org-publish-attachment)
           ("damagebdd.articles"
            :base-directory ,(expand-file-name "org/articles" damagebdd-project-root)
            :base-extension "jpeg\\|pdf"
@@ -129,6 +135,15 @@
     (message "🌐 Starting local server at http://localhost:8081")
     (httpd-start)))
 
+(defun damagebdd-rsync-deploy (node)
+  "Interactively select a NODE and deploy the 'public/' directory via rsync over SSH."
+  (interactive
+   (list (read-string "Enter user@node (e.g., root@node0): " "root@node0")))
+  (damagebdd-publish)
+  (let ((default-directory (expand-file-name "~/Org/damagebdd/")))
+    (async-shell-command
+     (format "rsync -avz --delete -e ssh public/ %s:/var/www/damagebdd.com/" node)
+     "*DamageBDD Deploy*")))
 (message "🛠️ DamageBDD publish.el loaded.")
 
 (provide 'publish)
