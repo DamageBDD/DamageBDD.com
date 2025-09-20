@@ -1,7 +1,8 @@
 #+TITLE: DamageBDD - BDD At Planetary Scale.
 
+- {{{timestamp(2025-09-20)}}} [[file:index.org][DamageBDD – Verifying Software Behaviour at Planetary Scale]]
+- {{{timestamp(2025-09-20)}}} [[file:supported_wallets.org][DAMAGE Token - Supported Wallets]]
 - {{{timestamp(2025-09-18)}}} [[file:pricing.org][Pricing of DamageTokens]]
-- {{{timestamp(2025-08-11)}}} [[file:index.org][DamageBDD – Verifying Software Behaviour at Planetary Scale]]
 - {{{timestamp(2025-06-09)}}} [[file:use.org][Use DamageBDD]]
 - {{{timestamp(2025-05-08)}}} [[file:socials.org][Social Media - DamageBDD]]
 - {{{timestamp(2025-04-24)}}} [[file:whitepaper.org][DamageBDD - Whitepaper]]
@@ -16,6 +17,8 @@
 - {{{timestamp(2025-04-24)}}} [[file:checklist.org][🧑💻 Task Submission Checklist - Code Like a Pro 🚀]]
 - {{{timestamp(2025-04-24)}}} [[file:accounts.org][Damagebdd - Accounts]]
 - {{{timestamp(2025-04-24)}}} [[file:about.org][About - DamageBDD]]
+- *security/*
+  - {{{timestamp(2025-09-20)}}} [[file:security/index.org][DamageBDD Security Policy]]
 - *ecai/*
   - {{{timestamp(2025-09-17)}}} [[file:ecai/isogeny-continuity.org][Isogenies Do Not Require Continuity]]
   - {{{timestamp(2025-09-17)}}} [[file:ecai/index.org][ECAI – The End of Probabilistic AI]]
