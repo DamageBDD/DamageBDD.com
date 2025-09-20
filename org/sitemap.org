@@ -1,6 +1,6 @@
 #+TITLE: DamageBDD - BDD At Planetary Scale.
 
-- {{{timestamp(2025-09-16)}}} [[file:pricing.org][Pricing of DamageTokens]]
+- {{{timestamp(2025-09-18)}}} [[file:pricing.org][Pricing of DamageTokens]]
 - {{{timestamp(2025-08-11)}}} [[file:index.org][DamageBDD – Verifying Software Behaviour at Planetary Scale]]
 - {{{timestamp(2025-06-09)}}} [[file:use.org][Use DamageBDD]]
 - {{{timestamp(2025-05-08)}}} [[file:socials.org][Social Media - DamageBDD]]
@@ -17,6 +17,7 @@
 - {{{timestamp(2025-04-24)}}} [[file:accounts.org][Damagebdd - Accounts]]
 - {{{timestamp(2025-04-24)}}} [[file:about.org][About - DamageBDD]]
 - *ecai/*
+  - {{{timestamp(2025-09-17)}}} [[file:ecai/isogeny-continuity.org][Isogenies Do Not Require Continuity]]
   - {{{timestamp(2025-09-17)}}} [[file:ecai/index.org][ECAI – The End of Probabilistic AI]]
   - {{{timestamp(2025-09-17)}}} [[file:ecai/redlines.org][ECAI Red Lines & Guardrails Policy]]
   - {{{timestamp(2025-08-22)}}} [[file:ecai/what-is-ecai.org][what-is-ecai]]

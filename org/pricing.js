@@ -1,5 +1,5 @@
 
-(function(window, document, undefined) {
+(function () {
   let lastDamageUSDT = null;
   let lastBtcUSDT = null;
 
@@ -143,9 +143,7 @@
     }
   }
 
-	document.addEventListener("DOMContentLoaded", async function() {
   pendingConverterRecalc = bindConverter();
   tick();
   setInterval(tick, 60000);
-	});
-})(window, document, undefined);
+})();

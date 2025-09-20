@@ -79,6 +79,29 @@ regularly for any updates.
 <script src="/assets/js/pricing.js"></script>
 #+END_EXPORT
 
+#+BEGIN_EXPORT html
+<div id="converter" style="margin-top:1.5rem;padding:1rem;border:1px solid #ddd;border-radius:12px;">
+  <div style="margin-bottom:0.5rem;font-weight:600;">Quick Converter</div>
+  <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+    <input id="conv-amount" type="number" min="0" step="0.000001" placeholder="1.0" style="width:10rem;padding:0.4rem;border:1px solid #ccc;border-radius:8px;">
+    <select id="conv-from" style="padding:0.4rem;border:1px solid #ccc;border-radius:8px;">
+      <option value="DAMAGE">DAMAGE</option>
+      <option value="USDT">USDT</option>
+      <option value="BTC">BTC</option>
+    </select>
+    <span>to</span>
+    <select id="conv-to" style="padding:0.4rem;border:1px solid #ccc;border-radius:8px;">
+      <option value="USDT">USDT</option>
+      <option value="DAMAGE">DAMAGE</option>
+      <option value="BTC">BTC</option>
+    </select>
+    <span style="margin-left:0.5rem;">=</span>
+    <strong id="conv-output">—</strong>
+  </div>
+  <div style="margin-top:0.25rem;color:#555;"><small>Also ≈ <span id="conv-output-sats">—</span></small></div>
+</div>
+#+END_EXPORT
+
 Pricing is aligned with the live market rate for DAMAGE/USDT on [[https://coinstore.com][Coinstore]].
 
 
@@ -89,5 +112,6 @@ Consultation pricing will also be pegged to the live DAMAGE/USDT market rate on 
 
 
 #+BEGIN_EXPORT html
-<a href="https://run.damagebdd.com/erm/schedule_call/15min">Schedule a Call with DamageBDD Now</a>
+<a href="https://calendly.com/damagebdd/15min">Schedule a Call with DamageBDD Now</a>
+<!--<a href="https://run.damagebdd.com/erm/schedule_call/15min">Schedule a Call with DamageBDD Now</a>-->
 #+END_EXPORT

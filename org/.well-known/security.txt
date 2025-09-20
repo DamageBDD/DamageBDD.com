@@ -1,0 +1,5 @@
+Contact: mailto:security@damagebdd.com
+Expires: 2026-12-31T23:59:59Z
+Encryption: https://damagebdd.com/security#gpg--pgp-public-keys-placeholders
+Policy: https://damagebdd.com/security
+Hiring: https://damagebdd.com/hiring
