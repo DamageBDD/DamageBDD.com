@@ -355,3 +355,183 @@ label {
   max-width: 100%;
   height: auto;
 }
+
+  :root{
+    --bg: #0b2239;
+    --fg: #e6edf7;
+    --muted: #9fb3c8;
+    --accent: #1e6fb9;
+    --accent-ink: #fff;
+    --ring: rgba(30,111,185,0.45);
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f7fbff; --fg:#0b2239; --muted:#4a6072; }
+  }
+
+  .hero{
+    background: radial-gradient(1200px 600px at 20% 10%, rgba(30,111,185,.18), transparent),
+                linear-gradient(180deg, var(--bg), #060e18 80%);
+    color: var(--fg);
+    padding: clamp(2rem, 4vw + 1rem, 4rem) 1rem;
+  }
+  @media (prefers-color-scheme: light){
+    .hero{ background: linear-gradient(180deg, #f7fbff, #eaf3ff); }
+  }
+
+  .hero__inner{
+    max-width: 1100px; margin: 0 auto;
+    display: grid; gap: 2rem;
+    grid-template-columns: 1fr;
+    align-items: center;
+  }
+  @media (min-width: 900px){
+    .hero__inner{ grid-template-columns: 1.2fr .8fr; }
+  }
+
+  .hero__text h1{
+    font: 800 clamp(1.6rem, 2.6vw + 1rem, 2.6rem)/1.15 system-ui, -apple-system, Segoe UI, Roboto, Inter, sans-serif;
+    margin: 0 0 .5rem 0;
+    letter-spacing: .2px;
+  }
+  .tagline{
+    color: var(--muted);
+    font-size: clamp(1rem, .6vw + .9rem, 1.125rem);
+    margin: 0 0 1.25rem 0;
+    max-width: 60ch;
+  }
+
+  .cta{ display: flex; gap: .75rem; flex-wrap: wrap; }
+  .btn{
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 12px; padding: .9rem 1.15rem;
+    font-weight: 700; text-decoration: none; border: 2px solid transparent;
+    transition: transform .08s ease, box-shadow .2s ease, background .2s ease;
+    will-change: transform;
+  }
+  .btn--primary{
+    background: var(--accent); color: var(--accent-ink);
+    box-shadow: 0 10px 25px -10px var(--ring);
+  }
+  .btn--primary:hover{ transform: translateY(-1px); box-shadow: 0 12px 28px -12px var(--ring); }
+  .btn--primary:active{ transform: translateY(0); }
+
+  .btn--ghost{
+    color: var(--fg); border-color: rgba(230,237,247,.35); background: transparent;
+  }
+  .btn--ghost:hover{ border-color: rgba(230,237,247,.6); }
+
+  .hero__cover{
+    justify-self: center;
+    max-width: 360px; width: min(80vw, 360px);
+    filter: drop-shadow(0 18px 40px rgba(0,0,0,.35));
+    border-radius: 16px; overflow: hidden;
+  }
+  .hero__cover img{ width: 100%; height: auto; display: block; border-radius: 16px; }
+
+  @media (prefers-reduced-motion: reduce){
+    .btn{ transition: none; }
+  }
+/* ================================
+   Book Hero – Theme-aware overrides
+   ================================ */
+.hero--book {
+  /* Declare we support both schemes so form controls, etc. render properly */
+  color-scheme: light dark;
+}
+
+/* Default (light) palette */
+.hero--book {
+  --hero-bg-1: #f7fbff;
+  --hero-bg-2: #eaf3ff;
+  --hero-fg: #0b2239;
+  --hero-muted: #4a6072;
+  --hero-accent: #1e6fb9;
+  --hero-accent-ink: #ffffff;
+  --hero-ring: rgba(30,111,185,0.25);
+  --hero-card-bg: #0b2239;
+  --hero-border: rgba(11,34,57,0.08);
+
+  background:
+    radial-gradient(1200px 600px at 20% 10%, rgba(30,111,185,.12), transparent),
+    linear-gradient(180deg, var(--hero-bg-1), var(--hero-bg-2));
+  color: var(--hero-fg);
+}
+
+.hero--book .hero__text .tagline { color: var(--hero-muted); }
+
+.hero--book .btn--primary {
+  background: var(--hero-accent);
+  color: var(--hero-accent-ink);
+  box-shadow: 0 10px 25px -10px var(--hero-ring);
+}
+.hero--book .btn--ghost {
+  color: var(--hero-fg);
+  border-color: rgba(11,34,57,0.25);
+  background: transparent;
+}
+
+/* Cover card: keep readable edge on both themes */
+.hero--book .hero__cover {
+  background: var(--hero-card-bg);
+  border: 1px solid var(--hero-border);
+  border-radius: 16px;
+  overflow: hidden;
+  filter: drop-shadow(0 18px 40px rgba(0,0,0,.25));
+}
+
+/* --- Dark scheme via prefers-color-scheme --- */
+@media (prefers-color-scheme: dark) {
+  .hero--book {
+    --hero-bg-1: #0b2239;
+    --hero-bg-2: #060e18;
+    --hero-fg: #e6edf7;
+    --hero-muted: #9fb3c8;
+    --hero-accent: #3aa0ff;
+    --hero-accent-ink: #001a2b;
+    --hero-ring: rgba(58,160,255,0.35);
+    --hero-card-bg: #0e2744;
+    --hero-border: rgba(230,237,247,0.08);
+
+    background:
+      radial-gradient(1200px 600px at 20% 10%, rgba(58,160,255,.14), transparent),
+      linear-gradient(180deg, var(--hero-bg-1), var(--hero-bg-2) 80%);
+    color: var(--hero-fg);
+  }
+
+  .hero--book .btn--ghost {
+    color: var(--hero-fg);
+    border-color: rgba(230,237,247,.25);
+  }
+}
+
+/* --- Dark scheme via explicit toggle: html/body[data-theme="dark"] --- */
+html.dark .hero--book, body.dark .hero--book {
+  --hero-bg-1: #0b2239;
+  --hero-bg-2: #060e18;
+  --hero-fg: #e6edf7;
+  --hero-muted: #9fb3c8;
+  --hero-accent: #3aa0ff;
+  --hero-accent-ink: #001a2b;
+  --hero-ring: rgba(58,160,255,0.35);
+  --hero-card-bg: #0e2744;
+  --hero-border: rgba(230,237,247,0.08);
+
+  background:
+    radial-gradient(1200px 600px at 20% 10%, rgba(58,160,255,.14), transparent),
+    linear-gradient(180deg, var(--hero-bg-1), var(--hero-bg-2) 80%);
+  color: var(--hero-fg);
+}
+
+/* Ensure the cover PNG/JPG remains visible even if it has transparent edges */
+.hero--book .hero__cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--hero-card-bg);
+}
+
+/* Button focus states (both themes) */
+.hero--book .btn:focus-visible {
+  outline: 2px solid var(--hero-accent);
+  outline-offset: 2px;
+}

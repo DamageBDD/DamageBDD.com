@@ -79,13 +79,6 @@ a:hover {
   text-decoration: underline;
 }
 
-img {
-  max-height: 300px;
-  display: block;
-  margin-top: 0.5rem;
-  border-radius: 4px;
-  max-width: 100%;
-}
 
 .nostr-post img {
   border: 1px solid #ddd;

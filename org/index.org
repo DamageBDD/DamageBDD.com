@@ -8,18 +8,48 @@ highlighting why DamageBDD is powerful, unique, and viable as a decentralized ve
 #+END_COMMENT
 
 #+BEGIN_EXPORT html
-<section id="page1">
-#+END_EXPORT
+<!-- Hero Banner: DamageBDD Book -->
+<section class="hero hero--book">
+  <div class="hero__inner">
+    <div class="hero__text">
+      <h1>DamageBDD: Behaviour Verification at Planetary Scale</h1>
+      <p class="tagline">
+        A beginner-to-advanced guide from BDD → Behaviour-Driven DevOps → the Verification Economy.
+      </p>
+      <div class="cta">
+        <a class="btn btn--primary" href="/assets/damagebdd_book.pdf">
+          ⬇ Download Now (PDF)
+        </a>
+        <a class="btn btn--ghost" href="/damagebdd-book">
+          Read more
+        </a>
+      </div>
+    </div>
 
+    <div class="hero__cover">
+      <!-- Use your generated cover image path -->
+      <img
+        src="/assets/img/book_front_cover.png"
+        alt="Book cover: DamageBDD — Behaviour Verification at Planetary Scale"
+        width="640" height="1000"
+        loading="eager" decoding="async"
+        srcset="/assets/img/book_front_cover.png 1x, /assets/img/book_front_cover@2x.png 2x">
+    </div>
+  </div>
+</section>
+
+
+<noscript>
+  <p><a href="/assets/damagebdd_book.pdf">Download the DamageBDD book (PDF)</a></p>
+</noscript>
+
+#+END_EXPORT
 * What is DamageBDD?
 
 DamageBDD is a platform that lets anyone – not just programmers – describe how software should behave, using simple sentences. These sentences are written in a format called [[https://en.wikipedia.org/wiki/Behavior-driven_development][BDD]] (Behaviour Driven Development), which turns software testing into a conversation instead of a cryptic task only engineers understand.
 
 Think of it like writing instructions for how an app should work, and DamageBDD automatically checks if the app really does that. This makes it possible for teams of all skill levels – developers, testers, support staff, even end users – to work together and catch problems before they reach the real world.
 
-#+BEGIN_EXPORT html
-</section>
-#+END_EXPORT
 
 * Why is it powerful?
 
@@ -103,6 +133,9 @@ This tells DamageBDD what to test – and it does the heavy lifting behind the s
 
 - 📄 [[./whitepaper.html][DAMAGE Token Whitepaper]]  
   The official guide to the DAMAGE Token vision, design, and use cases.
+  
+- 📄 [[./book.html][DamageBDD Book]]  
+  The official book to the DAMAGE Token vision, design, and use cases.
 
 - 📊 [[https://aescan.io/tokens/ct_m3Cty31JxWHmJFMGuFCTpedDHuMLCit2Qup57qawmEWmcJnCk?type=holders][Explore Token Stats]]  
   Track live data on DAMAGE token supply, holders, and transactions.
