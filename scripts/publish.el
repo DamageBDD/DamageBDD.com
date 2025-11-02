@@ -74,6 +74,7 @@
   "Load HTML snippets and publish the DamageBDD site."
   (interactive)
   (damagebdd-load-html-snippets)
+    (setq my-gpg-signing-key "DED5444526060D9F" )
   (setq org-publish-project-alist
         `(
           ("damagebdd" :components ("damagebdd.pages" "damagebdd.static" "damagebdd.articles" "damagebdd.papers"))
