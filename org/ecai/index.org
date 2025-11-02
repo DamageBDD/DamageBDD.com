@@ -19,6 +19,8 @@ ECAI (Elliptic Curve AI) replaces probabilistic models with a post-quantum secur
 
 Rather than using billions of parameters to "guess" outputs, ECAI hashes knowledge onto *elliptic curve points*. These points can be retrieved, verified, and computed with zero ambiguity, total transparency, and cryptographic proof.
 
+[[file:what-is-ecai.org][What is EcAI]]
+
 * Key Features
 
 - 🧠 **Deterministic Knowledge Retrieval**  
@@ -59,21 +61,32 @@ ECAI ends this madness by offering:
 * Example: Encode Knowledge on the Curve
 
 #+begin_src python
-from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.primitives import hashes
+        from cryptography.hazmat.primitives.asymmetric import ec
+        from cryptography.hazmat.primitives import hashes
 
-def encode_knowledge(data: str):
-    """Hashes data and maps it onto an elliptic curve point."""
-    digest = hashes.Hash(hashes.SHA256())
-    digest.update(data.encode())
-    hashed = digest.finalize()
-    point = ec.EllipticCurvePublicNumbers.from_encoded_point(
-        ec.SECP256R1(), hashed[:33]
-    )
-    return point
+        def encode_knowledge(data: str):
+            """Hashes data and maps it onto an elliptic curve point."""
+            digest = hashes.Hash(hashes.SHA256())
+            digest.update(data.encode())
+            hashed = digest.finalize()
 
-# Usage
-print(encode_knowledge("ECAI replaces guessing with retrieval"))
+            # Ensure hash is trimmed or expanded to a valid encoded point
+            # Compressed points are 33 bytes (1 byte prefix + 32 bytes X)
+            # We'll prefix with 0x02 to ensure it's on the curve (y even)
+            compressed_point = b'\x02' + hashed[:32]
+
+            point = ec.EllipticCurvePublicKey.from_encoded_point(
+                ec.SECP256R1(), compressed_point
+            )
+            return point.public_numbers()
+
+        # Usage
+        print(encode_knowledge("ECAI replaces guessing with retrieval"))
+        <EllipticCurvePublicNumbers(
+            curve=secp256r1,
+            x=28994934474324182410627027204483255348728367270114849145915598696486296772709,
+            y=2359458566184247827897016018343815426016115293228064850986226293382628918278
+        )>
 #+end_src
 
 This maps real-world knowledge to a recoverable elliptic curve point.  
@@ -147,7 +160,6 @@ DamageBDD laid the foundation: deterministic behavior verification on-chain.
 ECAI takes the same principle further — encoding *all knowledge* as elliptic curve points.
 Where DamageBDD proves software truth, ECAI proves *intelligence itself* — no guesses, no hallucinations, just cryptographic certainty.
 
-[[file:what-is-ecai.org][What is EcAI]]
 
 
 
