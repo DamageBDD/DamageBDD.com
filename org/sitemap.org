@@ -1,6 +1,8 @@
 #+TITLE: DamageBDD - BDD At Planetary Scale.
 
-- {{{timestamp(2025-10-31)}}} [[file:index.org][DamageBDD – Verifying Software Behaviour at Planetary Scale]]
+- {{{timestamp(2025-11-28)}}} [[file:contractors.org][DamageBDD Contractor Development Process]]
+- {{{timestamp(2025-11-25)}}} [[file:node.org][DamageBDD – Run a Damage Node]]
+- {{{timestamp(2025-11-23)}}} [[file:index.org][DamageBDD – Verifying Software Behaviour at Planetary Scale]]
 - {{{timestamp(2025-09-29)}}} [[file:book.org][DamageBDD: Behaviour Verification at Planetary Scale]]
 - {{{timestamp(2025-09-20)}}} [[file:supported_wallets.org][DAMAGE Token - Supported Wallets]]
 - {{{timestamp(2025-09-18)}}} [[file:pricing.org][Pricing of DamageTokens]]
@@ -18,14 +20,6 @@
 - {{{timestamp(2025-04-24)}}} [[file:checklist.org][🧑💻 Task Submission Checklist - Code Like a Pro 🚀]]
 - {{{timestamp(2025-04-24)}}} [[file:accounts.org][Damagebdd - Accounts]]
 - {{{timestamp(2025-04-24)}}} [[file:about.org][About - DamageBDD]]
-- *ecai/*
-  - {{{timestamp(2025-10-31)}}} [[file:ecai/index.org][ECAI – The End of Probabilistic AI]]
-  - {{{timestamp(2025-10-30)}}} [[file:ecai/what-is-ecai.org][What is ECAI (Elliptic Curve AI)?]]
-  - {{{timestamp(2025-09-17)}}} [[file:ecai/isogeny-continuity.org][Isogenies Do Not Require Continuity]]
-  - {{{timestamp(2025-09-17)}}} [[file:ecai/redlines.org][ECAI Red Lines & Guardrails Policy]]
-  - {{{timestamp(2025-04-24)}}} [[file:ecai/research.org][research]]
-  - {{{timestamp(2025-04-24)}}} [[file:ecai/prompt.org][**Bootstrap Prompt for ChatGPT to Teach and Implement ECAI**]]
-  - {{{timestamp(2025-04-24)}}} [[file:ecai/ekef-v0.3.org][ECAI Knowledge Encoding Format (EKEF v0.3)]]
 - *articles/*
   - {{{timestamp(2025-04-24)}}} [[file:articles/whydamagetoken.org][Why Damage Tokens?]]
   - {{{timestamp(2025-04-24)}}} [[file:articles/whatisdamage.org][What is damage?]]
@@ -46,6 +40,14 @@
   - {{{timestamp(2025-04-24)}}} [[file:articles/debugging_web.org][Manual: Using Chrome Inspector to Capture Request Results]]
   - {{{timestamp(2025-04-24)}}} [[file:articles/dark_matter.org][dark_matter]]
   - {{{timestamp(2025-04-24)}}} [[file:articles/damage_vs_tradition.org][DamageBDD vs Traditional Testing Tools]]
+- *ecai/*
+  - {{{timestamp(2025-10-31)}}} [[file:ecai/index.org][ECAI – The End of Probabilistic AI]]
+  - {{{timestamp(2025-10-30)}}} [[file:ecai/what-is-ecai.org][What is ECAI (Elliptic Curve AI)?]]
+  - {{{timestamp(2025-09-17)}}} [[file:ecai/isogeny-continuity.org][Isogenies Do Not Require Continuity]]
+  - {{{timestamp(2025-09-17)}}} [[file:ecai/redlines.org][ECAI Red Lines & Guardrails Policy]]
+  - {{{timestamp(2025-04-24)}}} [[file:ecai/research.org][research]]
+  - {{{timestamp(2025-04-24)}}} [[file:ecai/prompt.org][**Bootstrap Prompt for ChatGPT to Teach and Implement ECAI**]]
+  - {{{timestamp(2025-04-24)}}} [[file:ecai/ekef-v0.3.org][ECAI Knowledge Encoding Format (EKEF v0.3)]]
 - *security/*
   - {{{timestamp(2025-09-20)}}} [[file:security/index.org][DamageBDD Security Policy]]
 - *jobs/*

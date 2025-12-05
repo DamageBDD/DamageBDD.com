@@ -175,4 +175,7 @@ This tells DamageBDD what to test – and it does the heavy lifting behind the s
 
 - 🛠 [[https://microlancer.io/?page=1&length=25&status=my&showCompleted=1&showHidden=1&minimumAmount=0&user=asyncmind&tag=&category=&search=][DamageBDD Tasks on Microlancer]]  
   Take on bounties and earn rewards by contributing to DamageBDD.
-
+  
+- 💻 [[./node][Run a Damage Node]]
+  Participate in the Damage network, spend and earn DAMAGE with you computer.
+ 
