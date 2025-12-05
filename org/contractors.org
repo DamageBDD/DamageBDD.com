@@ -5,9 +5,16 @@
 
 This page defines a **lightweight, self-managed workflow** for contractors contributing to DamageBDD.
 It is intentionally simple. You do **not** need to understand Behavior-Driven Development (BDD) to start.
-You only need a GitHub account and a BTC wallet.
+You only need a GitHub account and a BTC or Lightning wallet.
 
 Over time, you will naturally learn BDD because every task in the project is verified using it.
+
+This process is:
+- Non-custodial
+- Non-employment
+- Non-investment
+- Globally permissionless
+- Fully auditable via GitHub
 
 * Communication Rule
   **All communication happens via GitHub Issues.**
@@ -19,7 +26,7 @@ Each issue represents:
 *** =The expected output=
 *** =The acceptance criteria=
 *** =The payout=
-*** =The payment address (one-off BTC address or Lightning invoice)=
+*** =The payment method (one-off BTC address or Lightning invoice)=
 
 This protects both sides and removes management overhead.
 
@@ -30,7 +37,7 @@ This protects both sides and removes management overhead.
 3. Maintainer assigns the issue to you.
 4. **Open a branch**, build the solution, and push a PR referencing the issue.
 5. Maintainer reviews & merges.
-6. **You get paid in BTC** to a one-off address/invoice you provide inside the PR.
+6. **You get paid in BTC (on-chain or Lightning)** to a one-off address or invoice you provide inside the PR.
 
 That’s all.
 
@@ -105,12 +112,18 @@ Describe:
 
 ### Payout
 
-BTC Address or Lightning Invoice:
-<insert your one-off address/invoice here>
+Payment Rail: BTC (on-chain) | Lightning
+
+One-Off BTC Address or BOLT11 Lightning Invoice:
+<insert your one-off address or invoice here>
 
 Amount: <as listed in issue>
 
-I confirm this address is safe to pay.
+I confirm:
+- This is a fresh, one-time payout destination.
+- I control this wallet.
+- This is a non-custodial wallet.
+- This payment is for completed work only.
 
 ### Notes
 
@@ -134,17 +147,48 @@ Once approved and merged, you mark the issue as:
 ---
 
 ** 6. Payment**
-You are paid **in BTC** to your quoted address or Lightning invoice.
+You are paid **in BTC (on-chain or Lightning)** to your quoted address or Lightning invoice.
 This is finalised inside the Issue thread so the record is permanent.
+
+For Lightning:
+- Only **BOLT11 invoices** are accepted.
+- Invoices must be **non-custodial**.
+- Expired invoices require resubmission.
+- Lightning payments are final.
 
 DAMAGE token liquidity, pricing, or conversions are *not your concern*.
 The treasury handles that.
 
 ---
 
+* Payment & Wallet Rules (Strict)
+
+- **Never reuse payout addresses.** Always generate a fresh one.
+- **Never submit exchange deposit addresses.**
+- **Never submit custodial Lightning invoices.**
+- **One work item = one payout destination.**
+- **All payout details must live in the PR.**
+- **No payout details via DM, email, or chat.**
+
+Failure to follow these rules may void payout eligibility for security reasons.
+
+---
+
+* Legal & Relationship Clarification
+
+By participating in this workflow, you acknowledge:
+
+- You are an **independent contractor**, not an employee.
+- This is **not an investment**, not revenue sharing, and not equity.
+- Payments are **final compensation for completed work only**.
+- You are responsible for your own **tax, reporting, and compliance**.
+- DamageBDD does not custody funds on your behalf.
+
+---
+
 * Best Practices for Contractors
 
-- Never reuse BTC addresses. Always generate a one-off.
+- Never reuse BTC addresses or Lightning invoices.
 - Put *all questions inside the issue*.
 - Keep branches small—one issue = one PR.
 - Don’t wait for permission. If it’s assigned to you, build.
@@ -166,6 +210,7 @@ You’ll naturally transition into BDD-driven development without being forced.
 - Scaling team ≠ scaling overhead.
 - No off-platform chatter.
 - No dependency on contractors learning BDD on day one.
+- Lightning enables instant, global, non-custodial micro-payouts.
 
 Everything else—BDD pipelines, DAMAGE token, Aeternity receipts, Lightning settlement—runs behind the scenes.
 
@@ -173,5 +218,5 @@ Everything else—BDD pipelines, DAMAGE token, Aeternity receipts, Lightning set
 
 * One Sentence Summary
 
-**Do the work, open a PR, get paid in BTC. GitHub is the contract.**
+**Do the work, open a PR, submit a one-off BTC address or Lightning invoice, get paid. GitHub is the contract.**
 
