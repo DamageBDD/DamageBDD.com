@@ -1,5 +1,6 @@
 #+TITLE: DamageBDD Contractor Development Process
-#+OPTIONS: toc:nil num:nil
+#+OPTIONS: toc:nil
+#+TOC: headlines 2
 
 * Purpose
 

@@ -23,7 +23,7 @@ That's it.
 
 Click the link below to download the installer:
 
-[[https://ipfs.damagebdd.com/ipfs/QmVsZSqKHPqxU57w5C7QtursMEnAxo3B8pc4YocceU1LKP?filename=damage_1.5.7_amd64.deb][Download Damage Node for Linux Mint]]
+[[https://ipfs.damagebdd.com/ipfs/Qmcz89KzigGFYCjy6R2ezQBFQUV8QB9h68aswXjWPToq1h?filename=damage_1.5.6+build.86.refe142481_amd64.deb][Download Damage Node for Linux Mint]]
 
 To install:
 
@@ -60,7 +60,7 @@ Click it to start.
 To confirm it is running, visit:
 
 #+begin_src
-http://localhost:8080
+http://localhost:4888
 #+end_src
 
 (This opens the local dashboard. It runs only on your machine.)
@@ -130,4 +130,19 @@ If something does not work:
 
 Damage Node is designed to be simple for everyone, not just developers.
 
+
+* Next Steps: Node Administration
+
+Running a DamageBDD node goes beyond basic execution.  
+To operate reliably in production, every node requires correct configuration of:
+
+- Admin wallets (custodial or non-custodial)
+- Bitcoin + Lightning (CLN) connectivity
+- LNURL / Lightning Address routing
+- Nostr relay integration
+- Execution security through =erlexec=
+- Privilege isolation and secret management
+
+These responsibilities are covered in the companion document  
+[[./node_admins][Node Admins]], which provides a focused operational guide for system administrators.
 
