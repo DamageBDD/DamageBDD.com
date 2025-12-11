@@ -19,11 +19,24 @@ That's it.
 
 * Download for Your System
 
-** Linux Mint 22 (or Ubuntu/Debian)
+** Linux Mint 22
 
 Click the link below to download the installer:
 
-[[https://ipfs.damagebdd.com/ipfs/Qmcz89KzigGFYCjy6R2ezQBFQUV8QB9h68aswXjWPToq1h?filename=damage_1.5.6+build.86.refe142481_amd64.deb][Download Damage Node for Linux Mint]]
+[[https://ipfs.damagebdd.com/ipfs/QmVmqZz1NKfMMb2oZyATbXyH4bgvz6yJb5Gp5TKqVNUdad?filename=damage_1.5.6+build.87.refc90092f_amd64.deb][Download Damage Node for Linux Mint]]
+
+To install:
+
+1. Open your *Downloads* folder  
+2. Double-click =damage_1.5.7_amd64.deb=  
+3. Press “Install”  
+4. Enter your password  
+   
+** Ubuntu 22.04 (LTS)
+
+Click the link below to download the installer:
+
+[[https://ipfs.damagebdd.com/ipfs/QmeeaYq4tzWwWfThQwnBq3vyWdpEk9RBS2utfUwDUV3UUV?filename=damage_1.5.7+build.67.ref135a5b9_amd64.deb][Download Damage Node for Ubuntu Jammy]]
 
 To install:
 

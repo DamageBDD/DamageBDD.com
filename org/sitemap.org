@@ -1,6 +1,6 @@
 #+TITLE: DamageBDD - BDD At Planetary Scale.
 
-- {{{timestamp(2025-12-09)}}} [[file:node.org][DamageBDD – Run a Damage Node]]
+- {{{timestamp(2025-12-11)}}} [[file:node.org][DamageBDD – Run a Damage Node]]
 - {{{timestamp(2025-12-09)}}} [[file:node_dev.org][node_dev]]
 - {{{timestamp(2025-12-09)}}} [[file:node_admins.org][DamageBDD Node Admin Guide]]
 - {{{timestamp(2025-12-05)}}} [[file:contractors.org][DamageBDD Contractor Development Process]]
