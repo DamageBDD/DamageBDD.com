@@ -1,5 +1,8 @@
 #+TITLE: DamageBDD - BDD At Planetary Scale.
 
+- {{{timestamp(2025-12-22)}}} [[file:pricing.org][Pricing of DamageTokens]]
+- {{{timestamp(2025-12-22)}}} [[file:token_tos.org][Terms and Conditions for Damage Token Sales DAMAGE Token – Terms of Use]]
+- {{{timestamp(2025-12-20)}}} [[file:manual.org][User Manual: Get Started with Behavior Testing in Minutes!]]
 - {{{timestamp(2025-12-11)}}} [[file:node.org][DamageBDD – Run a Damage Node]]
 - {{{timestamp(2025-12-09)}}} [[file:node_dev.org][node_dev]]
 - {{{timestamp(2025-12-09)}}} [[file:node_admins.org][DamageBDD Node Admin Guide]]
@@ -7,22 +10,20 @@
 - {{{timestamp(2025-11-23)}}} [[file:index.org][DamageBDD – Verifying Software Behaviour at Planetary Scale]]
 - {{{timestamp(2025-09-29)}}} [[file:book.org][DamageBDD: Behaviour Verification at Planetary Scale]]
 - {{{timestamp(2025-09-20)}}} [[file:supported_wallets.org][DAMAGE Token - Supported Wallets]]
-- {{{timestamp(2025-09-18)}}} [[file:pricing.org][Pricing of DamageTokens]]
 - {{{timestamp(2025-06-09)}}} [[file:use.org][Use DamageBDD]]
 - {{{timestamp(2025-05-08)}}} [[file:socials.org][Social Media - DamageBDD]]
 - {{{timestamp(2025-04-24)}}} [[file:whitepaper.org][DamageBDD - Whitepaper]]
-- {{{timestamp(2025-04-24)}}} [[file:token_tos.org][Terms and Conditions for Damage Token Sales]]
 - {{{timestamp(2025-04-24)}}} [[file:todo.org][todo]]
 - {{{timestamp(2025-04-24)}}} [[file:theindex.org][Index]]
 - {{{timestamp(2025-04-24)}}} [[file:tac.org][Terms and Conditions]]
 - {{{timestamp(2025-04-24)}}} [[file:steps.org][Damagebdd - Steps Manual]]
-- {{{timestamp(2025-04-24)}}} [[file:manual.org][User Manual: Get Started with Behavior Testing in Minutes!]]
 - {{{timestamp(2025-04-24)}}} [[file:header.org][header]]
 - {{{timestamp(2025-04-24)}}} [[file:faq.org][FAQ for CTOs & Engineering Managers - DamageBDD]]
 - {{{timestamp(2025-04-24)}}} [[file:checklist.org][🧑💻 Task Submission Checklist - Code Like a Pro 🚀]]
 - {{{timestamp(2025-04-24)}}} [[file:accounts.org][Damagebdd - Accounts]]
 - {{{timestamp(2025-04-24)}}} [[file:about.org][About - DamageBDD]]
 - *articles/*
+  - {{{timestamp(2025-12-15)}}} [[file:articles/funding-comparison.org][How DamageBDD Lightning Swap Funding Compares to All Other Funding Models]]
   - {{{timestamp(2025-04-24)}}} [[file:articles/whydamagetoken.org][Why Damage Tokens?]]
   - {{{timestamp(2025-04-24)}}} [[file:articles/whatisdamage.org][What is damage?]]
   - {{{timestamp(2025-04-24)}}} [[file:articles/usecase_insurance.org][usecase_insurance]]
@@ -42,6 +43,8 @@
   - {{{timestamp(2025-04-24)}}} [[file:articles/debugging_web.org][Manual: Using Chrome Inspector to Capture Request Results]]
   - {{{timestamp(2025-04-24)}}} [[file:articles/dark_matter.org][dark_matter]]
   - {{{timestamp(2025-04-24)}}} [[file:articles/damage_vs_tradition.org][DamageBDD vs Traditional Testing Tools]]
+- *features/*
+  - {{{timestamp(2025-12-15)}}} [[file:features/funding_swap.org][DamageBDD Lightning Swap Funding Steps]]
 - *ecai/*
   - {{{timestamp(2025-10-31)}}} [[file:ecai/index.org][ECAI – The End of Probabilistic AI]]
   - {{{timestamp(2025-10-30)}}} [[file:ecai/what-is-ecai.org][What is ECAI (Elliptic Curve AI)?]]

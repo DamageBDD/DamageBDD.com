@@ -1,76 +1,122 @@
 #+TITLE: Terms and Conditions for Damage Token Sales
 
 #+INCLUDE: "header.org"
-* Terms and Conditions for Damage Token Sales
+#+TITLE: DAMAGE Token – Terms of Use
+#+AUTHOR: Steven Joseph
+#+DATE: 2025-01-01
+#+OPTIONS: toc:nil num:nil
+#+LANGUAGE: en
 
-*Effective Date: 2024-07-29*
+* 1. Introduction
 
+These Terms of Use ("Terms") govern access to and use of the DAMAGE token ("DAMAGE") and related software functionality made available by Steven Joseph ("the Operator").
 
-** 1. Introduction
+The Operator is an individual sole trader and not a corporation, partnership, or financial institution.
 
-Welcome to Damage Token’s sales terms and conditions.
+By acquiring, holding, or using DAMAGE, you acknowledge that you have read, understood, and agreed to these Terms.
 
-These terms govern the purchase of Damage Tokens (“Tokens”) from DamageBDD (“Company”) via Lightning payments.
+* 2. Nature of DAMAGE
 
-By purchasing Tokens, you agree to these terms.
+DAMAGE is a cryptographic utility token designed for use within the DamageBDD software ecosystem.
 
-Please read them carefully.
+DAMAGE is used exclusively for:
+- Metering execution of software-defined behaviour
+- Coordinating verification activity
+- Recording and settling deterministic outcomes
+- Accessing or unlocking software functionality
 
-** 2. Definitions
+DAMAGE does not represent:
+- Money or legal tender
+- Stored value
+- A security, derivative, or investment product
+- Equity, debt, or ownership interest
+- A claim on future revenue or profits
+- A right of redemption or buyback
 
-- **"Damage Token"** refers to the digital asset issued by DamageBDD as an AEX9 token on the Aeternity blockchain, as outlined in the DamageBDD whitepaper.
-- **"Lightning Payments"** refers to transactions conducted through the Bitcoin Lightning Network.
-- **"Purchaser"** refers to an individual or entity buying Tokens from DamageBDD.
+No representation is made that DAMAGE has or will have monetary value outside its intended software utility.
 
-** 3. Token Sales
+* 3. No Financial or Regulated Services
 
-- **Sale Period:** The Token sales commence on 20213 and continue until the allocated Tokens are sold out.
-- **Purchase Method:** Tokens can be purchased using Lightning Payments through the provided payment gateway.
-- **Minimum Purchase:** The minimum amount of Tokens that can be purchased is 100,000.
+The Operator does not provide financial services.
 
-** 4. Pricing
+Specifically, the Operator does not:
+- Operate a digital currency exchange
+- Provide custodial wallet services
+- Hold or manage assets on behalf of users
+- Facilitate fiat currency transactions
+- Offer remittance or money transmission services
+- Provide investment advice or returns
 
-- **Token Price:** The price per Token is 0.000001 Bitcoin/BTC or 0.001 Satoshi/Sats.
-- **Payment Confirmation:** Payments must be confirmed through the Lightning Network.
-   The Company reserves the right to cancel or reverse transactions in the event of payment issues or disputes.
+Any acquisition or disposal of DAMAGE occurs independently of the Operator and is outside the scope of these Terms.
 
-** 5. Token Distribution
+* 4. User Custody and Responsibility
 
-- **Distribution Schedule:** Tokens will be distributed to Purchasers' Aeternity-compatible wallets upon successful confirmation of payment. Please allow few minutes for processing.
-- **Wallet Requirement:** Purchasers must provide a compatible Aeternity wallet address for Token delivery, such as Superhero.com.
+Users retain sole and exclusive control of their cryptographic keys and digital assets at all times.
 
-** 6. Refunds and Cancellations
+The Operator:
+- Does not access user private keys
+- Cannot recover lost keys
+- Cannot reverse transactions
+- Does not guarantee availability or continuity of access
 
-- **Refund Policy:** All sales are final. Tokens purchased via Lightning payments are non-refundable and non-cancellable.
-- **Exception:** Refunds may be granted if the Company fails to deliver Tokens due to technical issues or other reasons within [Insert Time Frame].
+Loss of DAMAGE due to user error, key loss, software incompatibility, or third-party actions is the sole responsibility of the user.
 
-** 7. Risk Disclosure
+* 5. Software-Only Scope
 
-- **Investment Risks:** Purchasing Tokens involves risks, including but not limited to market risk, technological risk, and regulatory risk. The value of Tokens may fluctuate.
-- **No Guarantees:** The Company makes no guarantees regarding the future value or performance of the Tokens.
+DAMAGE exists solely as a mechanism within software systems.
 
-** 8. Compliance and Legalities
+Access to software features may:
+- Change over time
+- Be gated by protocol rules
+- Be limited or discontinued
 
-- **Legal Compliance:** Purchasers must comply with all applicable laws and regulations related to Token purchases in their jurisdiction.
-- **Eligibility:** By purchasing Tokens, Purchasers confirm they are not prohibited by any local, state, or national laws.
+The Operator makes no guarantee that any specific feature, interface, or integration will remain available.
 
-** 9. Intellectual Property
+* 6. Regulatory Position
 
-- **Ownership:** DamageBDD retains all intellectual property rights related to Damage Token and the DamageBDD platform.
+Based on the current functionality and scope of DAMAGE, the Operator is not required to register as a digital currency exchange or remittance provider under Australian law.
 
-** 10. Liability and Disclaimers
+This assessment is based on:
+- Non-custodial design
+- Absence of fiat services
+- Software-only utility scope
 
-- **Limitation of Liability:** The Company shall not be liable for any direct, indirect, incidental, or consequential damages arising from the purchase or use of Tokens.
-- **Disclaimer:** The Company disclaims all warranties, express or implied, related to the Token sales process.
+If the functionality of the software materially changes, this position may be reviewed.
 
-** 11. Changes to Terms
+* 7. No Warranties
 
-- **Modifications:** The Company reserves the right to modify these terms at any time. Changes will be effective upon posting on the DamageBDD website.
+DAMAGE and all related software are provided "as is" and "as available".
 
-** 12. Contact Information
+To the maximum extent permitted by law, the Operator disclaims all warranties, express or implied, including but not limited to fitness for purpose, merchantability, or non-infringement.
 
-For any questions or concerns regarding these terms, please contact us at:
+* 8. Limitation of Liability
 
-- **Email:** support@damagebdd.com
+To the maximum extent permitted by law, the Operator shall not be liable for any indirect, incidental, consequential, or economic loss arising from use of DAMAGE or associated software.
 
+Aggregate liability, if any, shall be limited to the amount paid directly to the Operator for software access in the preceding 12 months.
+
+* 9. No Partnership or Agency
+
+Nothing in these Terms creates any partnership, agency, joint venture, or employment relationship between the user and the Operator.
+
+Users act independently and at their own risk.
+
+* 10. Amendments
+
+These Terms may be updated from time to time.
+
+Continued use of DAMAGE after publication of updated Terms constitutes acceptance of those changes.
+
+* 11. Governing Law
+
+These Terms are governed by the laws of Australia.
+
+Any disputes shall be resolved exclusively in the courts of the relevant Australian jurisdiction.
+
+* 12. Contact
+
+For matters relating to these Terms, contact:
+
+Steven Joseph  
+Operator, DamageBDD  
 

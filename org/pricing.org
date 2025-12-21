@@ -103,7 +103,7 @@ regularly for any updates.
 #+END_EXPORT
 
 Pricing is aligned with the live market rate for DAMAGE/USDT on [[https://coinstore.com][Coinstore]].
-
+Please read [[./token_tos.org][Token Terms of Use]].
 
 * 📞 Consultation Pricing
 
