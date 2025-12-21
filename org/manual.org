@@ -226,7 +226,7 @@ curl \
 curl -N \
     --data-binary @features/damage_http.feature \
     -H "Authorization: Bearer "$AUTH_TOKEN \
-    'https://run.damagebdd.com/schedule/daily/every/10/sec
+    'https://run.damagebdd.com/schedules/daily/every/10/sec
 </code></pre>
 #+END_EXPORT
 
@@ -238,7 +238,7 @@ To list all the scheduled jobs for a user.
 <pre class='snippet'><code class="language-bash">
 curl -N \
     -H "Authorization: Bearer "$AUTH_TOKEN \
-    'https://run.damagebdd.com/schedule/
+    'https://run.damagebdd.com/schedules/
 </code></pre>
 #+END_EXPORT
 ** Delete schedules
@@ -250,7 +250,7 @@ To delete a scheduled job, use the id from the listing in the following request
 curl -v -N \
     -X DELETE
     -H "Authorization: Bearer "$AUTH_TOKEN \
-    'https://run.damagebdd.com/schedule/${SCHEDULE_ID}/
+    'https://run.damagebdd.com/schedules/${SCHEDULE_ID}/
 </code></pre>
 #+END_EXPORT
 
