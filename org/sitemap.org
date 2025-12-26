@@ -1,6 +1,6 @@
 #+TITLE: DamageBDD - BDD At Planetary Scale.
 
-- {{{timestamp(2025-12-22)}}} [[file:pricing.org][Pricing of DamageTokens]]
+- {{{timestamp(2025-12-22)}}} [[file:pricing.org][Pricing of DAMAGE Tokens]]
 - {{{timestamp(2025-12-22)}}} [[file:token_tos.org][Terms and Conditions for Damage Token Sales DAMAGE Token – Terms of Use]]
 - {{{timestamp(2025-12-20)}}} [[file:manual.org][User Manual: Get Started with Behavior Testing in Minutes!]]
 - {{{timestamp(2025-12-11)}}} [[file:node.org][DamageBDD – Run a Damage Node]]
@@ -23,6 +23,7 @@
 - {{{timestamp(2025-04-24)}}} [[file:accounts.org][Damagebdd - Accounts]]
 - {{{timestamp(2025-04-24)}}} [[file:about.org][About - DamageBDD]]
 - *articles/*
+  - {{{timestamp(2025-12-23)}}} [[file:articles/swap_funding_faq.org][Swap Funding FAQ]]
   - {{{timestamp(2025-12-15)}}} [[file:articles/funding-comparison.org][How DamageBDD Lightning Swap Funding Compares to All Other Funding Models]]
   - {{{timestamp(2025-04-24)}}} [[file:articles/whydamagetoken.org][Why Damage Tokens?]]
   - {{{timestamp(2025-04-24)}}} [[file:articles/whatisdamage.org][What is damage?]]

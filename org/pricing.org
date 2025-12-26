@@ -1,28 +1,9 @@
-#+TITLE: Pricing of DamageTokens
+#+TITLE: Pricing of DAMAGE Tokens
+#+OPTIONS: toc:ni1
 
 #+INCLUDE: "header.org"
 
-* ⚡ Buy Damage Tokens Now with the Lightning Network
-
-🧑‍💻 **Create an Account**  
-Go to [[https://run.damagebdd.com][run.damagebdd.com]] and sign up to get your **custodial Aeternity wallet**, hosted by DamageBDD.
-
-🧾 **Generate a Lightning Invoice**  
-From your dashboard, generate an invoice for the number of satoshis you want to exchange for Damage Tokens.
-
-💸 **Make a Payment**  
-Use your Lightning wallet to pay the invoice — it's fast, final, and self-custodial.
-
-📥 **Receive Damage Tokens**  
-Once the payment is verified, your Damage Tokens are delivered directly to your hosted wallet.
-
-🚀 **Transfer Freely**  
-You are free to send your tokens to any wallet that supports the **AEX-9** token standard.
-
-🔥 *Verification is power. The Denied shall execute.*  
-
-
-* Pricing Plans for DamageBDD
+* Pricing
 
 
 We calculate pricing based on the number of steps and their
@@ -103,12 +84,64 @@ regularly for any updates.
 #+END_EXPORT
 
 Pricing is aligned with the live market rate for DAMAGE/USDT on [[https://coinstore.com][Coinstore]].
+
 Please read [[./token_tos.org][Token Terms of Use]].
+* ⚡ Buy Damage Tokens Now with the Lightning Network
+
+🧑‍💻 **Create an Account**  
+Go to [[https://run.damagebdd.com][run.damagebdd.com]] and sign up to get your **custodial Aeternity wallet**, hosted by DamageBDD.
+
+🧾 **Generate a Lightning Invoice**  
+From your dashboard, generate an invoice for the number of satoshis you want to exchange for Damage Tokens.
+
+💸 **Make a Payment**  
+Use your Lightning wallet to pay the invoice — it's fast, final, and self-custodial.
+
+📥 **Receive Damage Tokens**  
+Once the payment is verified, your Damage Tokens are delivered directly to your hosted wallet.
+
+🚀 **Transfer Freely**  
+You are free to send your tokens to any wallet that supports the **AEX-9** token standard.
+
+🔥 *Verification is power. The Denied shall execute.*  
+
+* 🏦 Buy DAMAGE on Coinstore
+
+If you already use a centralized exchange or prefer to acquire DAMAGE on the open market, you can purchase DAMAGE tokens directly via
+https://www.coinstore.com.
+
+This is a **secondary-market purchase** and is independent of DamageBDD’s Lightning-based issuance flow.
+
+**How it works**
+
+🧾 **Create a Coinstore Account**  
+Sign up and complete any required exchange onboarding on https://www.coinstore.com.
+
+💱 **Purchase DAMAGE**  
+Trade USDT for DAMAGE at the prevailing market price on Coinstore.
+
+📤 **Withdraw to Your Wallet**  
+Withdraw your DAMAGE tokens to:
+- Your DamageBDD custodial wallet (shown in your dashboard), or
+- Any external wallet that supports the **AEX-9** token standard on Aeternity.
+
+⚠️ *Always verify the destination address and token contract before withdrawing.*
+
+**Important Notes**
+
+- Coinstore is a third-party exchange. DamageBDD does not operate, control, or intermediate Coinstore trades.
+- Pricing on Coinstore is market-driven and may differ from Lightning conversion rates shown on this page.
+- Exchange fees, withdrawal fees, and custody terms are governed by Coinstore’s own policies.
+
+For terms governing usage of DAMAGE within DamageBDD, please read:
+[[./token_tos.org][Token Terms of Use]].
+
+
+
 
 * 📞 Consultation Pricing
 
 If you’re looking to quickly integrate DamageBDD into your team’s workflow, you can book a consultation with our experts.  
-Consultation pricing will also be pegged to the live DAMAGE/USDT market rate on Coinstore.
 
 
 #+BEGIN_EXPORT html

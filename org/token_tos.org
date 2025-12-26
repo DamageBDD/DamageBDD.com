@@ -2,8 +2,8 @@
 
 #+INCLUDE: "header.org"
 #+TITLE: DAMAGE Token – Terms of Use
-#+AUTHOR: Steven Joseph
-#+DATE: 2025-01-01
+#+OPTIONS: toc:nil
+#+TOC: headlines 2
 #+OPTIONS: toc:nil num:nil
 #+LANGUAGE: en
 
