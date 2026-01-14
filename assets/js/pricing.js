@@ -143,6 +143,36 @@
 		}
 	}
 
+	// --- expose minimal API for other modules (e.g., main.js) ---
+	let lastFetchMs = 0;
+
+	async function getPricesCached(maxAgeMs = 60_000) {
+		const now = Date.now();
+		if (lastDamageUSDT != null && lastBtcUSDT != null && (now - lastFetchMs) < maxAgeMs) {
+			return { damage_usdt: lastDamageUSDT, btc_usdt: lastBtcUSDT, cached: true };
+		}
+		const [dmgUSDT, btcUSDT] = await fetchCoinstoreDamageAndBtc();
+		lastFetchMs = now;
+		return { damage_usdt: dmgUSDT, btc_usdt: btcUSDT, cached: false };
+	}
+
+	// sats -> USD -> DAMAGE quote
+	async function quoteFromSats(sats) {
+		const s = Number(sats);
+		if (!Number.isFinite(s) || s <= 0) return null;
+
+		const { damage_usdt, btc_usdt } = await getPricesCached(60_000);
+		const usd = (s * btc_usdt) / 1e8;
+		const damage = usd / damage_usdt;
+
+		return { sats: s, usd, damage, damage_usdt, btc_usdt };
+	}
+
+	window.CoinstorePricing = {
+		getPricesCached,
+		quoteFromSats,
+	};
+
 	document.addEventListener("DOMContentLoaded", async function() {
 		pendingConverterRecalc = bindConverter();
 		tick();
