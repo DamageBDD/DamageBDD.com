@@ -1,5 +1,6 @@
 #+TITLE: DamageBDD - BDD At Planetary Scale.
 
+- {{{timestamp(2026-02-01)}}} [[file:activity.org][DamageBDD · Public Wallet Activity]]
 - {{{timestamp(2025-12-22)}}} [[file:pricing.org][Pricing of DAMAGE Tokens]]
 - {{{timestamp(2025-12-22)}}} [[file:token_tos.org][Terms and Conditions for Damage Token Sales DAMAGE Token – Terms of Use]]
 - {{{timestamp(2025-12-20)}}} [[file:manual.org][User Manual: Get Started with Behavior Testing in Minutes!]]
@@ -22,6 +23,19 @@
 - {{{timestamp(2025-04-24)}}} [[file:checklist.org][🧑💻 Task Submission Checklist - Code Like a Pro 🚀]]
 - {{{timestamp(2025-04-24)}}} [[file:accounts.org][Damagebdd - Accounts]]
 - {{{timestamp(2025-04-24)}}} [[file:about.org][About - DamageBDD]]
+- *ecai/*
+  - {{{timestamp(2026-02-17)}}} [[file:ecai/proofs.org][ECAI Deterministic Encoding and Cryptographic Proofs]]
+  - {{{timestamp(2026-02-17)}}} [[file:ecai/index.org][ECAI – The End of Probabilistic AI]]
+  - {{{timestamp(2025-10-30)}}} [[file:ecai/what-is-ecai.org][What is ECAI (Elliptic Curve AI)?]]
+  - {{{timestamp(2025-09-17)}}} [[file:ecai/isogeny-continuity.org][Isogenies Do Not Require Continuity]]
+  - {{{timestamp(2025-09-17)}}} [[file:ecai/redlines.org][ECAI Red Lines & Guardrails Policy]]
+  - {{{timestamp(2025-04-24)}}} [[file:ecai/research.org][research]]
+  - {{{timestamp(2025-04-24)}}} [[file:ecai/prompt.org][**Bootstrap Prompt for ChatGPT to Teach and Implement ECAI**]]
+  - {{{timestamp(2025-04-24)}}} [[file:ecai/ekef-v0.3.org][ECAI Knowledge Encoding Format (EKEF v0.3)]]
+- *modules/*
+  - {{{timestamp(2026-01-11)}}} [[file:modules/cdp.org][DamageBDD Browser (CDP) Steps]]
+  - {{{timestamp(2026-01-11)}}} [[file:modules/http.org][DamageBDD Step Reference]]
+  - {{{timestamp(2026-01-11)}}} [[file:modules/index.org][DamageBDD Module Index]]
 - *articles/*
   - {{{timestamp(2025-12-23)}}} [[file:articles/swap_funding_faq.org][Swap Funding FAQ]]
   - {{{timestamp(2025-12-15)}}} [[file:articles/funding-comparison.org][How DamageBDD Lightning Swap Funding Compares to All Other Funding Models]]
@@ -46,14 +60,6 @@
   - {{{timestamp(2025-04-24)}}} [[file:articles/damage_vs_tradition.org][DamageBDD vs Traditional Testing Tools]]
 - *features/*
   - {{{timestamp(2025-12-15)}}} [[file:features/funding_swap.org][DamageBDD Lightning Swap Funding Steps]]
-- *ecai/*
-  - {{{timestamp(2025-10-31)}}} [[file:ecai/index.org][ECAI – The End of Probabilistic AI]]
-  - {{{timestamp(2025-10-30)}}} [[file:ecai/what-is-ecai.org][What is ECAI (Elliptic Curve AI)?]]
-  - {{{timestamp(2025-09-17)}}} [[file:ecai/isogeny-continuity.org][Isogenies Do Not Require Continuity]]
-  - {{{timestamp(2025-09-17)}}} [[file:ecai/redlines.org][ECAI Red Lines & Guardrails Policy]]
-  - {{{timestamp(2025-04-24)}}} [[file:ecai/research.org][research]]
-  - {{{timestamp(2025-04-24)}}} [[file:ecai/prompt.org][**Bootstrap Prompt for ChatGPT to Teach and Implement ECAI**]]
-  - {{{timestamp(2025-04-24)}}} [[file:ecai/ekef-v0.3.org][ECAI Knowledge Encoding Format (EKEF v0.3)]]
 - *security/*
   - {{{timestamp(2025-09-20)}}} [[file:security/index.org][DamageBDD Security Policy]]
 - *jobs/*

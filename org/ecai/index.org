@@ -94,6 +94,37 @@ No model. Just math.
 
 ---
 
+* The Proof: Determinism You Can Verify
+
+ECAI is not a philosophical claim — it is a verifiable property.
+
+To validate ECAI, we test four mathematical guarantees:
+
+- **Canonical Convergence** — Different surface forms of the same fact resolve to the same encoded coordinate.
+- **Subfield Isolation** — The same phrase in different domains produces different coordinates (no semantic bleed).
+- **Deterministic Curve Mapping** — The same input always maps to the same elliptic curve point.
+- **Cryptographic Binding** — The mapping can be signed and independently verified.
+
+Unlike probabilistic AI, which can only provide statistical confidence,  
+ECAI provides *cryptographic proof* that a given piece of knowledge:
+
+1. Was encoded deterministically.
+2. Maps to a specific curve coordinate.
+3. Has not been altered.
+4. Can be recovered exactly.
+
+The Python example below demonstrates this in its simplest form:
+hash → curve → verify.
+
+No training loop.  
+No model weights.  
+No hallucination risk.
+
+Just mathematics.
+
+Proofs: [[file:proofs.org][ECAI Proofs]]
+---
+
 * Build on ECAI
 
 ECAI can be implemented in:
