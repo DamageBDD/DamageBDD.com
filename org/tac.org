@@ -1,4 +1,7 @@
 #+TITLE: Terms and Conditions
+#+DESCRIPTION: Terms and Conditions governing use of DamageBDD SaaS, including data submission rules, liability limits, intellectual property and Australian law compliance.
+#+KEYWORDS: DamageBDD terms and conditions, SaaS agreement, user terms, liability limitation, intellectual property policy, data usage policy, Australian governing law, software service terms
+
 #+INCLUDE: "header.org"
 #+options: num:2
 

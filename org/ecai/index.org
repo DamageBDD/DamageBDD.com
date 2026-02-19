@@ -1,4 +1,7 @@
 #+TITLE: ECAI – The End of Probabilistic AI
+#+DESCRIPTION: ECAI (Elliptic Curve AI) introduces deterministic cryptographic intelligence using elliptic curves for verifiable knowledge retrieval without training or probabilistic models.
+#+KEYWORDS: ECAI, Elliptic Curve AI, deterministic AI, cryptographic intelligence, post-quantum AI, verifiable knowledge retrieval, elliptic curve encoding, proof-based AI, Bitcoin-compatible intelligence
+
 #+INCLUDE: "../header.org"
 #+AUTHOR: Steven Joseph
 #+DATE: 2025-04-07

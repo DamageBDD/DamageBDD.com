@@ -1,4 +1,7 @@
 #+TITLE: Isogenies Do Not Require Continuity
+#+DESCRIPTION: Explains why elliptic curve isogenies over finite fields require no continuity, focusing on algebraic structure, homomorphisms and deterministic cryptographic mappings in ECAI.
+#+KEYWORDS: elliptic curve isogeny, finite field cryptography, isogeny homomorphism, multiplication by m map, algebraic group law, deterministic encoding, ECAI mathematics, post-quantum cryptography
+
 #+AUTHOR: Steven Joseph
 #+DATE: 2025-09-17
 #+OPTIONS: toc:nil num:nil

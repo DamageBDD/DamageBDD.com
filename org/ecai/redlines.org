@@ -1,4 +1,7 @@
 #+TITLE: ECAI Red Lines & Guardrails Policy
+#+DESCRIPTION: Executive policy defining ECAI Red Lines and Guardrails, establishing ethical boundaries, human oversight, cryptographic auditability and safety-first deterministic AI governance.
+#+KEYWORDS: ECAI policy, AI red lines, AI guardrails, deterministic AI governance, cryptographic auditability, human-in-the-loop AI, privacy-first AI design, ethical AI framework
+
 #+AUTHOR: DamageBDD Executive Release
 #+DATE: <2025-09-17>
 #+OPTIONS: toc:nil num:nil

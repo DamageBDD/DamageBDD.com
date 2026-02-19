@@ -1,4 +1,7 @@
 #+TITLE: ECAI Deterministic Encoding and Cryptographic Proofs
+#+DESCRIPTION: Deep dive into ECAI deterministic encoding, hash-to-curve mapping, domain separation and ECDSA binding proofs for verifiable cryptographic knowledge retrieval.
+#+KEYWORDS: ECAI deterministic encoding, hash to curve, elliptic curve cryptography, domain separation, ECDSA proof, canonicalization, deterministic knowledge retrieval, cryptographic verification
+
 #+AUTHOR: Steven Joseph
 #+OPTIONS: toc:t num:t
 

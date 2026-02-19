@@ -1,7 +1,9 @@
 #+TITLE: DamageBDD: Behaviour Verification at Planetary Scale
+
 #+INCLUDE: "header.org"
-#+DESCRIPTION: A beginner-to-advanced guide to Behaviour-Driven Development, Behaviour-Driven DevOps, and the Verification Economy with DamageBDD.
-#+KEYWORDS: DamageBDD, BDD, DevOps, Verification Economy, Aeternity, ECAI
+#+DESCRIPTION: DamageBDD: Behaviour Verification at Planetary Scale — a beginner-to-advanced guide to BDD, Behaviour-Driven DevOps, the Verification Economy, and deterministic ECAI.
+#+KEYWORDS: DamageBDD book, Behaviour Verification, BDD guide, Behaviour-Driven DevOps, Verification Economy, DAMAGE token, Lightning payments, deterministic AI, ECAI, Steven Joseph
+
 
 * DamageBDD: Behaviour Verification at Planetary Scale
 Welcome! This short page introduces the /DamageBDD/ book and offers a download link to the latest mobile-friendly PDF.

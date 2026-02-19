@@ -1,4 +1,6 @@
 #+TITLE: FAQ for CTOs & Engineering Managers - DamageBDD
+#+DESCRIPTION: FAQ for CTOs, engineering managers, founders and investors on DamageBDD’s blockchain-verified BDD, CI/CD integration, governance model and Lightning milestone escrow.
+#+KEYWORDS: DamageBDD FAQ, CTO guide, engineering managers, blockchain BDD, CI/CD verification, Lightning escrow, milestone payouts, governance token, software auditability, investor transparency
 
 #+INCLUDE: "header.org"
 #+OPTIONS: toc:2      

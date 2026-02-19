@@ -1,4 +1,7 @@
 #+Title: Damagebdd - Steps Manual
+#+DESCRIPTION: Complete reference of DamageBDD step definitions with arguments, examples and grouped documentation for building advanced Gherkin-based behavior tests.
+#+KEYWORDS: DamageBDD steps manual, BDD step definitions, Gherkin reference, behavior testing steps, automated test steps, API testing steps, Selenium steps, Appium steps, test automation documentation
+
 
 #+INCLUDE: "header.org"
 #+OPTIONS: toc:2      

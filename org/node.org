@@ -1,4 +1,7 @@
 #+TITLE: DamageBDD – Run a Damage Node
+#+DESCRIPTION: Install and run a Damage Node on Linux to locally verify deterministic Behavior-Driven Development execution with cryptographic integrity and Bitcoin-native incentives.
+#+KEYWORDS: Damage Node, DamageBDD, BDD verification, deterministic software, Linux installer, Ubuntu, Arch Linux, local dashboard, cryptographic verification, Bitcoin-native infrastructure
+
 #+INCLUDE: "header.org"
 
 #+OPTIONS: toc:nil

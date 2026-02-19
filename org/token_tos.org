@@ -1,4 +1,7 @@
 #+TITLE: Terms and Conditions for Damage Token Sales
+#+DESCRIPTION: Terms of Use for DAMAGE token outlining utility scope, non-custodial design, liability limits, regulatory position and Australian governing law.
+#+KEYWORDS: DAMAGE token terms, utility token agreement, AEX9 token terms of use, non-custodial crypto policy, token liability disclaimer, Australian crypto law, software utility token, DamageBDD governance terms
+
 
 #+INCLUDE: "header.org"
 #+TITLE: DAMAGE Token – Terms of Use

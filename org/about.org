@@ -1,4 +1,6 @@
 #+TITLE: About - DamageBDD
+#+DESCRIPTION: Learn how Steven founded DamageBDD to simplify Behavior-Driven Development, delivering deterministic, CI/CD-ready test verification without complex infrastructure.
+#+KEYWORDS: DamageBDD, Steven Joseph, Behavior-Driven Development, BDD, CI/CD integration, deterministic testing, server-side verification, software quality, solopreneur, test automation
 
 #+INCLUDE: "header.org"
 * About DamageBDD

@@ -1,4 +1,7 @@
 #+TITLE: **Bootstrap Prompt for ChatGPT to Teach and Implement ECAI** 
+#+DESCRIPTION: Bootstrap prompt to train ChatGPT to teach and implement ECAI, covering deterministic elliptic curve knowledge encoding, retrieval, and cryptographic system design.
+#+KEYWORDS: ECAI bootstrap prompt, Elliptic Curve AI training, deterministic AI implementation, cryptographic knowledge encoding, elliptic curve programming, post-quantum intelligence, blockchain AI integration
+
 #+INCLUDE: "../header.org"
 
 Use this prompt to configure ChatGPT to **teach operators, engineers, and developers** how **Elliptic Curve AI (ECAI)** works and generate **sound implementations in any programming language.**  

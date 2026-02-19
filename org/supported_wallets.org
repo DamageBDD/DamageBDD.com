@@ -1,4 +1,7 @@
 #+TITLE: DAMAGE Token - Supported Wallets
+#+DESCRIPTION: Learn which wallets and exchanges support DAMAGE (AEX9) tokens on æternity, including Superhero Wallet and Coinstore, plus essential security best practices.
+#+KEYWORDS: DAMAGE token wallet, AEX9 wallet support, æternity wallets, Superhero Wallet, Coinstore exchange, AEX9 tokens, crypto wallet security, seed phrase safety, token storage guide
+
 
 #+INCLUDE: "header.org"
 * Using Wallets and Exchanges with AEX9 Tokens on Aeternity

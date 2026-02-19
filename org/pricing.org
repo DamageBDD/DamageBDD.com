@@ -1,5 +1,8 @@
 #+TITLE: Pricing of DAMAGE Tokens
 #+OPTIONS: toc:ni1
+#+DESCRIPTION: DamageBDD pricing for DAMAGE tokens with step-based costs, live market peg, Lightning purchase flow, Coinstore trading and governance token terms.
+#+KEYWORDS: DAMAGE token pricing, DamageBDD pricing, step-based pricing, Lightning Network payments, AEX-9 token, Coinstore DAMAGE, BDD execution costs, satoshi pricing, governance token
+
 
 #+INCLUDE: "header.org"
 

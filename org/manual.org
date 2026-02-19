@@ -1,4 +1,7 @@
 #+Title: User Manual: Get Started with Behavior Testing in Minutes!
+#+DESCRIPTION: Quick start guide to DamageBDD — learn Gherkin syntax, authenticate with bearer tokens, execute feature files via curl and integrate behavior testing into CI/CD pipelines.
+#+KEYWORDS: BDD tutorial, Gherkin examples, API testing with curl, automated behavior testing, CI/CD verification, DamageBDD documentation, developer quick start, test automation guide
+
 
 #+INCLUDE: "header.org"
 

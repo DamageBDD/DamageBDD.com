@@ -1,5 +1,7 @@
 #+TITLE: DamageBDD – Verifying Software Behaviour at Planetary Scale
 
+#+DESCRIPTION: Deterministic BDD verification with cryptographic integrity and Bitcoin-native incentives.
+#+KEYWORDS: BDD, verification, Erlang, Bitcoin, Lightning, deterministic AI
 #+INCLUDE: "header.org"
 
 #+BEGIN_COMMENT

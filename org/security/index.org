@@ -1,5 +1,8 @@
 #+TITLE: DamageBDD Security Policy
 #+AUTHOR: DamageBDD Team
+#+DESCRIPTION: DamageBDD Security Policy covering vulnerability reporting, coordinated disclosure, CVSS severity scoring, operator hardening guidance and Lightning-based deployment security.
+#+KEYWORDS: DamageBDD security policy, vulnerability disclosure, coordinated disclosure, CVSS scoring, Erlang security hardening, DevOps security, responsible disclosure, security.txt, software supply chain security
+
 #+OPTIONS: toc:2 num:t
 #+LANGUAGE: en
 #+PROPERTY: header-args :eval never

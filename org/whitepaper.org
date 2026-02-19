@@ -1,4 +1,7 @@
 #+TITLE: DamageBDD - Whitepaper
+#+DESCRIPTION: DamageBDD Whitepaper detailing the DAMAGE token incentive model, Proof of Contribution, adversarial testing, blockchain integration and planetary-scale behavior verification.
+#+KEYWORDS: DamageBDD whitepaper, DAMAGE token model, Proof of Contribution, adversarial testing, blockchain BDD, Aeternity integration, Sophia smart contracts, decentralized testing marketplace, software verification economics
+
 
 
 #+INCLUDE: "header.org"
