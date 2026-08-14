@@ -67,16 +67,18 @@ regularly for any updates.
 <div id="converter" style="margin-top:1.5rem;padding:1rem;border:1px solid #ddd;border-radius:12px;">
   <div style="margin-bottom:0.5rem;font-weight:600;">Quick Converter</div>
   <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
-    <input id="conv-amount" type="number" min="0" step="0.000001" placeholder="1.0" style="width:10rem;padding:0.4rem;border:1px solid #ccc;border-radius:8px;">
+    <input id="conv-amount" type="number" min="0" step="0.000001" value="1" placeholder="1.0" style="width:10rem;padding:0.4rem;border:1px solid #ccc;border-radius:8px;">
     <select id="conv-from" style="padding:0.4rem;border:1px solid #ccc;border-radius:8px;">
       <option value="DAMAGE">DAMAGE</option>
       <option value="USDT">USDT</option>
+      <option value="SATS">sats</option>
       <option value="BTC">BTC</option>
     </select>
     <span>to</span>
     <select id="conv-to" style="padding:0.4rem;border:1px solid #ccc;border-radius:8px;">
       <option value="USDT">USDT</option>
       <option value="DAMAGE">DAMAGE</option>
+      <option value="SATS" selected>sats</option>
       <option value="BTC">BTC</option>
     </select>
     <span style="margin-left:0.5rem;">=</span>
