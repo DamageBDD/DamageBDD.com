@@ -141,6 +141,9 @@ This tells DamageBDD what to test – and it does the heavy lifting behind the s
 
 - 📊 [[https://aescan.io/tokens/ct_m3Cty31JxWHmJFMGuFCTpedDHuMLCit2Qup57qawmEWmcJnCk?type=holders][Explore Token Stats]]  
   Track live data on DAMAGE token supply, holders, and transactions.
+  
+- 📄 [[./tokenomics.html][DAMAGE Token Tokenomics]]
+  Implemented DAMAGE tokenomics for DamageBDD.
 
 - 👛 [[./supported_wallets][Wallets]]  
   Find supported wallets for storing and managing your DAMAGE tokens safely.
