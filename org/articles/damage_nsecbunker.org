@@ -3,6 +3,14 @@
 #+KEYWORDS: DamageBDD, nsecbunker, NIP-46, Nostr, AWS Secrets Manager, verification
 #+AUTHOR: Steven Joseph
 #+DATE: 2026-10-05
+#+CAPABILITY_ID: damage-nsecbunker
+#+CONTENT_CLASS: implementation-reference
+#+IMPLEMENTATION_STATUS: source_present
+#+VALIDATION_STATUS: live_suite_passed
+#+VALIDATION_SCOPE: All 12 documented release-build scenarios. External-client smoke test, deletion/restart history, rotation, backup/restore and IAM revocation remain separate evidence items.
+#+EVIDENCE_DATE: 2026-09-25
+#+VERIFIED_RELEASE: 1.7.5-rc2+build.1603.ref28a4047
+#+EVIDENCE_URL: https://lightning.lodgeit.org/reports/QmPd9j9xJKLbmRqFzgb4asWWLsS6Tvi2Z8SdFgy8g7ZCXQ
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
 #+OPTIONS: toc:2 ^:nil

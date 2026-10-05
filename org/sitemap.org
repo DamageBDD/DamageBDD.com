@@ -1,5 +1,6 @@
 #+TITLE: DamageBDD - BDD At Planetary Scale.
 
+- {{{timestamp(2026-10-05)}}} [[file:node_admins.org][DamageBDD Node Admin Guide]]
 - {{{timestamp(2026-10-05)}}} [[file:whitepaper.org][DamageBDD - Whitepaper]]
 - {{{timestamp(2026-10-05)}}} [[file:use.org][Use DamageBDD]]
 - {{{timestamp(2026-10-05)}}} [[file:tokenomics.org][DAMAGE Token Tokenomics — Implemented Model]]
@@ -9,7 +10,6 @@
 - {{{timestamp(2026-10-05)}}} [[file:steps.org][Damagebdd - Steps Manual]]
 - {{{timestamp(2026-10-05)}}} [[file:socials.org][Social Media - DamageBDD]]
 - {{{timestamp(2026-10-05)}}} [[file:pricing.org][Pricing of DAMAGE Tokens]]
-- {{{timestamp(2026-10-05)}}} [[file:node_admins.org][DamageBDD Node Admin Guide]]
 - {{{timestamp(2026-10-05)}}} [[file:node.org][DamageBDD – Run a Damage Node]]
 - {{{timestamp(2026-10-05)}}} [[file:manual.org][User Manual: Get Started with Behavior Testing in Minutes!]]
 - {{{timestamp(2026-10-05)}}} [[file:index.org][DamageBDD – Verifying Software Behaviour at Planetary Scale]]
@@ -23,32 +23,15 @@
 - {{{timestamp(2025-04-24)}}} [[file:header.org][header]]
 - {{{timestamp(2025-04-24)}}} [[file:checklist.org][🧑💻 Task Submission Checklist - Code Like a Pro 🚀]]
 - {{{timestamp(2025-04-24)}}} [[file:accounts.org][Damagebdd - Accounts]]
-- *security/*
-  - {{{timestamp(2026-10-05)}}} [[file:security/index.org][DamageBDD Security Policy]]
-- *modules/*
-  - {{{timestamp(2026-10-05)}}} [[file:modules/index.org][DamageBDD Module Index]]
-  - {{{timestamp(2026-10-05)}}} [[file:modules/http.org][DamageBDD Step Reference]]
-  - {{{timestamp(2026-10-05)}}} [[file:modules/cdp.org][DamageBDD Browser (CDP) Steps]]
-- *features/*
-  - {{{timestamp(2026-10-05)}}} [[file:features/funding_swap.org][DamageBDD Lightning Swap Funding Steps]]
-- *ecai/*
-  - {{{timestamp(2026-10-05)}}} [[file:ecai/what-is-ecai.org][What is ECAI (Elliptic Curve AI)?]]
-  - {{{timestamp(2026-10-05)}}} [[file:ecai/proofs.org][ECAI Deterministic Encoding and Cryptographic Proofs]]
-  - {{{timestamp(2026-10-05)}}} [[file:ecai/prompt.org][**Bootstrap Prompt for ChatGPT to Teach and Implement ECAI**]]
-  - {{{timestamp(2026-10-05)}}} [[file:ecai/isogeny-continuity.org][Isogenies Do Not Require Continuity]]
-  - {{{timestamp(2026-10-05)}}} [[file:ecai/index.org][ECAI – The End of Probabilistic AI]]
-  - {{{timestamp(2025-09-17)}}} [[file:ecai/redlines.org][ECAI Red Lines & Guardrails Policy]]
-  - {{{timestamp(2025-04-24)}}} [[file:ecai/research.org][research]]
-  - {{{timestamp(2025-04-24)}}} [[file:ecai/ekef-v0.3.org][ECAI Knowledge Encoding Format (EKEF v0.3)]]
 - *articles/*
-  - {{{timestamp(2026-10-05)}}} [[file:articles/features_current.org][Current Features: ECAI, Nostr, Blossom, Nosternity and nsecbunker]]
-  - {{{timestamp(2026-10-05)}}} [[file:articles/ecai_private_knowledge.org][ECAI Private Knowledge Retrieval and Controlled LLM Access]]
-  - {{{timestamp(2026-10-05)}}} [[file:articles/ecai_relation_processing.org][ECAI Deterministic Relation Processing]]
   - {{{timestamp(2026-10-05)}}} [[file:articles/nostr_reliability.org][Nostr Reliability: Live Relay Delivery and NIP-46 Reply Correlation]]
-  - {{{timestamp(2026-10-05)}}} [[file:articles/blossom_media.org][Blossom Media Integration: Files Alongside Signed Nostr Events]]
   - {{{timestamp(2026-10-05)}}} [[file:articles/nosternity.org][Nosternity: Integration Scope and Current Evidence]]
+  - {{{timestamp(2026-10-05)}}} [[file:articles/ecai_relation_processing.org][ECAI Deterministic Relation Processing]]
+  - {{{timestamp(2026-10-05)}}} [[file:articles/ecai_private_knowledge.org][ECAI Private Knowledge Retrieval and Controlled LLM Access]]
   - {{{timestamp(2026-10-05)}}} [[file:articles/damagebdd_nostr.org][DamageBDD Nostr Integration: Identities, Events and Verification]]
   - {{{timestamp(2026-10-05)}}} [[file:articles/damage_nsecbunker.org][Damage nsecbunker: Custody, Signing Policy and Live Verification]]
+  - {{{timestamp(2026-10-05)}}} [[file:articles/blossom_media.org][Blossom Media Integration: Files Alongside Signed Nostr Events]]
+  - {{{timestamp(2026-10-05)}}} [[file:articles/features_current.org][Current Features: ECAI, Nostr, Blossom, Nosternity and nsecbunker]]
   - {{{timestamp(2026-10-05)}}} [[file:articles/swap_funding_faq.org][Swap Funding FAQ]]
   - {{{timestamp(2026-10-05)}}} [[file:articles/funding-comparison.org][How DamageBDD Lightning Swap Funding Compares to All Other Funding Models]]
   - {{{timestamp(2025-04-24)}}} [[file:articles/whydamagetoken.org][Why Damage Tokens?]]
@@ -70,5 +53,22 @@
   - {{{timestamp(2025-04-24)}}} [[file:articles/debugging_web.org][Manual: Using Chrome Inspector to Capture Request Results]]
   - {{{timestamp(2025-04-24)}}} [[file:articles/dark_matter.org][dark_matter]]
   - {{{timestamp(2025-04-24)}}} [[file:articles/damage_vs_tradition.org][DamageBDD vs Traditional Testing Tools]]
+- *modules/*
+  - {{{timestamp(2026-10-05)}}} [[file:modules/index.org][DamageBDD Module Index]]
+  - {{{timestamp(2026-10-05)}}} [[file:modules/http.org][DamageBDD Step Reference]]
+  - {{{timestamp(2026-10-05)}}} [[file:modules/cdp.org][DamageBDD Browser (CDP) Steps]]
+- *ecai/*
+  - {{{timestamp(2026-10-05)}}} [[file:ecai/index.org][ECAI – The End of Probabilistic AI]]
+  - {{{timestamp(2026-10-05)}}} [[file:ecai/what-is-ecai.org][What is ECAI (Elliptic Curve AI)?]]
+  - {{{timestamp(2026-10-05)}}} [[file:ecai/proofs.org][ECAI Deterministic Encoding and Cryptographic Proofs]]
+  - {{{timestamp(2026-10-05)}}} [[file:ecai/prompt.org][**Bootstrap Prompt for ChatGPT to Teach and Implement ECAI**]]
+  - {{{timestamp(2026-10-05)}}} [[file:ecai/isogeny-continuity.org][Isogenies Do Not Require Continuity]]
+  - {{{timestamp(2025-09-17)}}} [[file:ecai/redlines.org][ECAI Red Lines & Guardrails Policy]]
+  - {{{timestamp(2025-04-24)}}} [[file:ecai/research.org][research]]
+  - {{{timestamp(2025-04-24)}}} [[file:ecai/ekef-v0.3.org][ECAI Knowledge Encoding Format (EKEF v0.3)]]
+- *security/*
+  - {{{timestamp(2026-10-05)}}} [[file:security/index.org][DamageBDD Security Policy]]
+- *features/*
+  - {{{timestamp(2026-10-05)}}} [[file:features/funding_swap.org][DamageBDD Lightning Swap Funding Steps]]
 - *jobs/*
   - {{{timestamp(2025-04-24)}}} [[file:jobs/index.org][index]]

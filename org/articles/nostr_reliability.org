@@ -3,6 +3,14 @@
 #+KEYWORDS: Nostr, NIP-46, relays, Erlang, Gun, ephemeral events, DamageBDD
 #+AUTHOR: Steven Joseph
 #+DATE: 2026-10-05
+#+CAPABILITY_ID: nostr-reliability
+#+CONTENT_CLASS: implementation-reference
+#+IMPLEMENTATION_STATUS: patch_supplied
+#+VALIDATION_STATUS: live_suite_passed
+#+VALIDATION_SCOPE: The documented 12 live bunker scenarios; no general relay-availability or latency guarantee.
+#+EVIDENCE_DATE: 2026-09-25
+#+VERIFIED_RELEASE: 1.7.5-rc2+build.1603.ref28a4047
+#+EVIDENCE_URL: https://lightning.lodgeit.org/reports/QmPd9j9xJKLbmRqFzgb4asWWLsS6Tvi2Z8SdFgy8g7ZCXQ
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
 #+OPTIONS: toc:2 ^:nil

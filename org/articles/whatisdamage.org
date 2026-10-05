@@ -1,6 +1,10 @@
 #+Title: What is damage?
-#+INCLUDE: "../header.org"
+#+OPTIONS: num:nil
+#+OPTIONS: toc:nil
 * What is the function of damage? 
+:PROPERTIES:
+:CUSTOM_ID: what-is-the-function-of-damage
+:END:
 
 The concept of "damage" can be interpreted in various contexts, such as biology, psychology, environmental science, mechanics, and social relationships. Its function or effects can vary widely depending on the context. Here's a general overview of the function or impact of damage across different fields:
 
@@ -17,7 +21,11 @@ The concept of "damage" can be interpreted in various contexts, such as biology,
 Overall, the function of damage often involves triggering a response or change, whether it's repair, adaptation, or mitigation. The nature of the response can be beneficial, such as in healing or adaptation, or detrimental, leading to further degradation or loss.
 
 * What is the function of damage in the context of software engineering? 
-#+INCLUDE: "../header.org"
+:PROPERTIES:
+:CUSTOM_ID: what-is-the-function-of-damage-in-the-context-of-software-engineering
+:END:
+#+OPTIONS: num:nil
+#+OPTIONS: toc:nil
 #+INDEX: What is Damage?
 
 

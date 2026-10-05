@@ -3,6 +3,11 @@
 #+KEYWORDS: Nosternity, Nostr, Erlang, DamageBDD, Lightning, Aeternity
 #+AUTHOR: Steven Joseph
 #+DATE: 2026-10-05
+#+CAPABILITY_ID: nosternity
+#+CONTENT_CLASS: historical-source-review
+#+IMPLEMENTATION_STATUS: historical_source_present
+#+VALIDATION_STATUS: not_recorded
+#+VALIDATION_SCOPE: July source snapshots and September compatibility hooks inspected; full current integration is unverified.
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
 #+OPTIONS: toc:2 ^:nil

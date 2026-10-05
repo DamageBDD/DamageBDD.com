@@ -1,0 +1,114 @@
+DamageBDD agent-readable documentation
+======================================
+
+Install
+-------
+Apply publish_agent_docs.patch from the repository root. It updates
+scripts/publish.el, adds these notes and scripts/publish-tests.el, and adds
+explicit status metadata to the seven current feature articles. Apply it after
+the current-feature article update, which placed those articles in org/articles/.
+
+Alternatively, install the updated publish.el as scripts/publish.el. The script
+works without the article metadata patch, but missing status fields are then
+reported as not_recorded.
+
+Build
+-----
+    emacs --script scripts/publish.el
+
+The root contains org/, assets/, snippets/ and scripts/. The existing snippets
+header.html, preamble.html and postamble.html are still required under snippets/.
+The script now performs the build when run in batch mode. Loading it interactively
+still exposes M-x damagebdd-publish, publish-and-serve and damagebdd-rsync-deploy.
+Running the build does not deploy the site.
+
+Environment overrides:
+    DAMAGEBDD_PROJECT_ROOT  Absolute repository root, if needed.
+    DAMAGEBDD_SITE_URL      Canonical origin, optionally with a path prefix.
+                           Default: https://damagebdd.com
+    SOURCE_DATE_EPOCH       Optional integer for the discovery build timestamp.
+    DAMAGEBDD_PUBLISH_NO_AUTO=1  Load batch definitions without starting a build.
+
+Output under public/
+--------------------
+    <existing path>.html    Existing HTML export with Markdown discovery links.
+    <existing path>.md      Markdown version of the same Org source.
+    llms.txt               Curated entry points and links to machine references.
+    docs/index.md          Complete navigable document index.
+    docs/index.json        Document URLs, paths, dates, status and SHA-256 hashes.
+    docs/capabilities.json Feature records and evidence metadata.
+    sitemap.xml            Canonical HTML URLs.
+    openapi.json           Only when an existing root openapi.json is supplied.
+
+Markdown is exported directly from Org, not scraped from the HTML pages. It
+includes fenced code, pipe tables, stable heading anchors and rewritten Org
+links. HTML layout/snippet blocks are omitted from Markdown; keep essential
+content in Org prose or explicit Markdown export blocks. Babel is not executed.
+
+Keep the publisher's public/.damagebdd-agent-files.json between builds. It tracks
+generated agent files so obsolete unchanged files can be removed. Untracked
+files and manually edited obsolete files are preserved. Existing HTML cleanup
+behavior is unchanged. Do not hand-edit active generated Markdown or JSON.
+
+Metadata
+--------
+Add author-maintained keywords before the first heading in an Org page:
+
+    #+CAPABILITY_ID: feature-name
+    #+CONTENT_CLASS: implementation-reference
+    #+IMPLEMENTATION_STATUS: source_present
+    #+VALIDATION_STATUS: not_recorded
+    #+VALIDATION_SCOPE: Exact scenarios covered and limits of the evidence.
+    #+EVIDENCE_DATE: YYYY-MM-DD
+    #+VERIFIED_RELEASE: exact-release-covered-by-evidence
+    #+EVIDENCE_URL: https://example.org/report
+
+Omit fields for which there is no evidence. EVIDENCE_URL may be repeated.
+CAPABILITY_ID adds a new capability; IDs must be unique. The seven current
+feature articles are also recognized by source path for backward compatibility.
+CONTENT_CLASS defaults to unclassified; both status fields default to
+not_recorded. Missing dates and releases are null; absent evidence URLs are [].
+
+Status values are author-supplied strings. The publisher does not infer them
+from prose, a successful documentation build, or the machine clock. DATE records
+the document date; EVIDENCE_DATE and VERIFIED_RELEASE describe historical
+evidence. generated_at is only the discovery-file build time. The companion
+article metadata records each article's existing evidence and its limits; it
+does not certify a deployment or upgrade prior validation claims.
+
+The JSON files use schema_version 1. docs/index.json contains a documents array;
+docs/capabilities.json contains a capabilities array. Each record contains title,
+summary, source_path, source_sha256, markdown_sha256, HTML/Markdown URLs and paths,
+document_date, content_class, implementation_status, validation_status,
+validation_scope, evidence_date, verified_release and evidence_urls.
+Source hashes cover the individual Org file; Markdown hashes cover exported
+content, including expanded includes. These are content hashes, not signatures.
+
+An optional existing OpenAPI 3 JSON document is copied verbatim after basic
+checks for openapi, info and paths. This is not full OpenAPI schema validation.
+The publisher does not derive an API contract from prose or create placeholder
+endpoints. If no contract is supplied, openapi_url is null and its link is omitted.
+
+Hosting
+-------
+Serve .md as text/markdown; charset=utf-8 and .json as application/json.
+Make the intended public pages and discovery files accessible without JavaScript.
+The patch does not change the web server, robots.txt, access rules or deployment.
+It cannot guarantee that a particular crawler will choose to read llms.txt.
+
+Validation
+----------
+    emacs -Q --batch -l scripts/publish-tests.el -f ert-run-tests-batch-and-exit
+
+Checked with Emacs 29.3 / Org 9.6.15:
+- Five ERT integration tests pass: paired export/content boundaries, metadata
+  defaults, supplied API handling, stale-file ownership and duplicate IDs.
+- Byte compilation passes with warnings treated as errors.
+- The supplied Org tree builds 67 HTML/Markdown pairs and seven capability
+  records. All inventory targets, source/export hashes, discovery links and
+  sitemap entries were checked.
+
+The full build used placeholder HTML snippets and an empty assets directory
+because production snippets/assets were not supplied. Production rendering,
+external links and live deployment were not tested. Existing legacy article
+content and links are not automatically corrected by this publisher.

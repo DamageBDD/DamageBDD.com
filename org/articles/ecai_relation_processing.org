@@ -3,6 +3,11 @@
 #+KEYWORDS: ECAI, relations, deterministic reasoning, code graph, provenance, benchmarks
 #+AUTHOR: Steven Joseph
 #+DATE: 2026-10-05
+#+CAPABILITY_ID: ecai-relation-processing
+#+CONTENT_CLASS: implementation-reference
+#+IMPLEMENTATION_STATUS: source_present
+#+VALIDATION_STATUS: not_recorded
+#+VALIDATION_SCOPE: Relation and benchmark code inspected; no executed benchmark score or runtime result recorded in this article.
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
 #+OPTIONS: toc:2 ^:nil

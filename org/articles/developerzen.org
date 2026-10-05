@@ -1,5 +1,9 @@
 * 🌟 Unlock Developer Zen: Embrace BDD for Ultimate Mental Wellness! 🌟
-#+INCLUDE: "../header.org"
+:PROPERTIES:
+:CUSTOM_ID: unlock-developer-zen-embrace-bdd-for-ultimate-mental-wellness
+:END:
+#+OPTIONS: num:nil
+#+OPTIONS: toc:nil
 
 
 

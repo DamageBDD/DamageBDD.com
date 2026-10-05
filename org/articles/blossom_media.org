@@ -3,6 +3,11 @@
 #+KEYWORDS: Blossom, Nostr, media, documents, content addressing, DamageBDD
 #+AUTHOR: Steven Joseph
 #+DATE: 2026-10-05
+#+CAPABILITY_ID: blossom-media
+#+CONTENT_CLASS: development-status
+#+IMPLEMENTATION_STATUS: reported_in_development
+#+VALIDATION_STATUS: not_recorded
+#+VALIDATION_SCOPE: Reported integration scope only; no implementation snapshot or live Blossom acceptance report available in the documented review.
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
 #+OPTIONS: toc:2 ^:nil

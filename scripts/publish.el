@@ -1,153 +1,633 @@
-;;; publish.el --- Static site generator for DamageBDD using Org Mode  -*- lexical-binding: t; -*-
+;;; publish.el --- Publish DamageBDD HTML and agent documentation -*- lexical-binding: t; -*-
 
 ;;; Commentary:
-;; This script defines the publishing pipeline for the DamageBDD project.
-;; It uses Org Mode and ox-publish to export .org files into static HTML,
-;; injecting custom HTML snippets for <head>, preamble, and postamble.
+;; Keep this file in scripts/publish.el.  Run:
+;;   emacs --script scripts/publish.el
+;; Or interactively: M-x damagebdd-publish
 ;;
-;; Snippets are read from the ./snippets directory, and publishing outputs to ./public.
+;; Outputs under public/:
+;;   <page>.html and <page>.md, llms.txt, sitemap.xml,
+;;   docs/index.md, docs/index.json, docs/capabilities.json.
+;; HTML pages advertise their Markdown alternative and /llms.txt.
+;; Only an existing OpenAPI specification is copied; none is inferred.
 ;;
-;; To use interactively:
-;;   M-x damagebdd-publish
+;; Optional per-page Org keywords before the first heading (author-maintained):
+;;   #+CAPABILITY_ID: my-feature
+;;   #+CONTENT_CLASS: implementation-reference
+;;   #+IMPLEMENTATION_STATUS: implemented
+;;   #+VALIDATION_STATUS: not_recorded
+;;   #+VALIDATION_SCOPE: The exact scenarios covered; not a global guarantee.
+;;   #+EVIDENCE_DATE: 2026-10-05
+;;   #+VERIFIED_RELEASE: <release actually covered by the evidence>
+;;   #+EVIDENCE_URL: https://example.org/report
+;; EVIDENCE_URL may be repeated.  Missing status is "not_recorded", never
+;; inferred from prose or the build date.  DATE is the document date only.
+;; Existing feature articles are recognised by path, even without these fields.
 ;;
-;; Or in batch mode:
-;;   emacs --script publish.el
-;;
+;; Environment overrides: DAMAGEBDD_PROJECT_ROOT, DAMAGEBDD_SITE_URL.
+;; SOURCE_DATE_EPOCH fixes the generated_at timestamp for reproducible builds.
+;; Set DAMAGEBDD_PUBLISH_NO_AUTO=1 when loading this file from batch tests.
+;; Uses bundled Org, ox-md and json; no MELPA packages.
+;; Tested with Emacs 29.3 / Org 9.6.15.
+;; Configure the web server to serve .md as text/markdown; charset=utf-8 and
+;; .json as application/json.  Public docs should be readable without JS.
 
 ;;; Code:
-
+(require 'cl-lib)
+(require 'subr-x)
+(require 'json)
+(require 'url-util)
+(require 'url-parse)
 (require 'ox-publish)
+(require 'ox-html)
+(require 'ox-md)
 
-(defconst damagebdd-project-root
-  (expand-file-name ".." (file-name-directory (or load-file-name buffer-file-name))))
+(defvar damagebdd-project-root
+  (file-name-as-directory
+   (expand-file-name
+    (or (getenv "DAMAGEBDD_PROJECT_ROOT")
+        (expand-file-name ".." (file-name-directory
+                               (or load-file-name buffer-file-name))))))
+  "Project directory containing org/, assets/, snippets/ and public/.")
 
+(defvar damagebdd-site-url
+  (or (getenv "DAMAGEBDD_SITE_URL") "https://damagebdd.com")
+  "Canonical public origin, optionally including a deployment path prefix.")
+
+(defvar damagebdd-openapi-source "openapi.json"
+  "Existing OpenAPI JSON under the project root, or nil.  Never synthesized.")
+
+(defvar damagebdd-capability-pages
+  '(("ecai-private-knowledge" . "articles/ecai_private_knowledge.org")
+    ("ecai-relation-processing" . "articles/ecai_relation_processing.org")
+    ("nostr-reliability" . "articles/nostr_reliability.org")
+    ("blossom-media" . "articles/blossom_media.org")
+    ("nosternity" . "articles/nosternity.org")
+    ("damagebdd-nostr" . "articles/damagebdd_nostr.org")
+    ("damage-nsecbunker" . "articles/damage_nsecbunker.org"))
+  "Known capability IDs and Org paths; explicit CAPABILITY_ID takes precedence.")
+
+(defvar damagebdd-entry-pages
+  '("articles/features_current.org" "manual.org" "install.org"
+    "modules/index.org" "node_admins.org")
+  "Preferred entry pages for llms.txt; only successfully exported pages appear.")
+
+(defvar damagebdd-html-head nil)
+(defvar damagebdd-html-preamble nil)
+(defvar damagebdd-html-postamble nil)
+(defvar damagebdd--documents nil)
+(defvar damagebdd--agent-files nil)
+(defvar damagebdd--fragment-cache nil)
+(defvar httpd-root)
+(defvar httpd-port)
+(declare-function httpd-start "simple-httpd")
+
+(defun damagebdd--root (relative)
+  "Resolve RELATIVE under the project root."
+  (expand-file-name relative damagebdd-project-root))
+
+(defun damagebdd--url (relative)
+  "Make a canonical URL for the public RELATIVE path."
+  (concat (string-remove-suffix "/" damagebdd-site-url) "/"
+          (mapconcat #'url-hexify-string (split-string relative "/") "/")))
+
+(defun damagebdd--single-line (text)
+  "Collapse whitespace in TEXT for metadata and navigation."
+  (string-trim (replace-regexp-in-string "[\n\r\t ]+" " " (or text ""))))
+
+(defun damagebdd--label (text)
+  "Escape TEXT for a Markdown link label."
+  (replace-regexp-in-string "[][\\\\]" "\\\\&"
+                            (damagebdd--single-line text)))
+
+(defun damagebdd--read (file)
+  "Read UTF-8 FILE."
+  (with-temp-buffer (insert-file-contents file) (buffer-string)))
+
+(defun damagebdd--hash-file (file)
+  "Return the SHA-256 of FILE's bytes."
+  (with-temp-buffer
+    (set-buffer-multibyte nil)
+    (insert-file-contents-literally file)
+    (secure-hash 'sha256 (current-buffer))))
+
+(defun damagebdd--write (relative text &optional track)
+  "Write TEXT to public/RELATIVE; TRACK marks a managed agent artifact."
+  (let ((file (damagebdd--root (concat "public/" relative)))
+        (coding-system-for-write 'utf-8-unix))
+    (make-directory (file-name-directory file) t)
+    (with-temp-file file (insert text))
+    (when track (cl-pushnew relative damagebdd--agent-files :test #'equal))
+    file))
+
+(defun damagebdd--write-json (relative value &optional track)
+  "Write VALUE as pretty-printed JSON to RELATIVE."
+  (damagebdd--write
+   relative
+   (with-temp-buffer
+     (insert (json-encode value))
+     (json-pretty-print-buffer)
+     (concat (buffer-string) "\n")) track))
+
+(defun damagebdd--read-json (file)
+  "Read FILE as an alist with vectors and symbol keys."
+  (let ((json-object-type 'alist) (json-array-type 'vector)
+        (json-key-type 'symbol) (json-false :json-false) (json-null nil))
+    (json-read-file file)))
 
 (defun damagebdd-read-snippet (relative-path)
-  "Read HTML snippet from RELATIVE-PATH under the project root."
-  (with-temp-buffer
-    (insert-file-contents (expand-file-name relative-path damagebdd-project-root))
-    (buffer-string)))
-
-
-
-(defvar damagebdd-html-head nil "HTML <head> section for DamageBDD export.")
-(defvar damagebdd-html-preamble nil "HTML preamble for DamageBDD export.")
-(defvar damagebdd-html-postamble nil "HTML postamble for DamageBDD export.")
+  "Read HTML snippet at RELATIVE-PATH."
+  (damagebdd--read (damagebdd--root relative-path)))
 
 (defun damagebdd-load-html-snippets ()
-  "Load DamageBDD HTML snippets into defvars."
-  (setq damagebdd-html-head      (damagebdd-read-snippet "snippets/header.html"))
-  (setq damagebdd-html-preamble  (damagebdd-read-snippet "snippets/preamble.html"))
-  (setq damagebdd-html-postamble (damagebdd-read-snippet "snippets/postamble.html"))
+  "Load existing HTML snippets without adding them to Markdown."
+  (setq damagebdd-html-head (damagebdd-read-snippet "snippets/header.html")
+        damagebdd-html-preamble (damagebdd-read-snippet "snippets/preamble.html")
+        damagebdd-html-postamble (damagebdd-read-snippet "snippets/postamble.html")))
 
-  (message "✅ HTML snippets loaded."))
-
-(defun org-sitemap-date-entry-format (entry style project)
-  "Format sitemap ENTRY in STYLE for PROJECT with a visible date."
-  (let ((filename (org-publish-find-title entry project)))
-    (if (= (length filename) 0)
-        (format "*%s*" entry)
+(defun org-sitemap-date-entry-format (entry _style project)
+  "Format sitemap ENTRY for PROJECT with a visible date."
+  (let ((title (org-publish-find-title entry project)))
+    (if (string-empty-p title) (format "*%s*" entry)
       (format "{{{timestamp(%s)}}} [[file:%s][%s]]"
-              (format-time-string "%Y-%m-%d"
-                                  (org-publish-find-date entry project))
-              entry
-              filename))))
+              (format-time-string "%Y-%m-%d" (org-publish-find-date entry project))
+              entry title))))
 
-;;; Settings
-(setq org-export-global-macros
-      '(("timestamp" . "@@html:<span class=\"timestamp\">[$1]</span>@@")))
+;; Stable anchors are added only to the export copy, never to author sources.
+(defun damagebdd--slug (title)
+  "Produce a deterministic anchor from TITLE."
+  (let ((slug (string-trim
+               (replace-regexp-in-string "[^[:alnum:]_-]+" "-" (downcase title))
+               "-+" "-+")))
+    (if (string-empty-p slug) "section" slug)))
 
-(setq org-confirm-babel-evaluate nil
-      org-html-validate-link nil
-      org-export-in-background nil
-      org-export-use-babel nil
-      org-export-with-toc nil
-      org-publish-use-timestamps-flag nil
-      org-publish-timestamp-directory "~/.org-timestamps/"
-      vc-handled-backends nil)
+(defun damagebdd--stable-ids (&optional _backend)
+  "Set missing CUSTOM_ID properties in the current export buffer."
+  (let ((used (make-hash-table :test #'equal)))
+    (org-map-entries
+     (lambda ()
+       (let ((id (org-entry-get nil "CUSTOM_ID")))
+         (when id (puthash id t used)))) nil nil)
+    (org-map-entries
+     (lambda ()
+       (unless (org-entry-get nil "CUSTOM_ID")
+         (let* ((base (damagebdd--slug (org-get-heading t t t t)))
+                (id base) (n 1))
+           (while (gethash id used)
+             (setq n (1+ n) id (format "%s-%d" base n)))
+           (puthash id t used)
+           (org-entry-put nil "CUSTOM_ID" id)))) nil nil)))
 
-(fset 'yes-or-no-p (lambda (&rest _) t))
-(fset 'y-or-n-p (lambda (&rest _) t))
+(defun damagebdd--fragment (file search)
+  "Resolve an Org heading SEARCH in FILE to an exported stable fragment."
+  (when (and search (not (string-empty-p search)))
+    (if (string-prefix-p "#" search) search
+      (let* ((key (cons file search))
+             (cached (and damagebdd--fragment-cache
+                          (gethash key damagebdd--fragment-cache 'missing))))
+        (if (and cached (not (eq cached 'missing))) cached
+          (let ((fragment
+                 (when (file-readable-p file)
+                   (with-temp-buffer
+                     (insert-file-contents file)
+                     (setq buffer-file-name file default-directory (file-name-directory file))
+                     (org-mode)
+                     (org-export-expand-include-keyword)
+                     (damagebdd--stable-ids)
+                     (let ((title (string-trim (replace-regexp-in-string "\\`\\*+" "" search)))
+                           found)
+                       (org-map-entries
+                        (lambda ()
+                          (when (and (not found) (equal (org-get-heading t t t t) title))
+                            (setq found (concat "#" (org-entry-get nil "CUSTOM_ID"))))))
+                       found)))))
+            (unless fragment
+              (message "Warning: unresolved Org search %s in %s; linking to page" search file))
+            (when damagebdd--fragment-cache
+              (puthash key (or fragment "") damagebdd--fragment-cache))
+            fragment))))))
+
+(defun damagebdd--org-link-path (link info extension)
+  "Translate an Org file LINK using INFO to EXTENSION, preserving heading targets."
+  (when (and (equal (org-element-property :type link) "file")
+             (string-equal (downcase (or (file-name-extension
+                                         (org-element-property :path link)) "")) "org"))
+    (let* ((path (org-element-property :path link))
+           (input (plist-get info :input-file))
+           (file (expand-file-name path (if input (file-name-directory input) default-directory)))
+           (fragment (damagebdd--fragment file (org-element-property :search-option link))))
+      (concat (mapconcat #'url-hexify-string
+                         (split-string (concat (file-name-sans-extension path) extension) "/") "/")
+              (when (and fragment (not (string-empty-p fragment)))
+                (concat "#" (url-hexify-string (string-remove-prefix "#" fragment))))))))
+
+(defun damagebdd-md-link (link description info)
+  "Export LINK and DESCRIPTION to Markdown using INFO."
+  (let ((path (damagebdd--org-link-path link info ".md")))
+    (if path
+        (format "[%s](%s)" (or description (damagebdd--label (org-element-property :path link))) path)
+      (org-md-link link description info))))
+
+(defun damagebdd-html-link (link description info)
+  "Export LINK and DESCRIPTION to HTML using INFO."
+  (let ((path (damagebdd--org-link-path link info ".html")))
+    (if path
+        (format "<a href=\"%s\">%s</a>" (org-html-encode-plain-text path)
+                (or description (org-html-encode-plain-text (org-element-property :path link))))
+      (org-html-link link description info))))
+
+(defun damagebdd-md-headline (headline contents info)
+  "Export HEADLINE with an explicit stable anchor even without a local link."
+  (let* ((rendered (org-md-headline headline contents info))
+         (id (org-element-property :CUSTOM_ID headline))
+         (anchor (and id (format "<a id=\"%s\"></a>" (org-html-encode-plain-text id)))))
+    (if (and rendered anchor (not (string-match-p (regexp-quote anchor) rendered)))
+        (concat anchor "\n\n" rendered)
+      rendered)))
+
+(defun damagebdd-md-code (element _contents info)
+  "Export a code ELEMENT as a fenced block using INFO."
+  (let* ((code (org-export-format-code-default element info))
+         (language (or (org-element-property :language element) "text"))
+         (longest 2) (start 0))
+    (while (string-match "`+" code start)
+      (setq longest (max longest (- (match-end 0) (match-beginning 0)))
+            start (match-end 0)))
+    (let ((fence (make-string (1+ longest) ?`)))
+      (format "%s%s\n%s\n%s\n" fence language (string-trim-right code "\n+") fence))))
+
+(defun damagebdd-md-table (table _contents info)
+  "Export an Org TABLE as a pipe table, preserving cells through INFO."
+  (let (rows)
+    (dolist (row (org-element-contents table))
+      (when (eq (org-element-property :type row) 'standard)
+        (push (mapcar
+               (lambda (cell)
+                 (replace-regexp-in-string
+                  "|" "\\|" (damagebdd--single-line
+                               (org-export-data (org-element-contents cell) info)) t t))
+               (org-element-contents row)) rows)))
+    (setq rows (nreverse rows))
+    (if (null rows) ""
+      (let* ((width (apply #'max (mapcar #'length rows)))
+             (render (lambda (row)
+                       (concat "| " (mapconcat #'identity
+                                               (append row (make-list (- width (length row)) ""))
+                                               " | ") " |\n")))
+             (caption (org-export-get-caption table)))
+        (concat (when caption (concat (org-export-data caption info) "\n\n"))
+                (funcall render (car rows))
+                (funcall render (make-list width "---"))
+                (mapconcat render (cdr rows) ""))))))
+
+(defun damagebdd-md-export-block (block _contents _info)
+  "Keep explicit Markdown BLOCK content; omit HTML layout and scripts."
+  (when (member (upcase (org-element-property :type block)) '("MD" "MARKDOWN"))
+    (org-remove-indentation (org-element-property :value block))))
+
+(defun damagebdd-md-export-snippet (snippet _contents _info)
+  "Keep explicit Markdown SNIPPET content only."
+  (when (member (downcase (org-element-property :back-end snippet)) '("md" "markdown"))
+    (org-element-property :value snippet)))
+
+(defun damagebdd-md-inner-template (contents info)
+  "Export CONTENTS with footnotes but no generated table of contents."
+  (org-md-inner-template contents (org-combine-plists info '(:with-toc nil))))
+
+(defun damagebdd-md-template (contents info)
+  "Add a compact title, description and canonical link to CONTENTS using INFO."
+  (let ((title (org-export-data (plist-get info :title) info))
+        (description (damagebdd--single-line (plist-get info :description)))
+        (canonical (plist-get info :damagebdd-canonical-url)))
+    (concat "# " title "\n\n"
+            (unless (string-empty-p description) (concat description "\n\n"))
+            (when canonical (format "Canonical HTML: <%s>\n\n" canonical))
+            (org-md-template contents
+                             (org-combine-plists info '(:with-title nil :with-author nil
+                                                        :with-date nil :with-toc nil))))))
+
+(org-export-define-derived-backend 'damagebdd-html 'html
+  :translate-alist '((link . damagebdd-html-link)))
+(org-export-define-derived-backend 'damagebdd-md 'md
+  :options-alist '((:damagebdd-canonical-url nil nil nil))
+  :translate-alist '((link . damagebdd-md-link)
+                    (headline . damagebdd-md-headline)
+                    (src-block . damagebdd-md-code)
+                    (example-block . damagebdd-md-code)
+                    (table . damagebdd-md-table)
+                    (export-block . damagebdd-md-export-block)
+                    (export-snippet . damagebdd-md-export-snippet)
+                    (inner-template . damagebdd-md-inner-template)
+                    (template . damagebdd-md-template)))
+
+(defun damagebdd--keywords (file)
+  "Read export and capability metadata from Org FILE without evaluating code."
+  (with-temp-buffer
+    (insert-file-contents file)
+    (org-mode)
+    ;; Only file-level metadata belongs in a public inventory.  In particular,
+    ;; do not harvest a keyword from a noexport subtree or a quoted code block.
+    (let ((first-heading (org-element-map (org-element-parse-buffer) 'headline
+                           (lambda (element) (org-element-property :begin element)) nil t)))
+      ;; org-collect-keywords widens its buffer, so remove the body from this
+      ;; temporary copy instead of relying on narrowing.
+      (when first-heading (delete-region first-heading (point-max)))
+      (org-collect-keywords
+       '("TITLE" "DESCRIPTION" "DATE" "CAPABILITY_ID"
+         "CONTENT_CLASS" "IMPLEMENTATION_STATUS" "VALIDATION_STATUS"
+         "VALIDATION_SCOPE" "EVIDENCE_DATE" "VERIFIED_RELEASE" "EVIDENCE_URL")))))
+
+(defun damagebdd--keyword (name keywords)
+  "Read first nonempty NAME in KEYWORDS."
+  (let ((value (cadr (assoc name keywords))))
+    (when (and value (not (string-empty-p (string-trim value))))
+      (string-trim value))))
+
+(defun damagebdd--date (text)
+  "Extract a date from TEXT, without treating a file timestamp as evidence."
+  (when (and text (string-match "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}" text))
+    (match-string 0 text)))
+
+(defun damagebdd-publish-page (plist filename pub-dir)
+  "Publish FILENAME to HTML and Markdown in PUB-DIR according to PLIST."
+  (let* ((keywords (damagebdd--keywords filename))
+         (source (file-relative-name filename (damagebdd--root "org/")))
+         ;; ox-publish owns the directory layout; exported basenames follow source.
+         (relative-dir (file-relative-name pub-dir (damagebdd--root "public/")))
+         (stem (file-name-sans-extension (file-name-nondirectory filename)))
+         (relative-base (concat (if (equal relative-dir "./") "" relative-dir) stem))
+         (html-relative (concat relative-base ".html"))
+         (md-relative (concat relative-base ".md"))
+         (html-url (damagebdd--url html-relative))
+         (md-url (damagebdd--url md-relative))
+         (parsing-hook (if (boundp 'org-export-before-parsing-functions)
+                           'org-export-before-parsing-functions
+                         'org-export-before-parsing-hook))
+         (head-extra (concat (or (plist-get plist :html-head-extra) "")
+                             "\n<link rel=\"alternate\" type=\"text/markdown\" href=\""
+                             (org-html-encode-plain-text md-url) "\">\n"
+                             "<link rel=\"describedby\" href=\""
+                             (org-html-encode-plain-text (damagebdd--url "llms.txt")) "\">"))
+         html md)
+    (cl-progv (list parsing-hook)
+        (list (cons #'damagebdd--stable-ids (symbol-value parsing-hook)))
+      (setq html (org-publish-org-to 'damagebdd-html filename ".html"
+                                  (org-combine-plists plist (list :html-head-extra head-extra)) pub-dir))
+    (let ((org-export-global-macros '(("timestamp" . "[$1]")))
+          (org-md-headline-style 'atx))
+      (setq md (org-publish-org-to
+                'damagebdd-md filename ".md"
+                (org-combine-plists plist
+                                   (list :with-toc nil :section-numbers nil
+                                         :md-headline-style 'atx :md-toplevel-hlevel 2
+                                         :md-link-org-files-as-md t
+                                         :damagebdd-canonical-url html-url)) pub-dir))))
+    (unless (and (equal (expand-file-name html) (damagebdd--root (concat "public/" html-relative)))
+                 (equal (expand-file-name md) (damagebdd--root (concat "public/" md-relative))))
+      (error "Unexpected export destination for %s: %s / %s" source html md))
+    (cl-pushnew md-relative damagebdd--agent-files :test #'equal)
+    (push `((id . ,(or (damagebdd--keyword "CAPABILITY_ID" keywords)
+                       (car (rassoc source damagebdd-capability-pages))))
+            (title . ,(or (damagebdd--keyword "TITLE" keywords) stem))
+            (summary . ,(damagebdd--single-line (damagebdd--keyword "DESCRIPTION" keywords)))
+            (source_path . ,(concat "org/" source))
+            (source_sha256 . ,(damagebdd--hash-file filename))
+            (markdown_sha256 . ,(damagebdd--hash-file md))
+            (html_url . ,html-url) (markdown_url . ,md-url)
+            (html_path . ,html-relative) (markdown_path . ,md-relative)
+            (document_date . ,(damagebdd--date (damagebdd--keyword "DATE" keywords)))
+            (content_class . ,(or (damagebdd--keyword "CONTENT_CLASS" keywords) "unclassified"))
+            (implementation_status . ,(or (damagebdd--keyword "IMPLEMENTATION_STATUS" keywords)
+                                          "not_recorded"))
+            (validation_status . ,(or (damagebdd--keyword "VALIDATION_STATUS" keywords)
+                                      "not_recorded"))
+            (validation_scope . ,(damagebdd--keyword "VALIDATION_SCOPE" keywords))
+            (evidence_date . ,(damagebdd--date (damagebdd--keyword "EVIDENCE_DATE" keywords)))
+            (verified_release . ,(damagebdd--keyword "VERIFIED_RELEASE" keywords))
+            (evidence_urls . ,(vconcat (cdr (assoc "EVIDENCE_URL" keywords)))))
+          damagebdd--documents)
+    html))
+
+(defun damagebdd--generated-at ()
+  "Return a UTC build timestamp, respecting SOURCE_DATE_EPOCH."
+  (let ((epoch (getenv "SOURCE_DATE_EPOCH")))
+    (when (and epoch (not (string-match-p "\\`[0-9]+\\'" epoch)))
+      (error "SOURCE_DATE_EPOCH must be a nonnegative integer"))
+    (format-time-string "%Y-%m-%dT%H:%M:%SZ"
+                        (when epoch (seconds-to-time (string-to-number epoch))) t)))
+
+(defun damagebdd--doc-for-source (source)
+  "Find exported document for Org-relative SOURCE."
+  (cl-find (concat "org/" source) damagebdd--documents
+           :key (lambda (doc) (alist-get 'source_path doc)) :test #'equal))
+
+(defun damagebdd--doc-link (doc)
+  "Create one Markdown navigation line for DOC."
+  (format "- [%s](%s)%s\n"
+          (damagebdd--label (alist-get 'title doc)) (alist-get 'markdown_url doc)
+          (let ((summary (alist-get 'summary doc)))
+            (if (string-empty-p summary) "" (concat ": " summary)))))
+
+(defun damagebdd--copy-openapi ()
+  "Copy an existing OpenAPI JSON, returning its public URL or nil."
+  (let ((source (and damagebdd-openapi-source (damagebdd--root damagebdd-openapi-source))))
+    (when (and source (file-exists-p source))
+      (let* ((spec (damagebdd--read-json source))
+             (version (alist-get 'openapi spec)))
+        (unless (and (stringp version) (string-prefix-p "3." version)
+                     (assq 'info spec) (assq 'paths spec))
+          (error "%s must be an existing OpenAPI 3 JSON document with info and paths" source))
+        ;; Preserve the supplied specification exactly, rather than editing APIs.
+        (copy-file source (damagebdd--root "public/openapi.json") t)
+        (cl-pushnew "openapi.json" damagebdd--agent-files :test #'equal)
+        (damagebdd--url "openapi.json")))))
+
+(defun damagebdd--discovery ()
+  "Generate navigation, document inventory, capabilities and XML sitemap."
+  (setq damagebdd--documents
+        (sort damagebdd--documents
+              (lambda (a b) (string< (alist-get 'source_path a) (alist-get 'source_path b)))))
+  (let* ((generated (damagebdd--generated-at))
+         (capabilities (cl-remove-if-not (lambda (doc) (alist-get 'id doc)) damagebdd--documents))
+         (entries (delq nil (mapcar #'damagebdd--doc-for-source damagebdd-entry-pages)))
+         (openapi-url (damagebdd--copy-openapi))
+         (seen (make-hash-table :test #'equal)))
+    (dolist (doc capabilities)
+      (let ((id (alist-get 'id doc)))
+        (when (gethash id seen) (error "Duplicate CAPABILITY_ID: %s" id))
+        (puthash id t seen)))
+    (dolist (doc damagebdd--documents)
+      (when (member (alist-get 'markdown_path doc) '("docs/index.md"))
+        (error "org/docs/index.org conflicts with the generated docs/index.md")))
+    (damagebdd--write-json
+     "docs/index.json"
+     `((schema_version . 1) (site_url . ,damagebdd-site-url) (generated_at . ,generated)
+       (document_count . ,(length damagebdd--documents))
+       (documents . ,(vconcat damagebdd--documents))) t)
+    (damagebdd--write-json
+     "docs/capabilities.json"
+     `((schema_version . 1) (site_url . ,damagebdd-site-url) (generated_at . ,generated)
+       (status_semantics . "Statuses are author-supplied Org metadata; not_recorded means absent. Build time is not verification time. Evidence is historical, not a live health check.")
+       (openapi_url . ,openapi-url)
+       (capabilities . ,(vconcat capabilities))) t)
+    (damagebdd--write
+     "docs/index.md"
+     (concat "# DamageBDD documentation index\n\n"
+             "Generated from the same Org sources as the HTML site. "
+             "Follow a topic link rather than loading the entire site.\n\n"
+             "Implementation and validation are separate. A build timestamp does not establish verification.\n\n"
+             "## Start here\n\n" (mapconcat #'damagebdd--doc-link entries "")
+             "\n## Feature references\n\n" (mapconcat #'damagebdd--doc-link capabilities "")
+             "\n## All exported documents\n\n"
+             (mapconcat #'damagebdd--doc-link damagebdd--documents "")) t)
+    (damagebdd--write
+     "llms.txt"
+     (concat "# DamageBDD\n\n"
+             "> Behaviour verification, ECAI knowledge retrieval and Nostr signing infrastructure.\n\n"
+             "Use the current feature references for implementation details. "
+             "Conceptual and historical articles may describe broader goals. "
+             "Read each feature's validation limits and evidence date; do not infer that "
+             "all components share the same release or verification status.\n\n"
+             "## Start here\n\n" (mapconcat #'damagebdd--doc-link entries "")
+             (format "- [Documentation index](%s): All exported topics.\n" (damagebdd--url "docs/index.md"))
+             "\n## Features\n\n" (mapconcat #'damagebdd--doc-link capabilities "")
+             "\n## Machine-readable references\n\n"
+             (format "- [Capabilities](%s): Explicit status, release and evidence fields.\n"
+                     (damagebdd--url "docs/capabilities.json"))
+             (format "- [Document inventory](%s): URLs, dates and content hashes.\n"
+                     (damagebdd--url "docs/index.json"))
+             (when openapi-url (format "- [OpenAPI](%s): Supplied HTTP API contract.\n" openapi-url))) t)
+    (damagebdd--write
+     "sitemap.xml"
+     (concat "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+             "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n"
+             (mapconcat (lambda (doc)
+                          (format "  <url><loc>%s</loc></url>\n"
+                                  (org-html-encode-plain-text (alist-get 'html_url doc))))
+                        damagebdd--documents "") "</urlset>\n") t)))
+
+(defun damagebdd--validate-artifacts ()
+  "Check generated JSON, page targets and discovery links without network calls."
+  (dolist (path '("docs/index.json" "docs/capabilities.json"))
+    (damagebdd--read-json (damagebdd--root (concat "public/" path))))
+  (dolist (doc damagebdd--documents)
+    (dolist (key '(html_path markdown_path))
+      (unless (file-regular-p (damagebdd--root (concat "public/" (alist-get key doc))))
+        (error "Missing exported target: %s" (alist-get key doc)))))
+  (dolist (path '("llms.txt" "docs/index.md"))
+    (with-temp-buffer
+      (insert-file-contents (damagebdd--root (concat "public/" path)))
+      (goto-char (point-min))
+      (while (re-search-forward "](\\([^ )\n]+\\))" nil t)
+        (let* ((url (match-string 1))
+               (prefix (concat (string-remove-suffix "/" damagebdd-site-url) "/")))
+          (when (string-prefix-p prefix url)
+            (let ((relative (decode-coding-string (url-unhex-string (substring url (length prefix))) 'utf-8)))
+              (unless (file-regular-p (damagebdd--root (concat "public/" relative)))
+                (error "Broken discovery link in %s: %s" path url)))))))))
+
+(defun damagebdd--finish-managed-files (previous)
+  "Record managed files and remove only unchanged obsolete files from PREVIOUS."
+  (let ((public (file-truename (damagebdd--root "public/"))))
+    (mapc
+     (lambda (entry)
+       (let* ((path (alist-get 'path entry))
+              (hash (alist-get 'sha256 entry))
+              (file (and (stringp path) (expand-file-name path public))))
+         (when (and file (not (file-name-absolute-p path))
+                    (file-in-directory-p file public)
+                    (not (member path damagebdd--agent-files))
+                    (not (file-symlink-p file)) (file-regular-p file)
+                    (equal hash (damagebdd--hash-file file)))
+           (delete-file file))))
+     previous)
+    (damagebdd--write-json
+     ".damagebdd-agent-files.json"
+     (vconcat (mapcar
+               (lambda (path)
+                 `((path . ,path) (sha256 . ,(damagebdd--hash-file (expand-file-name path public)))))
+               (sort (copy-sequence damagebdd--agent-files) #'string<))))))
 
 ;;;###autoload
 (defun damagebdd-publish ()
-  "Load HTML snippets and publish the DamageBDD site."
+  "Publish HTML, Markdown and agent references from the same Org sources."
   (interactive)
-  (damagebdd-load-html-snippets)
-    (setq my-gpg-signing-key "DED5444526060D9F" )
-  (setq org-publish-project-alist
-        `(
-          ("damagebdd" :components ("damagebdd.pages" "damagebdd.static" "damagebdd.articles" "damagebdd.papers"))
-          ("damagebdd.pages"
-           :base-directory ,(expand-file-name "org" damagebdd-project-root)
-
-           :base-extension "org"
-           :publishing-directory ,(expand-file-name "public" damagebdd-project-root)
-           :recursive t
-           :publishing-function org-html-publish-to-html
-           :auto-preamble t
-           :auto-sitemap t
-           :auto-index t
-           :sitemap-title "DamageBDD - BDD At Planetary Scale."
-           :sitemap-filename "sitemap.org"
-           :sitemap-sort-files anti-chronologically
-           :makeindex t
-           :sitemap-format-entry org-sitemap-date-entry-format
-           :with-toc nil
-           :html-doctype "html5"
-           :html-html5-fancy t
-           :html-head-include-scripts nil
-           :html-head-include-default-style nil
-           :html-head ,damagebdd-html-head
-           :html-preamble ,damagebdd-html-preamble
-           :html-postamble ,damagebdd-html-postamble)
-          ("damagebdd.papers"
-           :base-directory ,(expand-file-name "org/papers" damagebdd-project-root)
-           :base-extension "jpeg\\|pdf"
-           :publishing-directory ,(expand-file-name "public/papers" damagebdd-project-root)
-           :recursive t
-           :publishing-function org-publish-attachment)
-          ("damagebdd.articles"
-           :base-directory ,(expand-file-name "org/articles" damagebdd-project-root)
-           :base-extension "jpeg\\|pdf"
-           :publishing-directory ,(expand-file-name "public/articles" damagebdd-project-root)
-           :recursive t
-           :publishing-function org-publish-attachment)
-          ("damagebdd.static"
-           :base-directory ,(expand-file-name "assets" damagebdd-project-root)
-           :base-extension "css\\|js\\|png\\|jpg\\|jpeg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|ttf\\|map\\|svg\\|woff\\|woff2\\|ico\\|avif"
-           :publishing-directory ,(expand-file-name "public/assets" damagebdd-project-root)
-           :recursive t
-           :publishing-function org-publish-attachment)
-          ))
-  (org-publish-project "damagebdd" t)
-  (message "🚀 DamageBDD published."))
+  (let* ((parsed-url (url-generic-parse-url damagebdd-site-url))
+         (damagebdd--documents nil) (damagebdd--agent-files nil)
+         (damagebdd--fragment-cache (make-hash-table :test #'equal))
+         (previous-file (damagebdd--root "public/.damagebdd-agent-files.json"))
+         (previous (when (file-readable-p previous-file) (damagebdd--read-json previous-file)))
+         (org-export-global-macros '(("timestamp" . "@@html:<span class=\"timestamp\">[$1]</span>@@")))
+         (org-export-use-babel nil) (org-export-in-background nil)
+         (org-export-with-toc nil)
+         (org-html-htmlize-output-type
+          (if (require 'htmlize nil t) org-html-htmlize-output-type nil))
+         (org-publish-use-timestamps-flag nil)
+         (org-publish-timestamp-directory (damagebdd--root ".org-timestamps/"))
+         (vc-handled-backends nil)
+         org-publish-project-alist)
+    (unless (and (member (url-type parsed-url) '("https" "http"))
+                 (url-host parsed-url) (not (url-target parsed-url))
+                 (not (string-match-p "[?\n\r]" damagebdd-site-url)))
+      (error "DAMAGEBDD_SITE_URL must be an absolute HTTP(S) base URL without query or fragment"))
+    (damagebdd-load-html-snippets)
+    (setq org-publish-project-alist
+          `(("damagebdd" :components ("damagebdd.pages" "damagebdd.static"
+                                      "damagebdd.articles" "damagebdd.papers"))
+            ("damagebdd.pages"
+             :base-directory ,(damagebdd--root "org") :base-extension "org"
+             :publishing-directory ,(damagebdd--root "public") :recursive t
+             :publishing-function damagebdd-publish-page :auto-preamble t
+             :auto-sitemap t :auto-index t :makeindex t
+             :sitemap-title "DamageBDD - BDD At Planetary Scale."
+             :sitemap-filename "sitemap.org" :sitemap-sort-files anti-chronologically
+             :sitemap-format-entry org-sitemap-date-entry-format :with-toc nil
+             :html-doctype "html5" :html-html5-fancy t
+             :html-head-include-scripts nil :html-head-include-default-style nil
+             :html-head ,damagebdd-html-head :html-preamble ,damagebdd-html-preamble
+             :html-postamble ,damagebdd-html-postamble)
+            ("damagebdd.papers"
+             :base-directory ,(damagebdd--root "org/papers") :base-extension "jpeg\\|pdf"
+             :publishing-directory ,(damagebdd--root "public/papers") :recursive t
+             :publishing-function org-publish-attachment)
+            ("damagebdd.articles"
+             :base-directory ,(damagebdd--root "org/articles")
+             :base-extension "jpeg\\|jpg\\|png\\|webp\\|svg\\|pdf"
+             :publishing-directory ,(damagebdd--root "public/articles") :recursive t
+             :publishing-function org-publish-attachment)
+            ("damagebdd.static"
+             :base-directory ,(damagebdd--root "assets")
+             :base-extension "css\\|js\\|png\\|jpg\\|jpeg\\|gif\\|webp\\|pdf\\|mp3\\|ogg\\|swf\\|ttf\\|map\\|svg\\|woff\\|woff2\\|ico\\|avif"
+             :publishing-directory ,(damagebdd--root "public/assets") :recursive t
+             :publishing-function org-publish-attachment)))
+    (org-publish-project "damagebdd" t)
+    (damagebdd--discovery)
+    (damagebdd--validate-artifacts)
+    (damagebdd--finish-managed-files previous)
+    (message "DamageBDD published: %d HTML/Markdown pages, llms.txt and JSON references."
+             (length damagebdd--documents))))
 
 ;;;###autoload
 (defun publish-and-serve ()
-  "Publish and serve the DamageBDD site locally using simple-httpd."
+  "Publish and serve the site locally with simple-httpd."
   (interactive)
   (damagebdd-publish)
-  (add-to-list 'load-path (expand-file-name "scripts"))
+  (add-to-list 'load-path (damagebdd--root "scripts"))
   (require 'simple-httpd)
-  (setq httpd-root (expand-file-name "public"))
-  (setq httpd-port 8081)
-  (unless (process-status "httpd")
-    (message "🌐 Starting local server at http://localhost:8081")
-    (httpd-start)))
+  (setq httpd-root (damagebdd--root "public") httpd-port 8081)
+  (unless (process-status "httpd") (httpd-start)))
 
 (defun damagebdd-rsync-deploy (node)
-  "Interactively select a NODE and deploy the 'public/' directory via rsync over SSH."
-  (interactive
-   (list (read-string "Enter user@node (e.g., root@node0): " "root@node0")))
+  "Publish, then deploy public/ to NODE via rsync over SSH."
+  (interactive (list (read-string "Enter user@node: " "root@node0")))
   (damagebdd-publish)
-  (let ((default-directory (expand-file-name damagebdd-project-root)))
+  (let ((default-directory damagebdd-project-root))
     (async-shell-command
-     (format "rsync -avz --delete -e ssh public/ %s:/var/www/damagebdd.com/" node)
+     (format "rsync -avz --delete -e ssh public/ %s"
+             (shell-quote-argument (concat node ":/var/www/damagebdd.com/")))
      "*DamageBDD Deploy*")))
-(message "🛠️ DamageBDD publish.el loaded.")
 
 (provide 'publish)
-
+(when (and noninteractive (not (getenv "DAMAGEBDD_PUBLISH_NO_AUTO")))
+  (damagebdd-publish))
 ;;; publish.el ends here
-
