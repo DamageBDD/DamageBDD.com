@@ -3,6 +3,15 @@
 #+OPTIONS: toc:t num:t
 #+STARTUP: overview
 
+* Current feature and handoff documentation
+
+See the [[file:articles/features_current.org][current feature overview and evidence map]] for
+the detailed [[file:articles/damagebdd_nostr.org][Nostr integration]],
+[[file:articles/nostr_reliability.org][relay reliability]] and
+[[file:articles/damage_nsecbunker.org][nsecbunker custody and live-verification]] articles.
+These dated articles distinguish the inspected implementation from recorded
+deployment results and cover the newer relay configuration and handoff APIs.
+
 * Overview
 DamageBDD nodes participate in the Verification Economy by executing BDD features,
 publishing results, and confirming on-chain spends. Node Administrators are responsible for:

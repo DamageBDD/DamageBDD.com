@@ -1,0 +1,149 @@
+#+TITLE: ECAI Deterministic Relation Processing
+#+DESCRIPTION: Typed relations, canonical identity, explicit composition rules, proof records and structural benchmarks in the supplied ECAI implementation.
+#+KEYWORDS: ECAI, relations, deterministic reasoning, code graph, provenance, benchmarks
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-05
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Current position
+
+ECAI's relation layer provides a small, explicit mechanism for representing and
+deriving structural facts. The 2 October 2026 source archive contains
+=ecai_relation=, =ecai_compose=, =ecai_relation_bench= and
+=ecai_relation_learning=, with corresponding test modules. The implementation
+can extract relations from code-analysis maps, compose permitted relationships,
+attach a derivation record and compare recovered facts with analyser output.
+
+This is an implementation-level description. No new compiler run or benchmark
+measurement was performed for this documentation. The presence of benchmark
+code is evidence of an executable evaluation path, not evidence of an achieved
+score or superiority over an LLM.
+
+* A relation has an explicit identity
+
+A relation consists of a subject, predicate and object. For example, a module
+can call a function, and that function can belong to another module. The data
+model keeps metadata and proof separate from the semantic triple.
+
+=ecai_relation:new/3= and =new/4= canonicalise the triple and derive a SHA-256
+key. The canonical representation preserves Erlang types, so an atom and a
+binary with similar printed text do not silently become the same entity.
+Maps are canonicalised, and unsupported terms are rejected. Metadata and proof
+are excluded from the identity: the same triple can retain its key when a
+different extraction supplies it.
+
+That makes deduplication and comparison straightforward. It also sets a clear
+limit: the key commits to the representation of a claim. It does not establish
+that the claim is correct. Duplicate collapse is not a complete evidence-history
+store; the supplied deduplication map retains one relation per key.
+
+* Curve mappings and rule processing have distinct roles
+
+The relation module exposes =point/1=, =entity_point/1= and
+=predicate_point/1=. They use the domain-separated
+=ecai:hash_to_curve_point/2= path, with separate relation, entity and predicate
+domains. These mappings supply reproducible cryptographic representations.
+
+The actual composition engine works on typed entities and an explicit rule
+table. It does not infer a meaningful relationship merely because two curve
+points can be added or are numerically close. The module's own scope statement
+distinguishes this implemented structural baseline from the unproven hypothesis
+that general semantic composition can be performed by curve algebra.
+
+This distinction is useful for readers of the earlier ECAI conceptual papers:
+the current API offers a testable relation operation with inspectable premises.
+Broader claims about semantic geometry need separate definitions and experiments.
+
+* How a derivation works
+
+The engine first requires the object of the left relation to equal the subject
+of the right relation under canonical entity comparison. It then looks for the
+pair of predicates in =ecai_compose:rules/0=. Disconnected relations return an
+error; connected relations with no permitted composition return =no_rule=.
+
+This source-level example uses the implemented calls rule:
+
+#+BEGIN_SRC erlang
+{ok, Calls} = ecai_relation:new(
+    invoice_worker, calls, {mfa, ledger_store, put, 2}).
+{ok, Owner} = ecai_relation:new(
+    {mfa, ledger_store, put, 2}, belongs_to_module, ledger_store).
+{ok, Uses} = ecai_compose:compose(Calls, Owner).
+ecai_relation:predicate(Uses). %% uses
+ecai_relation:object(Uses).    %% ledger_store
+ecai_relation:proof(Uses).
+#+END_SRC
+
+The proof map records the rule, the two premise keys, the joining entity and
+the absence of an LLM call. It is a replayable derivation record. It is not a
+signature, a zero-knowledge proof or independent verification of the original
+source material.
+
+The supplied rule table also composes module dependencies and derives
+application dependencies through =belongs_to_application=. The general closure
+operation defaults to four rounds and accepts an explicit depth bound.
+Deduplication limits repeated facts, but a depth limit does not make arbitrary
+large relation sets cheap: the general composition path compares pairs.
+
+* Integration with code learning
+
+=ecai_relation:from_analysis/2= extracts facts such as exports, remote calls,
+behaviours, includes and application membership.
+=from_code_graph/1= also consumes outgoing module edges.
+
+=ecai_relation_learning:refresh/1= reads a stored application graph and persists
+its relation set through =ecai_learning_store=. =refresh_all/0= covers =damage=,
+=ecai= and =erm= and produces a deduplicated combined scope. These calls require
+the relevant application graphs to exist; a missing graph is reported rather
+than invented.
+
+The persisted relation set can support questions about dependency impact,
+module ownership and structural paths. Extending it to economic events would
+require an explicit entity vocabulary, extraction rules and evidence handling.
+The existing code-analysis rules do not already encode accounting semantics or
+business decisions.
+
+* What the benchmarks measure
+
+The generic =ecai_relation_bench:evaluate/3= computes a bounded closure from
+training relations and checks whether hidden relation keys are recovered.
+The integrated benchmark is narrower: it reconstructs module =uses= facts
+through =calls= and =belongs_to_module=, then compares them with remote-call
+facts obtained from the analyser.
+
+An indexed join in =derive_uses/1= avoids the generic all-pairs closure for this
+specific task. Report fields include sampled and full recall, precision,
+false positives, recovered keys, missing keys, and =llm_calls => 0=.
+
+The integrated function sorts the deduplicated truth set and takes its first
+bounded subset; this is not a randomly sampled external benchmark. Its truth
+and premises are structural views of the same code corpus. A high result would
+demonstrate internal reconstruction consistency for the stated rule, not broad
+language understanding. Empty-denominator ratios can be 1.0, so always inspect
+the counts alongside scores.
+
+* Verification that would make the result useful
+
+A reproducible report should record the source revision, extraction version,
+rule table, input counts, depth or join strategy, and recovered/missing keys.
+The same inputs should produce the same relation identities and derivations.
+Unconnected entities and unknown predicate combinations should remain rejected.
+
+For a LodgeiT demonstration, begin with a small, reviewed set of structured
+facts and one agreed rule. Preserve the source reference for each premise and
+make the derived result inspectable. DamageBDD can then test the expected
+relation, its provenance and the refusal cases. That workflow is a proposed
+integration exercise; this documentation does not claim a completed
+economic-event reasoning deployment.
+
+* Sources and related documentation
+
+Source basis: =latest-ecai.tar.gz= dated 2 October 2026, particularly
+=apps/ecai/src/ecai_relation.erl=, =ecai_compose.erl=,
+=ecai_relation_bench.erl= and =ecai_relation_learning.erl=, plus their EUnit
+sources. Examples above are derived from those APIs and were not executed here.
+
+- [[file:ecai_private_knowledge.org][Private knowledge retrieval and the model boundary]]
+- [[file:features_current.org][Current feature documentation and evidence map]]

@@ -1,0 +1,161 @@
+#+TITLE: ECAI Private Knowledge Retrieval and Controlled LLM Access
+#+DESCRIPTION: The implemented private-index patch: encrypted segments, corpus permissions, bounded retrieval, model destinations and validation limits.
+#+KEYWORDS: ECAI, private retrieval, encrypted index, RAG, LLM, access control
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-05
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Current position
+
+ECAI now has a supplied implementation patch for private indexing and controlled
+retrieval into an LLM. Its useful boundary is concrete: encrypt a corpus on disk,
+authorise a reader, retrieve relevant records inside a trusted worker, and send
+only bounded excerpts to an explicitly permitted model destination.
+
+The implementation described here is the 2 October 2026 private-index patch
+against =latest-ecai.tar.gz=. The accompanying validation record confirms static
+and patch-application checks. It explicitly records that compilation, EUnit,
+real liboqs operations and live HTTP/model integration were not run in that
+environment. This article documents the supplied code, not a production
+deployment certification. A subsequent reported compile error in the Damage
+log bridge also means a successful full release build must be evidenced
+separately.
+
+* What becomes private
+
+Each indexing batch becomes an immutable encrypted segment. The source records,
+term index and posting lists are encrypted together before writing the segment.
+The private path is separate from the public DETS document store, ingest journal,
+manifests, snapshots and shared hot cache. Private input is rejected by the
+public job path rather than silently entering public artifacts.
+
+Search still needs a trusted execution environment. A worker decrypts each
+scanned segment, matches the existing canonical term keys and selects results.
+Every record in the scanned segment is decrypted in memory, including records
+that are not returned. This is encrypted storage with authorised plaintext
+processing; the implementation does not perform search over ciphertext.
+
+The distinction matters for operational documents. A disk reader should not
+receive plaintext term lists, but a compromised host or privileged BEAM module
+remains inside the trust boundary. Segment counts, sizes, timestamps and access
+patterns are also observable. Deployment logging, crash dumps, swap and model
+service behaviour require their own controls.
+
+* Ownership, permissions and key handling
+
+An operator configures =private_corpora= in the =ecai= application environment.
+Each corpus names an owner, storage directory and scoped vault key references.
+Readers and writers are separate lists: permission to append does not itself
+grant permission to retrieve. The owner has both permissions. Access applies
+to the whole corpus, so records requiring different access boundaries belong in
+different corpora.
+
+The HTTP handler obtains identity from
+=damage_auth:authenticated_account/1=. A caller cannot select an owner or supply
+key, storage-path or model options in a JSON body. Erlang entry points are
+trusted application APIs; arbitrary code already running in the VM is not
+isolated by these checks.
+
+=ecai_private_keys:provision/2= explicitly creates a scoped key entry through
+the existing secrets service. Configuration holds references, not private key
+material. Provisioning does not rotate an existing corpus in place. This v1
+requires a new corpus/rebuild for rotation, record updates, deletion and
+compaction. Revocation restricts subsequent access; it cannot retrieve plaintext
+that has already been disclosed.
+
+* Interfaces implemented in the patch
+
+| Entry point | Purpose |
+|-------------+---------|
+| =ecai_disk_indexer:index_private/4= | Append one private batch |
+| =ecai_private_index:search/4= | Return ranked authorised source records |
+| =ecai_private_index:fetch/3= | Retrieve a record by its opaque reference |
+| =ecai_llm_bridge:ask/4= | Retrieve evidence and call a permitted destination |
+| =ecai_ollama_rag:ask_private/4= | Existing RAG entry point for the private path |
+
+The four HTTP operations are POST requests:
+
+| Route | Accepted fields |
+|-------+-----------------|
+| =/ecai/private/:corpus/index= | =batch_id=, =records= |
+| =/ecai/private/:corpus/search= | =query=, optional =limit= |
+| =/ecai/private/:corpus/fetch= | =id= |
+| =/ecai/private/:corpus/ask= | =question=, =destination= |
+
+These routes require the existing authenticated request path and protected
+transport. They do not introduce a new login scheme. Responses carry private,
+no-store cache directives. Request bodies do not accept arbitrary transport
+configuration or caller-selected callback modules.
+
+* Retrieval semantics and practical limits
+
+The private implementation reuses =ecai_terms/v1=. Results are ordered by the
+number of matched term keys, with an opaque record reference breaking ties.
+That score measures lexical matches. It does not measure factual correctness,
+semantic certainty or an experimentally demonstrated geometric advantage.
+Input records must already be appropriately chunked.
+
+The principal limits in the supplied patch are:
+
+| Resource | Bound |
+|----------+-------|
+| Records per batch | 256 |
+| Serialised batch input | 8 MiB |
+| Individual record | 1 MiB |
+| Encrypted segment | Approximately 32 MiB |
+| Segments per corpus | 1,024 |
+| Ciphertext scanned per query | 256 MiB |
+| HTTP request body | 1 MiB |
+| Search result limit | 50 |
+
+The HTTP body cap can constrain a submission before the larger internal batch
+cap is reached. Immutable batch identifiers must be retained across retries.
+An existing identifier is refused; it is not proof that a retried payload is
+identical. A timeout can occur after a write commits.
+
+* The model boundary
+
+The bridge checks the corpus's destination allowlist before decryption and
+checks it again before generation. It selects at most eight source records,
+clips each text excerpt to 6,144 bytes and caps the encoded prompt at 96 KiB.
+No matching sources means no model request. The bridge calls the existing
+client directly without a provider pool or automatic fallback.
+
+A local destination requires the Ollama provider and a literal loopback
+address. That establishes the immediate network destination, not what a local
+service might subsequently forward. Remote use requires an explicitly
+allowlisted destination and =allow_remote_llm => true=. The selected plaintext
+then leaves the trusted retrieval process. TLS and =store => false= do not by
+themselves establish the provider's complete retention policy.
+
+The returned source references allow an application to revisit supporting
+records. Generated source labels are not proof that every sentence is supported.
+The bridge passes source material as untrusted evidence and provides no tool
+execution interface, but model answers still need application-level checking.
+
+* A bounded LodgeiT demonstration
+
+A useful first demonstration would load a small, permissioned collection of
+operational notes and economic-event records, then ask questions whose expected
+sources are known. An authorised account should retrieve the expected record;
+an unrelated account should receive no contents. A forbidden destination should
+be rejected before any model call. A question with no matching evidence should
+return the explicit no-source outcome.
+
+Those are proposed acceptance cases, not results of a completed LodgeiT pilot.
+The patch includes 26 EUnit cases plus an opt-in real-PQC smoke test. Their
+execution, the actual authentication boundary, permission revocation and the
+deployed model route remain the next evidence needed for release acceptance.
+
+* Sources and related documentation
+
+Implementation basis: =ecai_private_index_llm_changed_files.tar.gz=,
+=ECAI_PRIVATE_INDEX.md= and =ecai_private_validation.txt=, dated 2 October 2026.
+Principal modules: =ecai_private_index=, =ecai_private_policy=,
+=ecai_private_store=, =ecai_private_crypto=, =ecai_private_http= and
+=ecai_llm_bridge=.
+
+- [[file:ecai_relation_processing.org][Deterministic relation processing]]
+- [[file:features_current.org][Current feature documentation and evidence map]]

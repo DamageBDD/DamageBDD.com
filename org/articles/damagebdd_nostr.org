@@ -1,0 +1,143 @@
+#+TITLE: DamageBDD Nostr Integration: Identities, Events and Verification
+#+DESCRIPTION: Source-backed Nostr capabilities in DamageBDD, the separation of event transport from signing policy, and the limits of current verification.
+#+KEYWORDS: DamageBDD, Nostr, NIP-05, NIP-46, Lightning, BDD, Erlang
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-05
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Current position
+
+DamageBDD contains a substantial Nostr integration in =damage_nostr.erl=:
+identity-backed processes, event construction and signing, note and BDD-post
+helpers, relay queries, metadata lookup, zap-related helpers, remote-signing
+helpers and relay connection configuration. The dedicated nsecbunker modules
+add a policy-controlled signing service and a live relay verification path.
+
+These capabilities have different evidence levels. The supplied source shows
+the general APIs. The 25 September release report establishes the 12 named
+live-bunker scenarios. It does not establish complete interoperability or
+production acceptance for every helper exported by =damage_nostr=.
+
+* Identity and process model
+
+=damage_nostr:start_link/1= takes a secrets-store reference. Initialisation
+retrieves the stored NSEC, derives the public key and registers the process
+through gproc under that reference. The node's live acceptance client uses
+=damage_nostr_nsec=; it does not create a new identity on every test run.
+
+The supplied general client keeps signing material in its process state. That
+must be distinguished from using the dedicated bunker to sign under a separate
+policy and vault boundary. Calling a general Nostr helper does not
+automatically route all signing through nsecbunker.
+
+The client identity, the remote signer identity and the event-signing identity
+also have distinct roles. They may coincide in a particular configuration,
+but applications should record what each returned public key identifies.
+The LodgeiT suite explicitly checks that its test client differs from the
+bunker identity.
+
+* Source-backed interface map
+
+| Area | Representative exported API | Interpretation |
+|------+-----------------------------+----------------|
+| Process lifecycle | =start_link/1=, =stop/1= | Start or stop an identity-backed client |
+| Public identity | =service_pubkey_hex/0=, =public_key_hex/0= | Obtain public identity information |
+| Events | =construct_event/5=, =finalize_event/2=, =create_signed_event/3= | Build or sign event structures |
+| Publishing | =post_note/2,4=, =post_bdd/1,2= | Application posting entry points |
+| Retrieval | =get_posts_since/2,3=, =get_metadata/2=, =fetch_event_by_id/2= | Query event or profile information |
+| Discovery | =get_nostr_json/0= | Build the NIP-05 mapping used by the web layer |
+| Zap support | =parse_zap_request/1=, =construct_zap_receipt/5= | Parse or construct payment-related events |
+| Remote signing helpers | =parse_nostrconnect_uri/1=, =nip46_send/3= | Low-level remote-signing support |
+| Relay setup | =configured_relays/0=, =open_relay_ws/2= | Resolve configuration and open a connection |
+
+This is a code inventory, not a conformance certificate. Call signatures,
+process registration and configuration must match the deployed release.
+
+There is a specific registration detail in the supplied snapshot:
+=post_bdd/1,2= looks up =nostr_nsec=, while the live bunker test uses
+=damage_nostr_nsec=. An integration must provision/start the expected process
+or deliberately update that path. The successful bunker suite does not test
+that posting helper's registration choice.
+
+* Relay configuration and transport
+
+The inspected =configured_relays/0= reads the =damage= application setting
+=nostr_relays=, then normalises entries. If no non-empty list exists it uses
+the module's defaults. Entries can carry URL, profile and proxy choices.
+This is more specific than the older admin page's single =nostr_relay= example;
+read the implementation used by the installed release when configuring it.
+
+The bunker separately loads relays through its running nsecbunker configuration.
+An operator should inspect both paths rather than assume that changing one
+setting changes every client. =damage_nostr:configured_relays/0= is useful for
+inspecting the general client's resolved configuration; bunker readiness and
+relay adapter status are separate observations.
+
+Relay scoring and profiles in the source guide connection attempts. They are
+not live service-level measurements. Public relay acceptance can vary by event
+kind, authentication policy, source network and current service state. The
+[[file:nostr_reliability.org][reliability article]] explains why the acceptance suite checks actual
+publication, ingress and a correlated response.
+
+* Linking behaviour verification to events
+
+Nostr provides an identity and communication surface for a verification
+workflow. DamageBDD supplies the feature, its execution and the resulting
+evidence. A useful application can associate an event with the feature CID,
+report CID and run identifier so another participant can inspect the exact
+claim and its result.
+
+The existing node-admin documentation describes Nostr-triggered BDD handling.
+That workflow must still define caller authorisation, resource budgets and
+result correlation. Receiving a signed event identifies a key; it does not by
+itself authorise arbitrary feature execution or spending.
+
+Similarly, a signed success announcement does not prove the feature passed.
+The reader needs the referenced result, the feature that was executed and the
+release identity. The source and run identifiers are the bridge between a
+message and reproducible evidence.
+
+* Lightning and adjacent helpers
+
+The general client registers for Core Lightning invoice-paid events. Its
+receipt path parses an invoice description as a zap request, constructs a
+receipt, signs it and attempts publication. Exported functions also cover
+wallet-connect payload encoding/decoding and reporting events.
+
+Those paths are outside the supplied bunker acceptance run. The module alone
+does not establish a complete wallet-connect service, successful payment
+settlement, all zap validation conditions or full reporting interoperability.
+A payment demonstration needs its own invoice, settlement and event-correlation
+evidence.
+
+Blossom and ECAI have similarly separate boundaries. A signed event can refer
+to a file or a retrieved source, but Nostr authentication does not itself make
+that content confidential or its statements correct.
+
+* What an agent can rely on
+
+The stable documentation distinction is between source-observed entry points
+and recorded successful scenarios. For a deployment decision, obtain the
+running release identity, configured public keys, relevant relay configuration
+and the acceptance report for the exact operation.
+
+For the supplied bunker run, encrypted ping/pong, public-key retrieval,
+restricted signing, rejection cases and audit correlation are evidenced.
+General posting, payment and media workflows must be checked separately.
+This gives agents an explicit boundary for what they may conclude from one
+green report.
+
+* Sources and related documentation
+
+Source basis: supplied =damage_nostr.erl=, =damage_nostr_relay_client.erl=,
+=damage_nsecbunker_relay.erl= and the existing [[file:../node_admins.org][Node Admin Guide]].
+The implementation inventory was inspected on 5 October 2026; it is not a
+fresh production probe.
+
+- [[file:damage_nsecbunker.org][nsecbunker custody, policy and live verification]]
+- [[file:nostr_reliability.org][Relay reliability and NIP-46 test corrections]]
+- [[file:blossom_media.org][Blossom media integration]]
+- [[file:nosternity.org][Nosternity integration status]]
+- [[file:features_current.org][Current feature documentation and evidence map]]

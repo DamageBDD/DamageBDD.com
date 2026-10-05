@@ -1,0 +1,77 @@
+#+TITLE: Current Features: ECAI, Nostr, Blossom, Nosternity and nsecbunker
+#+DESCRIPTION: A dated entry point for humans and agents, linking detailed feature articles and distinguishing implementation from recorded deployment evidence.
+#+KEYWORDS: DamageBDD, ECAI, Nostr, Blossom, Nosternity, nsecbunker, documentation
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-05
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Start here
+
+This collection describes the available implementation and verification
+evidence as reviewed on 5 October 2026. It answers the request for a detailed
+surface that people and agents can read before integrating with the DamageBDD
+stack. Each feature has its own article, with source scope, operating boundaries
+and the evidence still needed for a deployment claim.
+
+| Article | Current evidence |
+|---------+------------------|
+| [[file:ecai_private_knowledge.org][ECAI private knowledge retrieval and controlled LLM access]] | Implemented 2 October patch; static/application checks recorded; runtime tests unrecorded |
+| [[file:ecai_relation_processing.org][ECAI deterministic relation processing]] | Core, composition, learning integration and benchmark code in the 2 October source archive |
+| [[file:nostr_reliability.org][Nostr reliability and reply correlation]] | Supplied transport/test corrections and a successful 25 September live-bunker release log |
+| [[file:blossom_media.org][Blossom media integration]] | Reported development scope; implementation and live acceptance evidence unavailable here |
+| [[file:nosternity.org][Nosternity integration scope]] | July component snapshots and newer compatibility hooks; full current integration unverified |
+| [[file:damagebdd_nostr.org][DamageBDD Nostr integration]] | Inspected general client APIs; live verification covers a narrower bunker path |
+| [[file:damage_nsecbunker.org][Damage nsecbunker custody, policy and verification]] | All 12 scenarios passed in release-build run 20260925132037 |
+
+* How to interpret the status
+
+An inspected API establishes that an implementation is present in the named
+snapshot. A static patch check establishes that the change applied to its
+baseline. A recorded live result establishes the particular scenarios on the
+identified deployment and date. These are different kinds of evidence.
+
+Examples labelled as proposals are integration targets, not existing BDD step
+definitions or passing tests. The articles do not infer production readiness
+from file presence, a conceptual paper, an exported function or another
+component's successful run. In particular, deterministic encoding establishes
+repeatable representation; it does not establish the truth of arbitrary input.
+
+* Source ledger
+
+- Documentation baseline: uploaded =latest-org.tar.gz=, reviewed 5 October 2026.
+- ECAI implementation: =latest-ecai.tar.gz= dated 2 October, plus the separate
+  private-index changed-files package, implementation note and validation record.
+- Nostr and bunker: supplied Erlang modules, live feature and reply-race patch.
+- Release result: supplied console log =Pasted text(20260925-132528).txt=,
+  identifying [[https://lightning.lodgeit.org/reports/QmPd9j9xJKLbmRqFzgb4asWWLsS6Tvi2Z8SdFgy8g7ZCXQ][run 20260925132037]].
+- Nosternity: three source snapshots dated 24 July; these are explicitly treated
+  as historical observations rather than the complete October checkout.
+- Blossom development scope: the project update quoted in Andrew's 3 October
+  reply. Protocol references are linked in the relevant articles.
+
+No fresh production feature run, payment, key operation or service restart was
+performed to prepare this documentation. The source examples are documented
+for the corresponding versions and have not been executed as part of this edit.
+
+* An integration path for operational knowledge
+
+A focused proposed demonstration is a small set of authorised operational
+records, one reproducible retrieval question and one explicit relation rule.
+Signed events and supporting attachments can then be connected to the same
+evidence, with DamageBDD checking the expected result and refusal cases.
+Payments and chain commitments should be added with their own settlement
+evidence rather than inferred from successful messaging.
+
+The articles identify which parts have code or results today and which still
+need integration evidence. Start with the private-retrieval and relation
+articles for knowledge work, or the bunker and reliability articles for the
+signing handoff.
+
+* Existing documentation
+
+- [[file:index.org][Article index]]
+- [[file:../ecai/index.org][ECAI overview]]
+- [[file:../modules/index.org][DamageBDD module index]]
+- [[file:../node_admins.org][Node administration]]

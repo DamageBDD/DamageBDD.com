@@ -7,6 +7,15 @@
 #+DATE: 2025-04-07
 #+OPTIONS: toc:nil num:nil
 
+* Current implementation documentation
+
+For source-backed capabilities and validation status reviewed 5 October 2026,
+read the [[file:../articles/features_current.org][current feature overview]],
+[[file:../articles/ecai_private_knowledge.org][private knowledge retrieval article]] and
+[[file:../articles/ecai_relation_processing.org][deterministic relation processing article]].
+These describe the implemented interfaces and their evidence boundaries
+separately from the conceptual material below.
+
 * ECAI: Intelligence Without Guessing
 
 ** The Key Differentiator

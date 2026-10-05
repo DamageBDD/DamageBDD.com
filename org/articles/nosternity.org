@@ -1,0 +1,125 @@
+#+TITLE: Nosternity: Integration Scope and Current Evidence
+#+DESCRIPTION: Nosternity's role in the DamageBDD stack, inspected supervisor and relay code, compatibility boundaries and remaining integration evidence.
+#+KEYWORDS: Nosternity, Nostr, Erlang, DamageBDD, Lightning, Aeternity
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-05
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Current position
+
+Nosternity is described in the project update as work bringing Nostr workflows
+together with DamageBDD verification and the wider Lightning/Aeternity stack.
+That describes an integration direction. The available sources do not establish
+a completed end-to-end product contract for all of those components.
+
+The directly inspected Nosternity modules are snapshots supplied on
+24 July 2026: =nosternity_sup=, =nosternity_relay= and
+=nosternity_relay_client=. The newer September bunker bridge contains explicit
+compatibility hooks for Nosternity. No newer complete Nosternity source archive
+or live acceptance report was available for this documentation revision.
+Accordingly, the observations below describe the inspected snapshots and are
+not a claim that every limitation remains in the latest working checkout.
+
+* Integration responsibilities
+
+A useful way to understand the proposed stack is to ask which component owns
+each operation:
+
+| Responsibility | Component or boundary |
+|----------------+-----------------------|
+| Signed Nostr messages | Existing DamageBDD Nostr primitives and identity processes |
+| Remote signing policy | =damage_nsecbunker= and its crypto/vault path |
+| Live bunker relay transport | =damage_nsecbunker_relay= through the client bridge |
+| Behavioural verification | DamageBDD features and execution reports |
+| Private record retrieval | ECAI's separate private-index implementation |
+| Supporting files | Reported Blossom integration work |
+| Wider payment/chain workflow | Integration requiring its own transaction evidence |
+
+The table is a responsibility map, not proof that a single request already
+traverses every row. In particular, an accepted Nostr event does not prove a
+Lightning payment, and an Aeternity transaction reference does not by itself
+prove the application behaviour described in the event.
+
+* What the supervisor snapshot contains
+
+=nosternity_sup= is an OTP supervisor using a one-for-one strategy. It builds
+configured poolboy worker specifications and starts two =damage_nostr= identity
+workers under different secret references, together with =nostr_pool= using
+its default relay list.
+
+This is concrete code reuse: identity workers call into the shared Nostr
+implementation rather than introducing a separate signing scheme. It also
+means compatibility depends on the matching versions of =damage_nostr=,
+=nostr_pool=, secrets and the supervisor configuration. A source-level child
+specification does not show that the identity was provisioned or that the
+worker was successfully running in a particular deployment.
+
+The inspected supervisor does not list =nosternity_relay= as one of its explicit
+children. The presence of that module elsewhere is therefore insufficient to
+conclude that this supervisor starts it.
+
+* The local relay snapshot is a scaffold
+
+=nosternity_relay= exposes =publish_event/1=, =subscribe/1= and =get_events/1=.
+It creates an ETS table and accepts maps with selected fields of the expected
+types. Its validation does not verify an event signature or recompute an event
+ID. The filter helper returns =true=, and broadcasting to subscribers is left
+as a TODO. The subscribe handler logs the filter and returns =ok= without
+registering a working event-delivery path.
+
+Those details prevent this snapshot from being treated as a production Nostr
+relay or a durable event store. An ETS insertion, a successful cast or an
+=ok= subscription response must not become an acceptance claim about external
+clients receiving an event.
+
+The separate July =nosternity_relay_client= snapshot also needs runtime
+validation. It attempts to enumerate registered relays through tuple patterns
+over =erlang:processes()=, which returns process IDs. That expression does not
+provide the intended relay registry. This is an inspection finding, not a new
+test result or a change applied to the source by this documentation task.
+
+* How the newer bunker path relates
+
+The September =damage_nostr_relay_client= prefers the dedicated
+=damage_nsecbunker_relay= implementation for subscription and response
+publication. It retains =nosternity_relay= fallbacks for older deployments.
+That compatibility code is evidence of an integration seam, not evidence that
+the older local relay scaffold provides the same delivery guarantees.
+
+For an operational handoff, record the configured callback module/function and
+the actually running relay adapter. The live bunker suite's event-ID and
+counter checks, followed by a correlated reply, provide stronger evidence
+than merely seeing an adapter module on the code path.
+
+* A useful next integration demonstration
+
+A small proposed workflow could start with a signed operational event, retain
+its supporting document reference, run an agreed DamageBDD feature and attach
+the resulting report reference to the originating workflow. A reader could
+then inspect the input, claimed result and verification evidence together.
+
+If a payment or chain commitment is part of that workflow, add explicit
+settlement and correlation checks. If ECAI supplies an answer, record which
+authorised sources supported it. Each step should have its own failure result
+so a missing attachment or failed payment cannot be disguised by a successfully
+published status event.
+
+This is a proposed demonstration, not an assertion that Nosternity currently
+offers a complete event marketplace, automated settlement system or universal
+agent interface. The next release documentation should replace the historical
+snapshots with its exact revision, startup configuration, supported interfaces
+and a complete acceptance report.
+
+* Sources and related documentation
+
+Source basis: the three July Nosternity snapshots and the September
+=damage_nostr_relay_client.erl= compatibility path. Project scope comes from
+the update reproduced in Andrew's 3 October reply. No new Nosternity code was
+executed or modified while preparing this article.
+
+- [[file:damagebdd_nostr.org][DamageBDD Nostr integration]]
+- [[file:nostr_reliability.org][Live relay delivery and reply correlation]]
+- [[file:blossom_media.org][Blossom media integration]]
+- [[file:features_current.org][Current feature documentation and evidence map]]

@@ -1,0 +1,125 @@
+#+TITLE: Blossom Media Integration: Files Alongside Signed Nostr Events
+#+DESCRIPTION: The current scope of the Blossom integration work, its role in document workflows, and the implementation evidence still needed.
+#+KEYWORDS: Blossom, Nostr, media, documents, content addressing, DamageBDD
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-05
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Current position
+
+Blossom was included in the October project update as work on a media-upload
+layer with configurable upload limits, authentication controls and pinning.
+The available documentation archive does not contain its implementation,
+configuration schema or a Blossom acceptance report. This article therefore
+records the reported integration scope and explains its intended operational
+role. It does not certify deployed endpoints, exact defaults or a completed
+interoperability test.
+
+That evidence boundary matters for agents consuming this page. The green
+nsecbunker run proves its own scenarios; none of those scenarios uploads,
+retrieves or pins a Blossom object. Blossom acceptance must be demonstrated
+with its own feature and release evidence.
+
+* The role of the media layer
+
+Blossom defines HTTP interfaces for storing and retrieving blobs identified by
+their SHA-256 hash, using Nostr identities. The upstream specification separates
+basic retrieval, upload and management, mirroring, media processing and other
+optional capabilities into Blossom Upgrade Documents. A server's support must
+be established per operation. See the [[https://github.com/hzrd149/blossom][Blossom specification]].
+
+For the DamageBDD stack, the useful division is between a signed event describing
+an action or document and the bytes of the supporting attachment. A report,
+image or source document need not be embedded in a note. An application can
+associate the event with the attachment's identifier and retrieval location,
+then check the retrieved bytes against the expected digest.
+
+The digest establishes byte identity. It does not establish who approved the
+document, whether its statements are correct or how long a server will retain
+it. Those questions belong to event provenance, application policy and the
+storage operator's behaviour.
+
+* What the reported integration work covers
+
+The project update names three areas. Their exact implementation remains to be
+documented from source or a running release:
+
+| Area | Intended operational purpose | Evidence still needed |
+|------+------------------------------+-----------------------|
+| Upload limits | Bound storage and request resource use | Config keys, enforced sizes and boundary tests |
+| Authentication controls | Decide which identity may perform an operation | Supported operations and valid/invalid request tests |
+| Pinning | Retain selected objects under an operator policy | Storage backend, persistence semantics and restart evidence |
+
+Pinning is the terminology used in the project update. It should not be read
+as proof of an IPFS implementation, replication guarantee or a specific Blossom
+extension. No such mapping is established by the supplied material.
+
+These controls also have different effects. Accepting an authenticated upload
+does not automatically make later retrieval private. A retention setting does
+not itself establish geographic redundancy or a recoverable backup. A file
+type label does not verify the file's contents.
+
+* Relationship to private knowledge retrieval
+
+A proposed document workflow could let an authorised application upload a
+supporting object, attach its digest to a signed event and retain the event
+reference with an indexed record. A later answer could point to both the
+source record and its supporting bytes.
+
+The current private-index patch does not implement that entire path. It
+accepts already prepared records and does not add an automatic private Blossom
+fetcher. A confidential source should not be sent to a publicly readable media
+endpoint on the assumption that Nostr identity or upload authentication makes
+its content private. Any encryption and retrieval policy must be explicit at
+the application boundary.
+
+For LodgeiT's operational knowledge use case, begin with non-sensitive fixtures
+or an agreed private storage design. The demonstration should show which bytes
+were ingested, who could retrieve them, how they relate to the signed event and
+which excerpts, if any, were sent to a model. That would provide a concrete
+foundation for a later economic-event document workflow.
+
+* A proposed acceptance feature
+
+The following are acceptance goals, not existing step names or passing results:
+
+1. An authorised identity submits a small known object and receives an identifier.
+2. Retrieval produces bytes whose digest matches that identifier.
+3. An upload at the configured boundary behaves as documented; an oversized
+   request is refused without leaving an unintended readable object.
+4. Missing, expired or inappropriate authentication is rejected for the
+   operations that require it.
+5. A retained object survives the documented service restart and storage lifecycle.
+6. A signed event can reference the object and an independent client can verify
+   the association expected by the application.
+
+Where deletion, mirroring or media transformations are supported, their tests
+must describe those behaviours separately. A transformed image will have a new
+digest. A deletion request to one server cannot establish deletion from every
+copy already retrieved or mirrored elsewhere.
+
+* What is needed for a deployable agent reference
+
+The next documentation update should record the implementing modules and release
+SHA, actual routes and supported BUDs, authentication formats, configuration
+keys and defaults, storage backend and an independently repeatable report.
+Only then should an agent treat this article as an executable endpoint guide.
+
+At present the supported statement is narrower: Blossom is part of the reported
+media integration work, and its intended use is to carry supporting files
+alongside Nostr events. The attached sources do not establish a complete live
+service contract.
+
+* Sources and related documentation
+
+Project basis: the ECAI/Nostr update reproduced in Andrew's 3 October 2026
+reply. Protocol basis: the upstream Blossom specification, consulted
+5 October 2026. No Blossom implementation snapshot was available for this
+documentation revision.
+
+- [[file:damagebdd_nostr.org][Signed events and DamageBDD Nostr interfaces]]
+- [[file:ecai_private_knowledge.org][Private indexing and controlled disclosure to models]]
+- [[file:nosternity.org][Nosternity integration status]]
+- [[file:features_current.org][Current feature documentation and evidence map]]

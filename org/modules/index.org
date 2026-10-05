@@ -33,6 +33,9 @@ If you can describe behaviour in words, DamageBDD can verify it.
 
 - [[file:http.org][HTTP Steps (API testing)]]
 - [[file:cdp.org][CDP Steps (Browser testing)]]
+- [[file:../articles/features_current.org][Current feature articles and evidence map]]
+- [[file:../articles/damagebdd_nostr.org][Nostr integration capabilities]]
+- [[file:../articles/damage_nsecbunker.org][nsecbunker policy and live verification coverage]]
 
 
 

@@ -1,4 +1,18 @@
 
+* Current implementation articles
+
+Detailed feature documentation, reviewed 5 October 2026, with explicit source
+and validation boundaries. Start with the
+[[file:features_current.org][current feature overview and evidence map]].
+
+- [[file:ecai_private_knowledge.org][ECAI private knowledge retrieval and controlled LLM access]]
+- [[file:ecai_relation_processing.org][ECAI deterministic relation processing]]
+- [[file:nostr_reliability.org][Nostr reliability and NIP-46 reply correlation]]
+- [[file:blossom_media.org][Blossom media integration]]
+- [[file:nosternity.org][Nosternity integration scope and current evidence]]
+- [[file:damagebdd_nostr.org][DamageBDD Nostr integration]]
+- [[file:damage_nsecbunker.org][Damage nsecbunker custody, policy and live verification]]
+
 * Damage Tokens: Resilience Tokenized!
 
 
