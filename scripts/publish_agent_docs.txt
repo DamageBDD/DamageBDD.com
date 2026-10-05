@@ -5,7 +5,7 @@ Install
 -------
 Apply publish_agent_docs.patch from the repository root. It updates
 scripts/publish.el, adds these notes and scripts/publish-tests.el, and adds
-explicit status metadata to the seven current feature articles. Apply it after
+explicit status metadata to the included feature articles. Apply it after
 the current-feature article update, which placed those articles in org/articles/.
 
 Alternatively, install the updated publish.el as scripts/publish.el. The script
@@ -40,6 +40,12 @@ Output under public/
     sitemap.xml            Canonical HTML URLs.
     openapi.json           Only when an existing root openapi.json is supplied.
 
+The publisher discovers Org pages recursively on each build. Adding or removing
+source pages changes the generated inventories; no fixed page count is required.
+Use docs/index.json (document_count and documents) and docs/capabilities.json
+(capabilities) for the current build. Capability records are collected from
+exported pages with CAPABILITY_ID or a legacy source-path mapping.
+
 Markdown is exported directly from Org, not scraped from the HTML pages. It
 includes fenced code, pipe tables, stable heading anchors and rewritten Org
 links. HTML layout/snippet blocks are omitted from Markdown; keep essential
@@ -64,8 +70,9 @@ Add author-maintained keywords before the first heading in an Org page:
     #+EVIDENCE_URL: https://example.org/report
 
 Omit fields for which there is no evidence. EVIDENCE_URL may be repeated.
-CAPABILITY_ID adds a new capability; IDs must be unique. The seven current
-feature articles are also recognized by source path for backward compatibility.
+CAPABILITY_ID adds a capability to the generated inventory; IDs must be unique.
+Legacy feature articles are also recognized by source path for backward
+compatibility. New capability articles should declare CAPABILITY_ID explicitly.
 CONTENT_CLASS defaults to unclassified; both status fields default to
 not_recorded. Missing dates and releases are null; absent evidence URLs are [].
 
@@ -101,14 +108,13 @@ Validation
     emacs -Q --batch -l scripts/publish-tests.el -f ert-run-tests-batch-and-exit
 
 Checked with Emacs 29.3 / Org 9.6.15:
-- Seven ERT tests pass: paired export/content boundaries, metadata defaults,
+- ERT checks pass for paired export/content boundaries, metadata defaults,
   supplied API handling, stale-file ownership, duplicate IDs, and temporary
   heading-resolution buffer cleanup on success and error. Cleanup checks also
   confirm that unsaved edits in an open source buffer remain untouched.
 - Byte compilation passes with warnings treated as errors.
-- The supplied Org tree builds 67 HTML/Markdown pairs and seven capability
-  records. All inventory targets, source/export hashes, discovery links and
-  sitemap entries were checked.
+- Inventory targets, source/export hashes, discovery links and sitemap entries
+  were checked against the exported source tree.
 
 The full build used placeholder HTML snippets and an empty assets directory
 because production snippets/assets were not supplied. Production rendering,
