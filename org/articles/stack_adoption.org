@@ -1,0 +1,105 @@
+#+TITLE: Build an Operational Memory: A Practical Guide to the DamageBDD Stack
+#+DESCRIPTION: Start with one useful workflow: repeatable checks, controlled knowledge retrieval, a local voice interface or signed event retention.
+#+KEYWORDS: DamageBDD, ECAI, erm, Nosternity, adoption, developer tools, operational knowledge
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-05
+#+CONTENT_CLASS: adoption-guide
+#+IMPLEMENTATION_STATUS: components_present
+#+VALIDATION_STATUS: source_review_only
+#+VALIDATION_SCOPE: Selected code paths in the uploaded 5 October source snapshot; combined workflow is a proposed pilot, not a recorded deployment.
+#+EVIDENCE_DATE: 2026-10-05
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Your next incident should leave more than a chat transcript
+
+A team fixes a failure, explains the workaround in chat and moves on. A month
+later, someone asks what happened. The test is in one system, the deployment
+version in another, the explanation in a conversation, and the person who
+remembers the details is unavailable.
+
+The DamageBDD stack offers several building blocks for keeping those pieces
+connected. DamageBDD executes readable behaviour checks and records their
+results. ECAI indexes knowledge, represents code relationships and supports
+reviewable repair work. erm brings voice, media and native desktop controls to
+the operator. Nosternity adds an optional persistence path for selected signed
+Nostr events. Blossom supplies content-addressed supporting files.
+
+The practical adoption opportunity is to start with one recurring problem and
+produce an artifact another person can inspect. You can evaluate that outcome
+before attempting a workflow spanning the whole stack.
+
+* Choose an entry point
+
+| Your immediate problem | Start with | First useful result |
+|------------------------+------------+---------------------|
+| A customer cannot reproduce a service failure | [[file:damagebdd_evidence_workflows.org][DamageBDD acceptance evidence]] | A readable scenario and its exact run report |
+| Operational answers are scattered across private records | [[file:ecai_engineering_memory.org][ECAI engineering memory]] | A retrieved record with a source reference and an explicit access decision |
+| Generated code changes take too long to review | [[file:ecai_reviewable_repairs.org][ECAI repair review]] | A candidate patch tied to source identity and validation output |
+| Routine desktop controls interrupt focused work | [[file:erm_local_voice.org][erm voice and desktop tools]] | A spoken command with an observable action result |
+| Important signed events need a retention policy | [[file:nosternity.org][Nosternity event retention]] | An event correlated with a confirmed store result |
+| Applications need verifiable supporting files | [[file:blossom_media.org][Blossom media storage]] | Downloaded bytes matching the expected SHA-256 |
+
+These are source-backed entry points reviewed on 5 October 2026. The review
+used =latest-apps.tar.gz= and =latest-org.tar(1).gz=. It did not build the full
+release or run a production acceptance suite. Each article explains the
+implementation and proposes a bounded first pilot.
+
+* The features become more useful when their references agree
+
+Consider a service regression. A DamageBDD report can identify the feature,
+run and release. ECAI can hold an approved incident explanation and retrieve
+the relevant source records later. Its relation layer can describe which
+modules call which functions. A signed Nostr event can announce the report,
+and a supporting file can carry a digest that readers check independently.
+
+The proposed connecting record should carry explicit identifiers: feature
+hash, report hash, release identity, source record ID, event ID and attachment
+hash, as applicable. Application code must establish the correspondence. A
+signed message does not establish that a test passed; a report hash does not
+establish that its conclusion was justified.
+
+This makes a useful engineering target: follow a question back to the record,
+the observation and the version that produced it. The supplied modules do not
+establish that this complete path is already wired together for every use case.
+
+* A pilot a small team can evaluate
+
+Choose one service, one reproducible failure and a small set of non-sensitive
+records. Agree on the expected behaviour before running the demonstration.
+
+1. Write one supported DamageBDD scenario. Produce a passing run and a deliberately
+   failing run; retain both reports and their release identities.
+2. Index an approved explanation in ECAI. Check a question with a known source
+   and another whose answer is absent. If privacy is in scope, test an unauthorised
+   principal and a disallowed model destination as separate cases.
+3. Let a second person inspect the evidence without relying on the original
+   author's memory. Add erm voice access only to an appropriate public corpus;
+   its current voice retrieval path is separate from ECAI private retrieval.
+4. If event retention is needed, publish a non-sensitive signed reference and
+   verify Nosternity's confirmation and recovery path. Measure pending-event
+   loss on restart before relying on it for an archive.
+
+Record time to reproduce the failure, time to find the supporting record,
+incorrect or unsupported answers, and operator effort. Treat improvements as
+results to measure against your current workflow. No speed, cost or accuracy
+advantage is assumed here.
+
+* Adopt one boundary at a time
+
+Existing teams can keep their build pipeline, model choice and operational
+process while evaluating a small component. DamageBDD needs a precise supported
+scenario; ECAI needs a defined corpus and question set; erm needs working local
+audio and desktop dependencies; Nosternity needs an explicit retention and
+chain configuration. These are different onboarding tasks.
+
+For a first conversation with the project, bring one reproducible problem,
+the expected output, the data that may be shared, and a definition of success.
+That is enough to scope a demonstration around your work.
+
+Start with the [[file:../install.org][installation guide]],
+[[file:../manual.org][DamageBDD manual]] and
+[[file:features_current.org][current implementation and evidence map]].
+For each pilot, record the deployed revision separately from this documentation
+review date.

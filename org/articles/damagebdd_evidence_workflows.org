@@ -1,0 +1,119 @@
+#+TITLE: DamageBDD: Turn Acceptance Criteria into Evidence You Can Share
+#+DESCRIPTION: Use readable scenarios, content-addressed reports, schedules and release identity to make service acceptance easier to reproduce and review.
+#+KEYWORDS: DamageBDD, BDD, acceptance testing, API, IPFS, release evidence, automation
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-05
+#+CAPABILITY_ID: damagebdd-evidence-workflows
+#+CONTENT_CLASS: adoption-guide
+#+IMPLEMENTATION_STATUS: source_present
+#+VALIDATION_STATUS: source_review_only
+#+VALIDATION_SCOPE: Runner, HTTP result handling, schedules and release-discovery code inspected; no new execution, payment or release-installation run.
+#+EVIDENCE_DATE: 2026-10-05
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Make the acceptance conversation executable
+
+“It worked on my machine” leaves the next person with an investigation.
+A useful acceptance record tells them what was requested, what was observed,
+which version ran and where to inspect the result.
+
+DamageBDD connects a readable behaviour specification to an execution and its
+report. This is a practical entry point for API teams, integration developers,
+service operators and contractors agreeing on a delivery boundary. The first
+adoption goal can be small: turn one recurring support issue into a scenario
+that another person can run and understand.
+
+* Begin with an observable contract
+
+The following is an illustrative scenario using sentence patterns implemented
+in =steps_http.erl=. The reserved example host and response are placeholders;
+replace them with an authorised test service. This example was not executed
+during the review.
+
+#+BEGIN_SRC gherkin
+Feature: Service readiness is visible to clients
+
+  Scenario: The readiness endpoint reports a healthy service
+    Given I am using server "https://service.example"
+    When I make a GET request to "/health"
+    Then the response status must be "200"
+    And the json at path "$.status" must be "ok"
+#+END_SRC
+
+The supported vocabulary gives the example its meaning. Add scenarios for
+the failures your users actually experience: a refused request, a missing
+dependency or an incorrect response field. New sentences require matching
+step implementations; ordinary prose alone is not executable coverage.
+
+* A report can travel with the discussion
+
+In the reviewed runner, the report directory is published through IPFS after
+run metadata is written. The returned record includes =feature_hash=,
+=report_hash=, release information and encrypted-context references. This
+gives a handoff a stable content reference instead of relying on a screenshot
+or a mutable copy of a log.
+
+That distinction is useful when a customer and supplier disagree about a
+regression. They can refer to the same scenario and report, then compare a
+later run against it. Content addressing detects changed bytes; continued
+availability still depends on retention, pinning and the serving infrastructure.
+The observations remain those of the executing environment.
+
+A failed run may also have a report hash. The HTTP execution code handles
+explicit failure fields before the ordinary report-hash success branch.
+Integrations should inspect the result and failing step, and should distinguish
+dry-run output from an executed check. Saving a report is not itself success.
+
+* Keep checking the behaviour that matters
+
+The scheduling code stores a feature reference with account, schedule and
+concurrency information, registers execution through the schedule index, and
+records execution state. That supports a useful progression: prove a scenario
+manually, then run it on a schedule to detect a recurrence.
+
+Configuration, account state and downstream services are part of that
+operational path. A pilot should include restart recovery, one expected failure
+and a check that the reported schedule corresponds to the intended feature.
+It should also establish resource use before raising concurrency. The source
+review provides no throughput measurement or planetary-scale capacity result.
+
+* Release identity adds another checkable link
+
+The release NFT discovery implementation reads a selected release and platform,
+resolves metadata through a local validating Kubo daemon, and exposes
+installation fields including the package digest. Publication verification
+compares release, platform, Git identity, metadata and asset references.
+
+For operators, the adoption value is traceability: which artifact did a report
+or deployment refer to? The code separates read-only discovery from explicit
+account-signed state changes. A token or CID identifies an artifact; it does
+not replace the build tests or establish that the software is defect-free.
+Contract files and a complete release environment were not included in this
+source-only archive, so no installation or chain operation was tested here.
+
+* A first pilot with a clear finish
+
+Pick a customer-facing API behaviour with a known failure mode. Write a
+passing scenario and a negative case. Preserve the feature, release identity,
+execution result and report references. Ask a colleague to reproduce the
+result from those records, then repeat through the scheduler.
+
+The pilot succeeds when both people can explain the same outcome from the
+same evidence, and a deliberately failing case remains visible as a failure.
+Only after that should you extend the workflow into custody, payments or
+cross-node verification. Those paths need their own acceptance evidence.
+
+* Source basis and next steps
+
+Reviewed source: =apps/damage/src/damage.erl= (execution and report assembly),
+=damage_http.erl= (result handling), =steps_http.erl= (scenario vocabulary),
+=damage_schedule.erl=, =damage_schedule_index.erl= and
+=damage_release_nft.erl=. Tests for HTTP context and release discovery are
+present in =apps/damage/test/=; they were not run in this review.
+
+- [[file:../modules/http.org][Write an HTTP scenario]]
+- [[file:../manual.org][Use the DamageBDD manual]]
+- [[file:damage_nsecbunker.org][Explore the separately recorded nsecbunker acceptance evidence]]
+- [[file:stack_adoption.org][Choose the next stack component]]

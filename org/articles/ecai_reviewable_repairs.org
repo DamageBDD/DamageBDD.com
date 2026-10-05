@@ -1,0 +1,114 @@
+#+TITLE: ECAI Repair Workflows: Make a Generated Patch Easier to Review
+#+DESCRIPTION: Connect incident context, source identity, candidate patches and isolated validation so reviewers can assess what changed and what was actually checked.
+#+KEYWORDS: ECAI, code repair, Erlang, incident learning, patch review, worktrees
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-05
+#+CAPABILITY_ID: ecai-reviewable-repairs
+#+CONTENT_CLASS: adoption-guide
+#+IMPLEMENTATION_STATUS: source_present
+#+VALIDATION_STATUS: source_review_only
+#+VALIDATION_SCOPE: Incident learning, repair preflight, patch verification and repair capsule code inspected; no candidate generation, compilation, integration or deployment executed.
+#+EVIDENCE_DATE: 2026-10-05
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* A patch is easier to review when its context survives
+
+A generated diff leaves several questions unanswered. Which revision did the
+model see? Does the reported problem still exist? Did the patch apply to the
+intended files? Did a test fail because of the candidate or because the
+baseline was already broken?
+
+ECAI contains a repair workflow aimed at retaining that context. It connects
+runtime incident records and source analysis to candidate generation, patch
+validation and persistent review artifacts. Erlang teams can evaluate this
+on one reproducible maintenance issue before enabling a wider automated queue.
+
+The adoption goal is a review package whose assumptions can be checked.
+Human acceptance should depend on the actual diff and validation evidence.
+
+* Carry the incident into the review
+
+The Damage log bridge bounds and redacts selected event text and reduces
+metadata before passing observations into ECAI. The incident-learning service
+correlates errors with module analysis and knowledge cards, then asks an audit
+model for a bounded incident card. It checkpoints queue state and exposes
+observed, learned, failed and retried counters.
+
+This gives maintainers a place to keep an explanation tied to the module
+that produced the observation. That learning stage does not itself execute
+a command or modify source. A separate patch workflow handles candidates.
+
+The redaction code covers known credential patterns, including bearer values,
+Nostr secrets and common password/token labels. Pattern redaction is not a
+complete data-loss boundary. Use synthetic incidents first, and inspect what
+your configured model actually receives before admitting production logs.
+
+* Check the source before spending another model call
+
+The repair preflight compares finding versions and source snapshots. It can
+mark a stale finding as superseded or block a structurally inconsistent
+snapshot. The manager tracks queue and active-worker state separately from
+cumulative counters and includes retry handling.
+
+These are useful controls for long-running work: a finding from yesterday
+should not silently be treated as today's source. However, the inspected
+preflight also has explicit allow/deferred paths for missing analysis and
+some internal failures. It is not a universal fail-closed gate. A deployment
+must decide how those states affect admission and human review.
+
+* Put the candidate through an isolated validation path
+
+The patch verifier checks diff structure and file paths, rejects binary patches,
+and restricts paths to the DamageBDD, ECAI and erm application trees. It uses
+Git worktrees and supports compile, EUnit and optional Common Test commands.
+Integrity checks and baseline comparison help distinguish a candidate change
+from unrelated working-tree or existing-build problems.
+
+An isolated worktree protects the original checkout from routine patch
+application. It is not a security sandbox: builds and tests execute code and
+need an appropriate runtime boundary when candidates are untrusted.
+
+Read the validation steps, warnings and configuration together. Some
+candidate-neutral baseline failures can be retained as warnings in a result.
+An accepted disposition is therefore not automatically a clean compile and
+test run. A baseline problem must remain visible to the person deciding
+whether the candidate is useful.
+
+* Keep a compact identity for the review package
+
+The repair capsule includes repository state, problem fingerprint, context,
+policy and invariants in a deterministic payload. Its content-derived identity
+lets another process check that it is examining the same package. Local
+checkout paths are excluded from the stable repository identity.
+
+This is useful for handoffs and retry correlation. The portable commitment
+is SHA-256; native point mapping is optional. The identity proves neither that
+the diagnosis is correct nor that the patch repairs every possible failure.
+Those conclusions depend on the observation, reviewer and tests.
+
+* A pilot that exposes the difficult cases
+
+Select a small known bug with a reproducer. Retain the baseline revision,
+incident input, candidate diff, verification configuration and command output.
+Ask a second reviewer to reconstruct the decision from that package.
+
+Then change the source so the original finding is stale, and repeat with an
+independently failing baseline. The workflow should show those conditions
+explicitly. Record time spent reviewing and explaining a candidate, along
+with false diagnoses and rejected patches. This produces an adoption measure
+for the maintenance work your team actually does.
+
+* Source basis and next steps
+
+Reviewed source: =apps/damage/src/damage_ecai_log_bridge.erl= and, under
+=apps/ecai/src/=, =ecai_log_learning=, =ecai_patch_manager=,
+=ecai_repair_preflight=, =ecai_patch_verifier=, =ecai_patch_integration=,
+=ecai_repair_capsule= and =ecai_repair_commitment=. The archive contains
+dedicated preflight, integrity, retry, source-coherence and capsule tests.
+They were not executed during this documentation review.
+
+- [[file:ecai_engineering_memory.org][Build source-backed engineering memory]]
+- [[file:damagebdd_evidence_workflows.org][Make the reproducer an acceptance scenario]]
+- [[file:stack_adoption.org][Choose a bounded pilot]]

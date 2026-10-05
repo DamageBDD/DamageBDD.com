@@ -1,0 +1,119 @@
+#+TITLE: ECAI: Give Engineering Knowledge a Source, a Structure and an Access Boundary
+#+DESCRIPTION: Private retrieval, typed code relations and durable indexing jobs provide concrete ways to evaluate ECAI on operational knowledge.
+#+KEYWORDS: ECAI, engineering knowledge, private RAG, relations, code analysis, indexing
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-05
+#+CAPABILITY_ID: ecai-engineering-memory
+#+CONTENT_CLASS: adoption-guide
+#+IMPLEMENTATION_STATUS: source_present
+#+VALIDATION_STATUS: source_review_only
+#+VALIDATION_SCOPE: Private index, LLM bridge, relation learning and index-job code inspected; no retrieval benchmark, real crypto-backend or live model run performed.
+#+EVIDENCE_DATE: 2026-10-05
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Start with a question your team already struggles to answer
+
+Which module depends on this interface? What did we learn from the last
+incident? Which approved record supports that answer? May this user read it,
+and may its contents be sent to this model?
+
+These questions make useful adoption tests for ECAI. The current implementation
+contains distinct mechanisms for private document retrieval, typed relations
+from code analysis, and managed indexing work. Each can be evaluated against
+a small set of known inputs and expected outputs.
+
+For engineering teams, the immediate value is an inspectable path from a
+question to its supporting records. Claims about general intelligence or
+universal correctness are unnecessary to demonstrate that path.
+
+* Keep corpus access and model access explicit
+
+The private index encrypts records and their term postings together in
+append-only segments. A configured corpus separates owners, readers and
+writers. Search rechecks authorisation before returning plaintext, and fetch
+uses an opaque batch-and-record reference within the authorised corpus.
+
+The LLM bridge checks the configured destination before retrieving private
+content, then rechecks permissions and destination policy before dispatch.
+It retrieves at most eight source records, clips each text excerpt to 6,144
+bytes, and bounds the prompt. When retrieval finds no sources, it returns
+“Not in sources.” without making the model call.
+
+Those controls make a concrete pilot possible: verify that an approved user
+can retrieve a known record, a different user is refused, and a disallowed
+destination receives nothing. Requests cannot supply arbitrary provider or
+filesystem settings through the private HTTP dispatcher.
+
+The trusted worker still decrypts scanned segments in memory. The approved
+model receives the selected plaintext excerpts. This is not encrypted
+computation, and a source-grounded prompt does not guarantee that every
+generated statement or citation is correct. Evaluate the resulting answers.
+The current private search scores canonical term matches; semantic recall and
+scan performance must be measured on your corpus.
+
+* Give code relationships stable identities
+
+ECAI's relation layer represents a subject, predicate and object with a
+canonical identity. Erlang types are preserved; metadata and proof records
+sit outside that identity. The composition layer derives relationships using
+explicit rules and records the premises used.
+
+One implemented evaluation recovers a module's =uses= relation by composing
+its =calls= relation with a function's =belongs_to_module= relation. The
+benchmark compares the derived result against remote-call information from
+the analyser. That is a defined structural task with an inspectable expected
+answer, rather than a general question-answering benchmark.
+
+This can help teams review dependencies or understand a codebase before a
+change. The current cross-application refresh covers =damage=, =ecai= and
+=erm=. It does not automatically include Nosternity. Dynamic runtime behaviour
+also needs evidence beyond statically recovered call relationships.
+
+Deterministic encoding makes identities repeatable. It does not make an
+incorrect source statement true. Curve representations and SHA-256 relation
+keys should be evaluated for the properties they actually provide.
+
+* Make ingestion an operational process
+
+The indexing-job service exposes queue status, pause, resume, cancel and
+retry operations, with checkpoints and a DETS-backed job store. Index
+finalisation builds a manifest from source identity, pipeline, counts and
+files. Optional IPFS publication can supply content references for later use.
+
+For an operator, the useful questions are simple: what is being indexed,
+where did it stop, and which source snapshot produced this artifact? Test
+those answers by interrupting and resuming a small public indexing job.
+An artifact marked ready for later minting is not evidence that minting or
+payment has happened. The private-index path remains separate from public
+index artifacts and their publication workflow.
+
+* Evaluate it with a small answer set
+
+Use ten approved documents and a list of questions with known supporting
+records. Include absent answers, similar-looking but irrelevant records and
+access-denied cases. Measure retrieval success, unsupported answer rate,
+latency and the volume of text disclosed to the chosen model.
+
+For code relations, choose a few modules whose dependencies you can inspect
+manually. Compare the derived edges and their premises before broadening the
+corpus. Keep the document and structural evaluations separate so a good
+result in one does not conceal a failure in the other.
+
+Bring those results to the next integration discussion. They provide a
+stronger basis for adoption than an unmeasured claim of replacing every LLM.
+
+* Source basis and next steps
+
+Reviewed source under =apps/ecai/src/=: =ecai_private_index=,
+=ecai_private_policy=, =ecai_private_http=, =ecai_llm_bridge=,
+=ecai_relation=, =ecai_compose=, =ecai_relation_learning=,
+=ecai_index_jobs_srv=, =ecai_index_job_store= and =ecai_index_artifact=.
+The private-index tests use test crypto and model providers; their presence
+does not establish a real backend run. No benchmark score is reported here.
+
+- [[file:ecai_private_knowledge.org][Private retrieval interfaces and limits]]
+- [[file:ecai_relation_processing.org][Relation rules and benchmark design]]
+- [[file:ecai_reviewable_repairs.org][Use source knowledge in a repair review]]
+- [[file:stack_adoption.org][Plan a first stack pilot]]

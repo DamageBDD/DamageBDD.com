@@ -31,6 +31,9 @@ If you can describe behaviour in words, DamageBDD can verify it.
 
 * Quick links (start here)
 
+- [[file:../articles/stack_adoption.org][Choose a practical stack pilot]]
+- [[file:../articles/damagebdd_evidence_workflows.org][Build a shareable acceptance record]]
+
 - [[file:http.org][HTTP Steps (API testing)]]
 - [[file:cdp.org][CDP Steps (Browser testing)]]
 - [[file:../articles/features_current.org][Current feature articles and evidence map]]

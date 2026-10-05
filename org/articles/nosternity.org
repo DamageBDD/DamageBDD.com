@@ -1,130 +1,141 @@
-#+TITLE: Nosternity: Integration Scope and Current Evidence
-#+DESCRIPTION: Nosternity's role in the DamageBDD stack, inspected supervisor and relay code, compatibility boundaries and remaining integration evidence.
-#+KEYWORDS: Nosternity, Nostr, Erlang, DamageBDD, Lightning, Aeternity
+#+TITLE: Nosternity: Give Important Signed Events a Retention Policy
+#+DESCRIPTION: Select and verify Nostr events, queue them for Aeternity storage, track confirmation and rehydrate a local cache—with explicit durability and relay limits.
+#+KEYWORDS: Nosternity, Nostr, signed events, retention, Aeternity, Erlang
 #+AUTHOR: Steven Joseph
 #+DATE: 2026-10-05
 #+CAPABILITY_ID: nosternity
-#+CONTENT_CLASS: historical-source-review
-#+IMPLEMENTATION_STATUS: historical_source_present
-#+VALIDATION_STATUS: not_recorded
-#+VALIDATION_SCOPE: July source snapshots and September compatibility hooks inspected; full current integration is unverified.
+#+CONTENT_CLASS: implementation-reference
+#+IMPLEMENTATION_STATUS: source_present
+#+VALIDATION_STATUS: source_review_only
+#+VALIDATION_SCOPE: Current supervisor, relay, event-store, HTTP and WebSocket source inspected; no contract deployment, chain persistence, recovery or Nostr interoperability run performed.
+#+EVIDENCE_DATE: 2026-10-05
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
 #+OPTIONS: toc:2 ^:nil
 
-* Current position
+* Decide which events should outlive a relay session
 
-Nosternity is described in the project update as work bringing Nostr workflows
-together with DamageBDD verification and the wider Lightning/Aeternity stack.
-That describes an integration direction. The available sources do not establish
-a completed end-to-end product contract for all of those components.
+A signed event gives an application an identifiable statement from a key.
+A release announcement, report reference or operational note may need to be
+retrieved long after the session that first delivered it. Retaining every
+message indefinitely is a different requirement from retaining a selected
+class of important records.
 
-The directly inspected Nosternity modules are snapshots supplied on
-24 July 2026: =nosternity_sup=, =nosternity_relay= and
-=nosternity_relay_client=. The newer September bunker bridge contains explicit
-compatibility hooks for Nosternity. No newer complete Nosternity source archive
-or live acceptance report was available for this documentation revision.
-Accordingly, the observations below describe the inspected snapshots and are
-not a claim that every limitation remains in the latest working checkout.
+Nosternity's current event-store code provides a concrete starting point for
+that selection. It checks signed events against kind and author policy,
+queues accepted records for an Aeternity contract, and distinguishes transaction
+submission from confirmation. Relay startup can read stored events back into
+its local cache.
 
-* Integration responsibilities
+This makes Nosternity worth evaluating as an event-retention component for
+Nostr application developers and operators. Its local relay interface still
+has unfinished behaviour, so the most focused pilot is the event-store path
+with non-sensitive fixtures.
 
-A useful way to understand the proposed stack is to ask which component owns
-each operation:
+* What changed in the current source
 
-| Responsibility | Component or boundary |
-|----------------+-----------------------|
-| Signed Nostr messages | Existing DamageBDD Nostr primitives and identity processes |
-| Remote signing policy | =damage_nsecbunker= and its crypto/vault path |
-| Live bunker relay transport | =damage_nsecbunker_relay= through the client bridge |
-| Behavioural verification | DamageBDD features and execution reports |
-| Private record retrieval | ECAI's separate private-index implementation |
-| Supporting files | Reported Blossom integration work |
-| Wider payment/chain workflow | Integration requiring its own transaction evidence |
+The 5 October =latest-apps.tar.gz= snapshot supersedes the July snapshots used
+by an earlier version of this article. The supervisor now explicitly starts
+=nosternity_event_store= and =nosternity_relay=, alongside two shared
+=damage_nostr= identity workers. It expects the relay pool to be supervised
+by Damage rather than starting another pool itself.
 
-The table is a responsibility map, not proof that a single request already
-traverses every row. In particular, an accepted Nostr event does not prove a
-Lightning payment, and an Aeternity transaction reference does not by itself
-prove the application behaviour described in the event.
+The relay now verifies an event through =damage_nostr_event:verify/1= before
+inserting it into ETS. It uses =insert_new= to suppress duplicate event IDs
+and asks the event store to retain a newly accepted event. These are present
+code paths. No current running-service or deployment result was supplied.
 
-* What the supervisor snapshot contains
+* Select records before committing storage
 
-=nosternity_sup= is an OTP supervisor using a one-for-one strategy. It builds
-configured poolboy worker specifications and starts two =damage_nostr= identity
-workers under different secret references, together with =nostr_pool= using
-its default relay list.
+The event store is disabled by default. When enabled, it supports kind and
+public-key policies, event-size limits, a bounded queue and batching. The
+source defaults select kinds 1, 7 and 30023; the default event-size limit is
+65,536 bytes. Operators should choose the actual policy for their application.
 
-This is concrete code reuse: identity workers call into the shared Nostr
-implementation rather than introducing a separate signing scheme. It also
-means compatibility depends on the matching versions of =damage_nostr=,
-=nostr_pool=, secrets and the supervisor configuration. A source-level child
-specification does not show that the identity was provisioned or that the
-worker was successfully running in a particular deployment.
+Validation checks the required fields, event ID and signature through the
+shared verifier. Selection decides whether a valid event belongs in the
+retained set. Both checks matter: an authentic event may still be outside
+your storage policy.
 
-The inspected supervisor does not list =nosternity_relay= as one of its explicit
-children. The presence of that module elsewhere is therefore insufficient to
-conclude that this supervisor starts it.
+The contract record includes the event content, tags and signature as well
+as its identifiers. It is not merely a digest commitment. Treat selected
+content as intended for the configured chain's visibility and retention;
+use public or explicitly approved records in the pilot.
 
-* The local relay snapshot is a scaffold
+* Make confirmation visible to the caller
 
-=nosternity_relay= exposes =publish_event/1=, =subscribe/1= and =get_events/1=.
-It creates an ETS table and accepts maps with selected fields of the expected
-types. Its validation does not verify an event signature or recompute an event
-ID. The filter helper returns =true=, and broadcasting to subscribers is left
-as a TODO. The subscribe handler logs the filter and returns =ok= without
-registering a working event-delivery path.
+=store_sync/1= reports a validation or queue decision. It does not wait for
+mining. With =ae_event_store_confirm_writes=true=, the batch is removed from
+the retry queue only when the tracked contract call reports =confirmed=.
+Submitted or uncertain outcomes remain retry cases. Disabling confirmation
+uses weaker submission-based dequeue semantics.
 
-Those details prevent this snapshot from being treated as a production Nostr
-relay or a durable event store. An ETS insertion, a successful cast or an
-=ok= subscription response must not become an acceptance claim about external
-clients receiving an event.
+The following inspection calls are available in a configured running release:
 
-The separate July =nosternity_relay_client= snapshot also needs runtime
-validation. It attempts to enumerate registered relays through tuple patterns
-over =erlang:processes()=, which returns process IDs. That expression does not
-provide the intended relay registry. This is an inspection finding, not a new
-test result or a change applied to the source by this documentation task.
+#+BEGIN_SRC erlang
+nosternity_event_store:status().
+nosternity_event_store:contract_id().
+nosternity_event_store:get_event_count().
+#+END_SRC
 
-* How the newer bunker path relates
+Use an event ID to correlate the application record, store query and chain
+receipt. A relay's =ok= response or a ={queued, Id}= response is insufficient
+evidence of persistence. Contract source, deployment configuration and live
+receipts were absent from the uploaded application-source archive.
 
-The September =damage_nostr_relay_client= prefers the dedicated
-=damage_nsecbunker_relay= implementation for subscription and response
-publication. It retains =nosternity_relay= fallbacks for older deployments.
-That compatibility code is evidence of an integration seam, not evidence that
-the older local relay scaffold provides the same delivery guarantees.
+* Recovery has a precise current boundary
 
-For an operational handoff, record the configured callback module/function and
-the actually running relay adapter. The live bunker suite's event-ID and
-counter checks, followed by a correlated reply, provide stronger evidence
-than merely seeing an adapter module on the code path.
+The relay can fetch stored events in pages and rehydrate its ETS cache. This
+is useful for rebuilding a local view of records that reached the contract.
+It does not recover every pending write: the event-store queue is held in
+process memory, so unconfirmed queued records have no local durable outbox
+in the reviewed module.
 
-* A useful next integration demonstration
+There is also a retry boundary at ingress. The relay inserts the event into
+ETS before its asynchronous store request, and duplicates are suppressed.
+A later queue rejection or unavailable contract therefore cannot be repaired
+by assuming an ordinary duplicate relay submission will enqueue the record
+again. An adoption pilot should explicitly exercise this case and define a
+retry/reconciliation path before promising lossless retention.
 
-A small proposed workflow could start with a signed operational event, retain
-its supporting document reference, run an agreed DamageBDD feature and attach
-the resulting report reference to the originating workflow. A reader could
-then inspect the input, claimed result and verification evidence together.
+* Use the right integration surface
 
-If a payment or chain commitment is part of that workflow, add explicit
-settlement and correlation checks. If ECAI supplies an answer, record which
-authorised sources supported it. Each step should have its own failure result
-so a missing attachment or failed payment cannot be disguised by a successfully
-published status event.
+The reviewed =nosternity_relay= still returns every event from its filter
+helper, and subscriber broadcasting remains a TODO. Its subscription handler
+logs a request without establishing the complete delivery path. The separate
+WebSocket handler also needs a full protocol interoperability test. This
+snapshot should not be advertised as a complete drop-in public Nostr relay.
 
-This is a proposed demonstration, not an assertion that Nosternity currently
-offers a complete event marketplace, automated settlement system or universal
-agent interface. The next release documentation should replace the historical
-snapshots with its exact revision, startup configuration, supported interfaces
-and a complete acceptance report.
+The older =nosternity_relay_client= still tries to select tuples from
+=erlang:processes()=, whose elements are PIDs; that registry expression cannot
+supply the intended relay list. The application also has a separate note/thread
+HTTP viewer using the shared Nostr client/pool. These paths need to be tested
+individually rather than inheriting the bunker transport's earlier results.
 
-* Sources and related documentation
+* A first retention pilot
 
-Source basis: the three July Nosternity snapshots and the September
-=damage_nostr_relay_client.erl= compatibility path. Project scope comes from
-the update reproduced in Andrew's 3 October reply. No new Nosternity code was
-executed or modified while preparing this article.
+Choose one allowed author and a small set of public fixture events. Verify
+acceptance, tamper rejection, author/kind exclusion and duplicate handling.
+Observe confirmed storage, restart and rehydrate the cache, then repeat while
+the contract is unavailable and while the queue is full. Record which events
+are retained, rejected, pending or lost across the restart.
 
-- [[file:damagebdd_nostr.org][DamageBDD Nostr integration]]
-- [[file:nostr_reliability.org][Live relay delivery and reply correlation]]
-- [[file:blossom_media.org][Blossom media integration]]
-- [[file:features_current.org][Current feature documentation and evidence map]]
+The immediate adoption measure is whether a second process can retrieve the
+same confirmed event by ID after recovery. The next engineering milestone is
+a durable ingress/retry contract and completed relay subscription behaviour.
+That would strengthen the path from a useful event-store component to a
+broader relay product.
+
+* Source basis and related reading
+
+Reviewed source under =apps/nosternity/src/=: =nosternity_sup=,
+=nosternity_event_store=, =nosternity_relay=, =nosternity_relay_client=,
+=nosternity_websocket=, =nosternity_http= and =nosternity_app=. The supplied
+=nosternity_event_store_tests.erl= checks signed-event validation, tampering,
+policy and size; it does not establish confirmed persistence or restart
+recovery, and was not executed for this review.
+
+- [[file:blossom_media.org][Store supporting files with verifiable byte identities]]
+- [[file:damagebdd_evidence_workflows.org][Attach a precise behaviour report to the workflow]]
+- [[file:damagebdd_nostr.org][Shared DamageBDD Nostr interfaces]]
+- [[file:stack_adoption.org][Plan a stack adoption pilot]]

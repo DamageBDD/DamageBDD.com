@@ -189,18 +189,26 @@
           (let ((fragment
                  (when (file-readable-p file)
                    (with-temp-buffer
-                     (insert-file-contents file)
-                     (setq buffer-file-name file default-directory (file-name-directory file))
-                     (org-mode)
-                     (org-export-expand-include-keyword)
-                     (damagebdd--stable-ids)
-                     (let ((title (string-trim (replace-regexp-in-string "\\`\\*+" "" search)))
-                           found)
-                       (org-map-entries
-                        (lambda ()
-                          (when (and (not found) (equal (org-get-heading t t t t) title))
-                            (setq found (concat "#" (org-entry-get nil "CUSTOM_ID"))))))
-                       found)))))
+                     (unwind-protect
+                         (progn
+                           (insert-file-contents file)
+                           (setq buffer-file-name file
+                                 default-directory (file-name-directory file))
+                           (org-mode)
+                           (org-export-expand-include-keyword)
+                           (damagebdd--stable-ids)
+                           (let ((title (string-trim (replace-regexp-in-string "\\`\\*+" "" search)))
+                                 found)
+                             (org-map-entries
+                              (lambda ()
+                                (when (and (not found) (equal (org-get-heading t t t t) title))
+                                  (setq found (concat "#" (org-entry-get nil "CUSTOM_ID"))))))
+                             found))
+                       ;; Only the disposable copy has generated anchors and
+                       ;; expanded includes.  Never offer to save it over FILE,
+                       ;; even when resolving the heading signals an error.
+                       (set-buffer-modified-p nil)
+                       (setq buffer-file-name nil))))))
             (unless fragment
               (message "Warning: unresolved Org search %s in %s; linking to page" search file))
             (when damagebdd--fragment-cache

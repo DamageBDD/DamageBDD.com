@@ -1,77 +1,98 @@
-#+TITLE: Current Features: ECAI, Nostr, Blossom, Nosternity and nsecbunker
-#+DESCRIPTION: A dated entry point for humans and agents, linking detailed feature articles and distinguishing implementation from recorded deployment evidence.
-#+KEYWORDS: DamageBDD, ECAI, Nostr, Blossom, Nosternity, nsecbunker, documentation
+#+TITLE: Current Features: DamageBDD, ECAI, erm and Nosternity
+#+DESCRIPTION: A source-reviewed entry point to practical workflows, implementation references and the evidence needed to evaluate the stack.
+#+KEYWORDS: DamageBDD, ECAI, erm, Nosternity, Nostr, Blossom, nsecbunker, adoption
 #+AUTHOR: Steven Joseph
 #+DATE: 2026-10-05
+#+CONTENT_CLASS: implementation-overview
+#+IMPLEMENTATION_STATUS: components_present
+#+VALIDATION_STATUS: source_review_only
+#+VALIDATION_SCOPE: Selected implementation paths reviewed in the 5 October uploaded source; historical live results retain their original date and scope.
+#+EVIDENCE_DATE: 2026-10-05
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
 #+OPTIONS: toc:2 ^:nil
 
-* Start here
+* Start with a useful workflow
 
-This collection describes the available implementation and verification
-evidence as reviewed on 5 October 2026. It answers the request for a detailed
-surface that people and agents can read before integrating with the DamageBDD
-stack. Each feature has its own article, with source scope, operating boundaries
-and the evidence still needed for a deployment claim.
+Read [[file:stack_adoption.org][Build an operational memory: a practical guide to the stack]]
+to choose a small adoption pilot. The articles below explain who each feature
+helps, what the source implements and how to evaluate it against a known
+problem. They are based on the application sources uploaded on 5 October 2026.
 
-| Article | Current evidence |
-|---------+------------------|
-| [[file:ecai_private_knowledge.org][ECAI private knowledge retrieval and controlled LLM access]] | Implemented 2 October patch; static/application checks recorded; runtime tests unrecorded |
-| [[file:ecai_relation_processing.org][ECAI deterministic relation processing]] | Core, composition, learning integration and benchmark code in the 2 October source archive |
-| [[file:nostr_reliability.org][Nostr reliability and reply correlation]] | Supplied transport/test corrections and a successful 25 September live-bunker release log |
-| [[file:blossom_media.org][Blossom media integration]] | Reported development scope; implementation and live acceptance evidence unavailable here |
-| [[file:nosternity.org][Nosternity integration scope]] | July component snapshots and newer compatibility hooks; full current integration unverified |
-| [[file:damagebdd_nostr.org][DamageBDD Nostr integration]] | Inspected general client APIs; live verification covers a narrower bunker path |
-| [[file:damage_nsecbunker.org][Damage nsecbunker custody, policy and verification]] | All 12 scenarios passed in release-build run 20260925132037 |
+| Article | Practical entry point | Evidence in this review |
+|---------+-----------------------+-------------------------|
+| [[file:damagebdd_evidence_workflows.org][DamageBDD acceptance evidence]] | Reproduce a service behaviour and share its report | Runner, HTTP, schedules and release-discovery source |
+| [[file:ecai_engineering_memory.org][ECAI engineering memory]] | Retrieve approved records and inspect code relations | Private retrieval, relation learning and index-job source |
+| [[file:ecai_reviewable_repairs.org][ECAI reviewable repairs]] | Retain the context and checks around a generated patch | Incident, preflight, verifier and capsule source |
+| [[file:erm_local_voice.org][erm local voice and desktop]] | Control media and query an appropriate local corpus | Erlang coordination and adapter source; native hardware untested |
+| [[file:nosternity.org][Nosternity event retention]] | Store selected signed events with confirmation tracking | Current event store, supervisor and relay source; delivery/recovery gaps identified |
+| [[file:blossom_media.org][Blossom supporting files]] | Retrieve bytes matching a known digest | HTTP, signed authorization, storage and ownership source |
 
-* How to interpret the status
+* Detailed implementation references
 
-An inspected API establishes that an implementation is present in the named
-snapshot. A static patch check establishes that the change applied to its
-baseline. A recorded live result establishes the particular scenarios on the
-identified deployment and date. These are different kinds of evidence.
+| Reference | Scope and status |
+|-----------+------------------|
+| [[file:ecai_private_knowledge.org][ECAI private knowledge retrieval]] | Private implementation now present in the current archive; fresh runtime validation not performed |
+| [[file:ecai_relation_processing.org][ECAI deterministic relation processing]] | Typed relations and structural evaluation code present; no benchmark score recorded |
+| [[file:damagebdd_nostr.org][DamageBDD Nostr interfaces]] | Source-observed client interfaces and their transport boundaries |
+| [[file:nostr_reliability.org][Nostr reliability and reply correlation]] | Historical 25 September live-bunker result and transport corrections |
+| [[file:damage_nsecbunker.org][nsecbunker custody and policy]] | Historical 12-scenario release-build run; it does not certify this whole source snapshot |
 
-Examples labelled as proposals are integration targets, not existing BDD step
-definitions or passing tests. The articles do not infer production readiness
-from file presence, a conceptual paper, an exported function or another
-component's successful run. In particular, deterministic encoding establishes
-repeatable representation; it does not establish the truth of arbitrary input.
+* What the new source changes
 
-* Source ledger
+Blossom is no longer documented only from a development update: the current
+archive includes its HTTP facade, authorization verifier, rate limiter and
+shared ownership store. Nosternity now explicitly supervises its relay and
+Aeternity event store, validates events and supports cache rehydration.
+Its subscription filtering/broadcasting and pending-write durability remain
+incomplete. Those details supersede the historical July snapshot descriptions.
 
-- Documentation baseline: uploaded =latest-org.tar.gz=, reviewed 5 October 2026.
-- ECAI implementation: =latest-ecai.tar.gz= dated 2 October, plus the separate
-  private-index changed-files package, implementation note and validation record.
-- Nostr and bunker: supplied Erlang modules, live feature and reply-race patch.
-- Release result: supplied console log =Pasted text(20260925-132528).txt=,
-  identifying [[https://lightning.lodgeit.org/reports/QmPd9j9xJKLbmRqFzgb4asWWLsS6Tvi2Z8SdFgy8g7ZCXQ][run 20260925132037]].
-- Nosternity: three source snapshots dated 24 July; these are explicitly treated
-  as historical observations rather than the complete October checkout.
-- Blossom development scope: the project update quoted in Andrew's 3 October
-  reply. Protocol references are linked in the relevant articles.
+ECAI's private-index and LLM-bridge modules are present in this source tree.
+The previously reported unsafe-variable pattern in the log bridge is changed,
+but that observation is not a successful compilation result. The new erm
+article documents a real retrieval connection to ECAI's public disk corpus;
+private voice access still requires its own authenticated integration.
 
-No fresh production feature run, payment, key operation or service restart was
-performed to prepare this documentation. The source examples are documented
-for the corresponding versions and have not been executed as part of this edit.
+* How to interpret evidence
 
-* An integration path for operational knowledge
+A source review establishes the inspected implementation, its apparent control
+flow and its dependencies. A test file establishes a described test case, not
+that the test passed. A build or live result establishes only its recorded
+revision, environment and scenarios. The =EVIDENCE_DATE= on new articles is
+the source-review date; =VALIDATION_STATUS= is =source_review_only=.
 
-A focused proposed demonstration is a small set of authorised operational
-records, one reproducible retrieval question and one explicit relation rule.
-Signed events and supporting attachments can then be connected to the same
-evidence, with DamageBDD checking the expected result and refusal cases.
-Payments and chain commitments should be added with their own settlement
-evidence rather than inferred from successful messaging.
+The 25 September bunker report remains historical evidence for that run.
+It is not reused as verification for Blossom, private retrieval, voice,
+Nosternity persistence or a new release. Generated documentation timestamps
+are also separate from feature verification dates.
 
-The articles identify which parts have code or results today and which still
-need integration evidence. Start with the private-retrieval and relation
-articles for knowledge work, or the bunker and reliability articles for the
-signing handoff.
+Deterministic relation encoding establishes repeatable identity. A signature
+binds an event to a signing key; a digest identifies bytes. None of those
+properties establishes the truth of arbitrary content. Model answers and
+application conclusions need their own supporting evidence.
+
+* Review scope
+
+The source basis is =latest-apps.tar.gz= and the documentation baseline is
+=latest-org.tar(1).gz=, uploaded 5 October 2026. The review followed selected
+feature paths and tests; it is not an exhaustive security audit of every
+application module.
+
+The application archive lacks the repository's =rebar.config=, contract tree,
+native C/C++ sources, relevant include directories and deployed configuration.
+No full build, EUnit/CT suite, audio device test, model inference, payment,
+chain transaction or production service operation was performed. Documentation
+exports and links are checked separately.
+
+Proposed pilot steps are acceptance goals unless explicitly identified as
+existing scenario vocabulary or API calls. Use the complete matching release,
+record its revision and configuration, and retain its own results when moving
+from a source-level evaluation to a deployment claim.
 
 * Existing documentation
 
 - [[file:index.org][Article index]]
-- [[file:../ecai/index.org][ECAI overview]]
+- [[file:../ecai/index.org][ECAI overview and earlier conceptual material]]
 - [[file:../modules/index.org][DamageBDD module index]]
+- [[file:../install.org][Installation guide]]
 - [[file:../node_admins.org][Node administration]]

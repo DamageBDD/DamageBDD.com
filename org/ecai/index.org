@@ -1,5 +1,5 @@
-#+TITLE: ECAI – The End of Probabilistic AI
-#+DESCRIPTION: ECAI (Elliptic Curve AI) introduces deterministic cryptographic intelligence using elliptic curves for verifiable knowledge retrieval without training or probabilistic models.
+#+TITLE: ECAI: Current Implementation and Earlier Conceptual Work
+#+DESCRIPTION: Source-backed ECAI guides for private retrieval, typed relations and reviewable repairs, followed by earlier conceptual material.
 #+KEYWORDS: ECAI, Elliptic Curve AI, deterministic AI, cryptographic intelligence, post-quantum AI, verifiable knowledge retrieval, elliptic curve encoding, proof-based AI, Bitcoin-compatible intelligence
 
 #+INCLUDE: "../header.org"
@@ -9,12 +9,21 @@
 
 * Current implementation documentation
 
-For source-backed capabilities and validation status reviewed 5 October 2026,
-read the [[file:../articles/features_current.org][current feature overview]],
-[[file:../articles/ecai_private_knowledge.org][private knowledge retrieval article]] and
-[[file:../articles/ecai_relation_processing.org][deterministic relation processing article]].
-These describe the implemented interfaces and their evidence boundaries
-separately from the conceptual material below.
+For source-backed capabilities reviewed 5 October 2026, start with
+[[file:../articles/ecai_engineering_memory.org][ECAI engineering memory]],
+[[file:../articles/ecai_reviewable_repairs.org][reviewable repair workflows]],
+[[file:../articles/ecai_private_knowledge.org][private knowledge retrieval]] and
+[[file:../articles/ecai_relation_processing.org][deterministic relation processing]].
+The [[file:../articles/features_current.org][current feature map]] separates
+source inspection, historical tests and deployment evidence.
+
+The material below is the earlier conceptual position, not a description of
+measured current guarantees. The reviewed code establishes repeatable relation
+identity, explicit structural rules and permissioned retrieval interfaces.
+It does not establish universal truth recovery, general hallucination-free
+answers, reversible hashing or quantum resistance of ordinary elliptic-curve
+cryptography. The private storage path uses a separate hybrid-cryptography
+interface whose real backend still needs deployment validation.
 
 * ECAI: Intelligence Without Guessing
 

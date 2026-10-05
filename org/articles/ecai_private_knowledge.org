@@ -1,33 +1,31 @@
 #+TITLE: ECAI Private Knowledge Retrieval and Controlled LLM Access
-#+DESCRIPTION: The implemented private-index patch: encrypted segments, corpus permissions, bounded retrieval, model destinations and validation limits.
+#+DESCRIPTION: The current private-index implementation: encrypted segments, corpus permissions, bounded retrieval, model destinations and validation limits.
 #+KEYWORDS: ECAI, private retrieval, encrypted index, RAG, LLM, access control
 #+AUTHOR: Steven Joseph
 #+DATE: 2026-10-05
 #+CAPABILITY_ID: ecai-private-knowledge
 #+CONTENT_CLASS: implementation-reference
-#+IMPLEMENTATION_STATUS: patch_supplied
-#+VALIDATION_STATUS: static_checks_only
-#+VALIDATION_SCOPE: Patch application and static checks; compilation, EUnit, real PQC and live HTTP/LLM integration are not established.
-#+EVIDENCE_DATE: 2026-10-02
+#+IMPLEMENTATION_STATUS: source_present
+#+VALIDATION_STATUS: source_review_only
+#+VALIDATION_SCOPE: Current source inspected; prior patch checks remain historical. No fresh compilation, EUnit, real PQC or live HTTP/LLM test performed.
+#+EVIDENCE_DATE: 2026-10-05
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
 #+OPTIONS: toc:2 ^:nil
 
 * Current position
 
-ECAI now has a supplied implementation patch for private indexing and controlled
-retrieval into an LLM. Its useful boundary is concrete: encrypt a corpus on disk,
-authorise a reader, retrieve relevant records inside a trusted worker, and send
-only bounded excerpts to an explicitly permitted model destination.
+ECAI's private-index and LLM-bridge implementation is present in the
+5 October 2026 =latest-apps.tar.gz= snapshot. Its boundary is concrete:
+encrypt a corpus on disk, authorise a reader, retrieve records inside a
+trusted worker, and send bounded excerpts to a permitted model destination.
 
-The implementation described here is the 2 October 2026 private-index patch
-against =latest-ecai.tar.gz=. The accompanying validation record confirms static
-and patch-application checks. It explicitly records that compilation, EUnit,
-real liboqs operations and live HTTP/model integration were not run in that
-environment. This article documents the supplied code, not a production
-deployment certification. A subsequent reported compile error in the Damage
-log bridge also means a successful full release build must be evidenced
-separately.
+This source review supersedes the earlier description of the implementation
+as only a supplied 2 October patch. The earlier validation record covered
+static and patch-application checks. No fresh compiler run, EUnit, real
+liboqs operation or live HTTP/model integration was performed here. The
+reported unsafe-variable pattern in the Damage log bridge is changed in
+this snapshot; that is not proof of a successful full release build.
 
 * What becomes private
 
@@ -71,7 +69,7 @@ requires a new corpus/rebuild for rotation, record updates, deletion and
 compaction. Revocation restricts subsequent access; it cannot retrieve plaintext
 that has already been disclosed.
 
-* Interfaces implemented in the patch
+* Interfaces in the current source
 
 | Entry point | Purpose |
 |-------------+---------|
@@ -103,7 +101,7 @@ That score measures lexical matches. It does not measure factual correctness,
 semantic certainty or an experimentally demonstrated geometric advantage.
 Input records must already be appropriately chunked.
 
-The principal limits in the supplied patch are:
+The principal limits in the reviewed source are:
 
 | Resource | Bound |
 |----------+-------|
@@ -151,17 +149,20 @@ be rejected before any model call. A question with no matching evidence should
 return the explicit no-source outcome.
 
 Those are proposed acceptance cases, not results of a completed LodgeiT pilot.
-The patch includes 26 EUnit cases plus an opt-in real-PQC smoke test. Their
-execution, the actual authentication boundary, permission revocation and the
-deployed model route remain the next evidence needed for release acceptance.
+The current archive contains private-index EUnit cases using test crypto
+and model providers. Their execution, real-backend behaviour, authentication,
+permission revocation and the deployed model route remain separate evidence
+needed for release acceptance.
 
 * Sources and related documentation
 
-Implementation basis: =ecai_private_index_llm_changed_files.tar.gz=,
-=ECAI_PRIVATE_INDEX.md= and =ecai_private_validation.txt=, dated 2 October 2026.
+Current implementation basis: =latest-apps.tar.gz=, uploaded 5 October 2026.
+Historical patch context: =ecai_private_index_llm_changed_files.tar.gz= and
+=ecai_private_validation.txt=, dated 2 October 2026.
 Principal modules: =ecai_private_index=, =ecai_private_policy=,
 =ecai_private_store=, =ecai_private_crypto=, =ecai_private_http= and
 =ecai_llm_bridge=.
 
+- [[file:ecai_engineering_memory.org][Practical ECAI adoption guide]]
 - [[file:ecai_relation_processing.org][Deterministic relation processing]]
 - [[file:features_current.org][Current feature documentation and evidence map]]

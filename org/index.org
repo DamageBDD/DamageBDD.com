@@ -46,6 +46,18 @@ highlighting why DamageBDD is powerful, unique, and viable as a decentralized ve
 </noscript>
 
 #+END_EXPORT
+* Find a practical starting point
+
+Start with the [[file:articles/stack_adoption.org][DamageBDD stack adoption guide]]:
+repeatable [[file:articles/damagebdd_evidence_workflows.org][acceptance evidence]],
+[[file:articles/ecai_engineering_memory.org][ECAI engineering memory]],
+[[file:articles/ecai_reviewable_repairs.org][reviewable code repairs]],
+[[file:articles/erm_local_voice.org][erm voice and desktop workflows]], and
+[[file:articles/nosternity.org][Nosternity signed-event retention]].
+Each article includes a pilot and the source-review limits as of 5 October 2026.
+The [[file:articles/features_current.org][current feature map]] records the
+implementation evidence separately from the broader product vision below.
+
 * What is DamageBDD?
 
 DamageBDD is a platform that lets anyone – not just programmers – describe how software should behave, using simple sentences. These sentences are written in a format called [[https://en.wikipedia.org/wiki/Behavior-driven_development][BDD]] (Behaviour Driven Development), which turns software testing into a conversation instead of a cryptic task only engineers understand.

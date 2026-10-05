@@ -6,7 +6,8 @@
 #+CAPABILITY_ID: ecai-relation-processing
 #+CONTENT_CLASS: implementation-reference
 #+IMPLEMENTATION_STATUS: source_present
-#+VALIDATION_STATUS: not_recorded
+#+VALIDATION_STATUS: source_review_only
+#+EVIDENCE_DATE: 2026-10-05
 #+VALIDATION_SCOPE: Relation and benchmark code inspected; no executed benchmark score or runtime result recorded in this article.
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
@@ -15,7 +16,7 @@
 * Current position
 
 ECAI's relation layer provides a small, explicit mechanism for representing and
-deriving structural facts. The 2 October 2026 source archive contains
+deriving structural facts. The 5 October 2026 application source archive contains
 =ecai_relation=, =ecai_compose=, =ecai_relation_bench= and
 =ecai_relation_learning=, with corresponding test modules. The implementation
 can extract relations from code-analysis maps, compose permitted relationships,
@@ -145,10 +146,11 @@ economic-event reasoning deployment.
 
 * Sources and related documentation
 
-Source basis: =latest-ecai.tar.gz= dated 2 October 2026, particularly
+Source basis: =latest-apps.tar.gz= uploaded 5 October 2026, particularly
 =apps/ecai/src/ecai_relation.erl=, =ecai_compose.erl=,
 =ecai_relation_bench.erl= and =ecai_relation_learning.erl=, plus their EUnit
 sources. Examples above are derived from those APIs and were not executed here.
 
+- [[file:ecai_engineering_memory.org][Practical ECAI adoption guide]]
 - [[file:ecai_private_knowledge.org][Private knowledge retrieval and the model boundary]]
 - [[file:features_current.org][Current feature documentation and evidence map]]

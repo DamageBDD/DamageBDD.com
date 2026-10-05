@@ -34,6 +34,56 @@
              (kill-buffer buffer))))
        (delete-directory damagebdd-project-root t))))
 
+(defmacro damagebdd-test--record-dirty-file-disposals (disposals &rest body)
+  "Record file buffers killed with unsaved changes while evaluating BODY.
+Batch Emacs skips the interactive confirmation, so observe its trigger at
+kill time instead.  This also covers temporary buffers with inhibited hooks."
+  (declare (indent 1))
+  `(let ((real-kill-buffer (symbol-function 'kill-buffer)))
+     (cl-letf (((symbol-function 'kill-buffer)
+                (lambda (&optional buffer)
+                  (with-current-buffer (or buffer (current-buffer))
+                    (when (and buffer-file-name (buffer-modified-p))
+                      (push (buffer-name) ,disposals)))
+                  (funcall real-kill-buffer buffer))))
+       ,@body)))
+
+(ert-deftest damagebdd-fragment-cleanup-does-not-prompt-or-touch-author-buffer ()
+  (damagebdd-test--site
+    (damagebdd-test--put "org/chapter.org" "#+TITLE: Chapter\n* Details\nSaved text.\n")
+    (damagebdd-test--put "org/part.inc" "* Included\nIncluded text.\n")
+    (damagebdd-test--put "org/index.org" "#+TITLE: Start\n#+INCLUDE: \"part.inc\"\n")
+    (let* ((file (damagebdd--root "org/chapter.org"))
+           (before (damagebdd--hash-file file))
+           (author (find-file-noselect file))
+           disposals)
+      (with-current-buffer author
+        (goto-char (point-max))
+        (insert "Unsaved author edit.\n"))
+      (let ((author-text (with-current-buffer author (buffer-string))))
+        (damagebdd-test--record-dirty-file-disposals disposals
+          (should (equal "#details" (damagebdd--fragment file "*Details")))
+          (should (equal "#included" (damagebdd--fragment
+                                     (damagebdd--root "org/index.org") "*Included"))))
+        (should-not disposals)
+        (should (equal before (damagebdd--hash-file file)))
+        (should (buffer-live-p author))
+        (with-current-buffer author
+          (should (buffer-modified-p))
+          (should (equal author-text (buffer-string))))))))
+
+(ert-deftest damagebdd-fragment-error-cleanup-does-not-prompt ()
+  (damagebdd-test--site
+    (damagebdd-test--put "org/index.org"
+                        "#+TITLE: Start\n#+INCLUDE: \"missing.inc\"\n* Details\n")
+    (let* ((file (damagebdd--root "org/index.org"))
+           (before (damagebdd--hash-file file))
+           disposals)
+      (damagebdd-test--record-dirty-file-disposals disposals
+        (should-error (damagebdd--fragment file "*Details")))
+      (should-not disposals)
+      (should (equal before (damagebdd--hash-file file))))))
+
 (ert-deftest damagebdd-paired-export-preserves-content-and-boundaries ()
   (damagebdd-test--site
     (damagebdd-test--put

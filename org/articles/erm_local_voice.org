@@ -1,0 +1,127 @@
+#+TITLE: erm: Bring Voice, Media and Operational Knowledge to Your Desktop
+#+DESCRIPTION: A local Erlang workspace with typed voice actions, optional model assistance, native speech output and inspectable service health.
+#+KEYWORDS: erm, Erlang, local voice, Whisper, Piper, GTK, MPV, ECAI
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-05
+#+CAPABILITY_ID: erm-local-voice
+#+CONTENT_CLASS: adoption-guide
+#+IMPLEMENTATION_STATUS: source_present
+#+VALIDATION_STATUS: source_review_only
+#+VALIDATION_SCOPE: Erlang voice, media, TTS, model-pull and Lens paths inspected; native binaries, microphone, playback, speaker verification and UI not run.
+#+EVIDENCE_DATE: 2026-10-05
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Keep a small command from becoming another context switch
+
+Pause the music. Find a track. Ask a question about an indexed document.
+These are modest interactions, but they repeatedly pull attention away from
+the task on screen. erm brings them into a supervised Erlang desktop workspace
+with voice input, media control, optional local model assistance and speech
+output.
+
+The clearest first audience is a Linux developer or operator willing to run
+the local audio and GTK dependencies. Start with a few observable commands
+on your own workstation. That is enough to evaluate whether the interaction
+helps without treating the whole desktop as an autonomous agent.
+
+* Common commands have a direct path
+
+The voice-intent module recognises play, pause, stop, next, previous, volume,
+track selection and player visibility before asking a model to classify an
+unknown phrase. Volume input is bounded. Known negated commands are refused.
+The media adapter sends typed actions to the existing MPV process owner and
+uses the playlist state for track selection and progression.
+
+The voice coordinator handles transcript boundaries, command windows,
+deduplication and asynchronous work. Model planning and media actions have
+timeouts; they do not run as blocking work inside the coordinator's message
+handler. The operating benefit is that command state can be inspected and
+failures can be reported through the same service interface.
+
+Try a small command set such as “Bob, pause music”, “Bob, next song” and
+“Bob, volume 30” after configuring the trigger. These are pilot utterances,
+not measured recognition results. Check actual playback and volume after
+each command, including repetitions and silence around the wake phrase.
+
+* Model assistance has a defined action vocabulary
+
+For phrases outside the direct parser, the code requests a bounded JSON
+intent and validates it against built-in or operator-configured actions.
+Model output does not choose arbitrary Erlang module/function pairs. Custom
+callbacks come from trusted configuration.
+
+That is a useful extension boundary for a workstation tool. A maintainer can
+add a named action with an explicit implementation and test its effect.
+The callback still carries whatever authority its implementation has; a
+voice phrase or speaker match should not be treated as approval for payments,
+secret access or other sensitive operations.
+
+The configured Ollama path can answer a general question or assist with an
+intent. Local processing depends on the actual configuration and installed
+models. The code also supports pulling a missing configured model, so setup
+and downloads are separate from an offline-use claim.
+
+* Ask indexed knowledge, with the retrieval boundary visible
+
+The “ask ECAI” route retrieves up to three sources from the configured disk
+corpus and sends bounded excerpts to the answer model. Missing corpus
+configuration and empty retrieval have explicit error paths.
+
+This is a concrete connection between erm and ECAI, but it uses
+=ecai_ollama_rag:retrieve_sources/3=. It does not call the corpus/principal
+private bridge. Use an appropriate public or non-sensitive corpus for this
+pilot. Private voice access needs an explicit authenticated integration with
+the [[file:ecai_private_knowledge.org][private retrieval boundary]].
+
+* Speech and service health are part of the interface
+
+The TTS service exposes native Piper speech, voice selection, volume controls,
+repeat, cancellation and diagnostics. Model installation is handled by an
+asynchronous service with manifest-driven file checks and immutable cache
+directories. Listening suppression is used around speech output to reduce
+feedback into the recogniser.
+
+The optional native voice coordinator also contains enrolment and speaker-score
+handling. The source archive does not include its native capture/Whisper
+binary implementation, and no audio was tested here. Speaker matching should
+be evaluated with recordings, other speakers and replay attempts before it is
+given any security role; the reviewed code does not establish liveness.
+
+In a running configured release, these inspection calls help separate a
+command problem from a missing model or disconnected speech backend:
+
+#+BEGIN_SRC erlang
+erm_voice:status().
+erm_voice:healthcheck().
+erm_tts:diagnostics().
+#+END_SRC
+
+Readiness is not an end-to-end microphone test. Verify capture, recognition,
+dispatch, playback and the spoken response as one real interaction.
+
+* A desktop that can grow around the operator
+
+Lens provides an optional GTK interface with Nostr feed, media and configured
+wallet integration components. Its supervision and show operation return
+useful startup errors, allowing it to be evaluated separately from voice.
+Wallet adapters, mainnet permission and confirmation behaviour need their
+own setup and tests. No payment or wallet action is part of the suggested
+voice pilot.
+
+The first useful result is a workstation that performs a small set of commands
+reliably and makes its failures visible. Measure accidental triggers, missed
+commands and time to recover a disconnected backend on your own hardware.
+
+* Source basis and next steps
+
+Reviewed modules under =apps/erm/src/=: =erm_voice=, =erm_voice_boundary=,
+=erm_voice_intent=, =erm_voice_media=, =erm_native_voice=, =erm_voice_health=,
+=erm_tts=, =erm_model_pull=, =erm_lens=, =erm_lens_wallet= and =erm_sup=.
+Isolated voice/TTS fixtures are present under =apps/erm/test/=; fake services
+and ports in those fixtures are not evidence of live hardware operation.
+
+- [[file:ecai_engineering_memory.org][Prepare a useful retrieval corpus]]
+- [[file:nosternity.org][Understand the separate signed-event retention path]]
+- [[file:stack_adoption.org][Plan the next integration step]]

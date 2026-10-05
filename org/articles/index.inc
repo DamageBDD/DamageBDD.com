@@ -1,3 +1,17 @@
+* Start here: practical adoption guides
+
+Choose one useful workflow and evaluate it on your own evidence. These articles
+review the application source uploaded on 5 October 2026 and include scoped
+pilots rather than unmeasured performance promises.
+
+- [[file:stack_adoption.org][Build an operational memory: a practical guide to the stack]]
+- [[file:damagebdd_evidence_workflows.org][DamageBDD: acceptance evidence you can share]]
+- [[file:ecai_engineering_memory.org][ECAI: engineering knowledge with sources and access boundaries]]
+- [[file:ecai_reviewable_repairs.org][ECAI: make a generated patch easier to review]]
+- [[file:erm_local_voice.org][erm: voice, media and operational knowledge on your desktop]]
+- [[file:nosternity.org][Nosternity: give signed events a retention policy]]
+- [[file:blossom_media.org][Blossom: share files with a verifiable byte identity]]
+
 
 * Current implementation articles
 
@@ -9,7 +23,7 @@ and validation boundaries. Start with the
 - [[file:ecai_relation_processing.org][ECAI deterministic relation processing]]
 - [[file:nostr_reliability.org][Nostr reliability and NIP-46 reply correlation]]
 - [[file:blossom_media.org][Blossom media integration]]
-- [[file:nosternity.org][Nosternity integration scope and current evidence]]
+- [[file:nosternity.org][Nosternity event retention and current limits]]
 - [[file:damagebdd_nostr.org][DamageBDD Nostr integration]]
 - [[file:damage_nsecbunker.org][Damage nsecbunker custody, policy and live verification]]
 

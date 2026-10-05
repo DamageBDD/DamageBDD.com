@@ -101,8 +101,10 @@ Validation
     emacs -Q --batch -l scripts/publish-tests.el -f ert-run-tests-batch-and-exit
 
 Checked with Emacs 29.3 / Org 9.6.15:
-- Five ERT integration tests pass: paired export/content boundaries, metadata
-  defaults, supplied API handling, stale-file ownership and duplicate IDs.
+- Seven ERT tests pass: paired export/content boundaries, metadata defaults,
+  supplied API handling, stale-file ownership, duplicate IDs, and temporary
+  heading-resolution buffer cleanup on success and error. Cleanup checks also
+  confirm that unsaved edits in an open source buffer remain untouched.
 - Byte compilation passes with warnings treated as errors.
 - The supplied Org tree builds 67 HTML/Markdown pairs and seven capability
   records. All inventory targets, source/export hashes, discovery links and
@@ -112,3 +114,14 @@ The full build used placeholder HTML snippets and an empty assets directory
 because production snippets/assets were not supplied. Production rendering,
 external links and live deployment were not tested. Existing legacy article
 content and links are not automatically corrected by this publisher.
+
+Temporary-buffer cleanup fix
+----------------------------
+Heading-link resolution now clears the disposable copy's modified state and
+file association before closing it, including when include expansion fails.
+This prevents the modified *temp* buffer confirmation during interactive
+publishing. Source buffers and their unsaved edits remain unchanged.
+
+To install just this fix, apply publish_temp_buffer_cleanup.patch from the
+repository root after the previous publisher update, or replace scripts/publish.el.
+Cancel an active publish with C-g, then reload scripts/publish.el before retrying.
