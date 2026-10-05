@@ -1,0 +1,270 @@
+#+TITLE: Install DamageBDD
+#+DESCRIPTION: Beginner-friendly installation guide for DamageBDD on Linux and Android Termux using the verified production installer.
+#+KEYWORDS: DamageBDD install, Damage Node, Linux, Ubuntu, Debian, Mint, Arch Linux, Fedora, Alpine, Termux, BDD, software testing
+#+INCLUDE: "header.org"
+
+#+OPTIONS: toc:nil
+#+TOC: headlines 2
+#+STARTUP: overview
+
+* Install DamageBDD
+
+Welcome! This page will help you install a *DamageBDD node* without needing to
+build anything from source.
+
+For the normal installation you do *not* need to install Erlang, rebar3, or
+clone the DamageBDD repository first. The production installer detects your
+system, selects a compatible prebuilt package, verifies it, and installs it
+using your operating system's package manager.
+
+If this is your first time using a terminal, don't worry. You can copy and
+paste the commands below exactly as shown.
+
+* Quick Install
+
+** Linux
+
+Open a terminal and run:
+
+#+begin_src bash
+curl -fsSL https://run.damagebdd.com/install | sudo bash -s -- --yes --start
+#+end_src
+
+You may be asked for your computer password by =sudo=. This is normal: Linux
+needs administrator permission to install system packages and start services.
+
+The =--start= option tells the installer to enable and start the packaged
+DamageBDD service after installation.
+
+** Android with Termux
+
+Install and open Termux, then run this command *inside Termux*:
+
+#+begin_src bash
+curl -fsSL https://run.damagebdd.com/install | bash -s -- --yes --start
+#+end_src
+
+Do *not* use =sudo= or run the Termux installer as root.
+
+Android may stop background applications to save battery, so a phone is useful
+for experimenting but may not be suitable for a node that must stay online all
+the time.
+
+* Prefer to Look Before You Install?
+
+That's a good idea.
+
+You can download the installer first:
+
+#+begin_src bash
+curl -fsSL https://run.damagebdd.com/install -o damagebdd-install.sh
+#+end_src
+
+Read it with your editor, or in the terminal:
+
+#+begin_src bash
+less damagebdd-install.sh
+#+end_src
+
+Then install on Linux:
+
+#+begin_src bash
+sudo bash damagebdd-install.sh --yes --start
+#+end_src
+
+Or install in Termux:
+
+#+begin_src bash
+bash damagebdd-install.sh --yes --start
+#+end_src
+
+* Check Your System First
+
+You can ask the installer which DamageBDD release target matches your system
+without installing anything:
+
+#+begin_src bash
+curl -fsSL https://run.damagebdd.com/install | bash -s -- --print-platform
+#+end_src
+
+For example, the result may identify an Ubuntu, Debian, Arch, RPM, Alpine, or
+Termux target for your native architecture.
+
+You can also download and validate the selected package without installing it:
+
+#+begin_src bash
+curl -fsSL https://run.damagebdd.com/install | bash -s -- --check
+#+end_src
+
+The =--check= mode expects the required download and package-inspection tools
+to already be installed.
+
+* Supported Systems
+
+The production installer supports compatible prebuilt releases for:
+
+- Debian, Ubuntu, Linux Mint, Pop!_OS, Kali, and related Debian/Ubuntu systems
+- Arch Linux, Arch Linux ARM, Manjaro, EndeavourOS, Garuda, and related systems
+- Fedora, RHEL, Rocky Linux, AlmaLinux, CentOS, and related RPM systems
+- openSUSE and SLES
+- Alpine Linux
+- Native Termux on Android
+
+A compatible package must exist for your exact release target and architecture.
+
+The production installer does not handle native macOS, native Windows,
+immutable/OSTree systems, or source builds.
+
+If your system is not supported, see [[./node_dev][Node Development]] instead
+of forcing a package made for another operating system onto your machine.
+
+* What the Installer Does
+
+The installer is designed to do the repetitive work for you. It:
+
+1. Detects your operating system and native package architecture.
+2. Selects the requested DamageBDD release (the latest release by default).
+3. Downloads the release metadata and matching prebuilt package.
+4. Verifies the package SHA-256 digest.
+5. Checks that the package type, architecture, and target match your system.
+6. Installs required native packages and DamageBDD using your package manager.
+7. Optionally enables and starts the packaged service when you pass =--start=.
+8. Checks the local DamageBDD version endpoint after installation.
+9. Writes an installation log so failures are easier to diagnose.
+
+The installer uses prebuilt DamageBDD packages with their runtime included. It
+does not bootstrap a system Erlang or perform a source build.
+
+* Confirm DamageBDD Is Running
+
+After installing with =--start=, try:
+
+#+begin_src bash
+curl -fsS http://127.0.0.1:4888/api/version
+#+end_src
+
+If the node is ready, you should receive version information from the local
+DamageBDD API.
+
+You can also open the local service in a browser:
+
+#+begin_src
+http://localhost:4888
+#+end_src
+
+This address points to your own machine.
+
+** On a Linux system using systemd
+
+Check the service:
+
+#+begin_src bash
+sudo systemctl status damage.service --no-pager
+#+end_src
+
+Follow its logs:
+
+#+begin_src bash
+sudo journalctl -u damage.service -f
+#+end_src
+
+Press =Ctrl-C= when you want to stop following the logs.
+
+** In Termux
+
+Check the runit service:
+
+#+begin_src bash
+SVDIR="$PREFIX/var/service" sv status damage
+#+end_src
+
+If Termux was freshly configured for services, opening a new Termux shell can
+also help the service supervisor start normally.
+
+* Updating DamageBDD
+
+Updating is intentionally similar to installing.
+
+Run the same command again:
+
+#+begin_src bash
+curl -fsSL https://run.damagebdd.com/install | sudo bash -s -- --yes --start
+#+end_src
+
+The installer selects the latest compatible published release by default.
+
+To request a specific published release, use:
+
+#+begin_src bash
+curl -fsSL https://run.damagebdd.com/install | sudo bash -s -- --yes --start --version VERSION
+#+end_src
+
+Replace =VERSION= with the exact published DamageBDD release name.
+
+* If Something Goes Wrong
+
+Start with the installer log.
+
+** Linux
+
+#+begin_src bash
+sudo less /var/log/damagebdd/install.log
+#+end_src
+
+** Termux
+
+#+begin_src bash
+less "$PREFIX/var/log/damagebdd/install.log"
+#+end_src
+
+Look near the end for a line beginning with:
+
+#+begin_src
+[damagebdd] ERROR:
+#+end_src
+
+That message normally tells you which dependency, package, repository, or
+validation step needs attention.
+
+A warning is different from an error. For example, on Debian-family systems an
+unrelated APT repository can fail to refresh while DamageBDD is still able to
+install from the package indexes already available. Required package
+installation and DamageBDD verification must still succeed.
+
+If installation completed but the local version endpoint is not responding,
+check the DamageBDD service logs. The node may still need configuration or an
+encrypted secret store to be unlocked.
+
+* Useful Installer Options
+
+Most beginners only need =--yes --start=. These options are useful later:
+
+| Option | What it does |
+|--------+--------------|
+| =--help= | Show installer help. |
+| =--print-platform= | Show the detected release target without installing. |
+| =--check= | Download and validate the package without installing it. |
+| =--version NAME= | Install an exact published release instead of =latest=. |
+| =--start= | Enable and start the package-provided service. |
+| =--tor auto= | Use the normal automatic Tor policy (the default). |
+| =--tor system= | Use only Tor already available from configured repositories. |
+| =--tor official= | Require the official Tor Project APT setup when appropriate. |
+| =--tor skip= | Do not explicitly install Tor; package dependencies may still require it. |
+
+For the complete current list, run:
+
+#+begin_src bash
+curl -fsSL https://run.damagebdd.com/install | bash -s -- --help
+#+end_src
+
+* What Next?
+
+Once your node is installed and running, continue with:
+
+- [[./node][Run a Damage Node]] for an overview of running a node.
+- [[./node_admins][Node Admin Guide]] for wallets, Lightning, Nostr, secrets, and production administration.
+- [[./node_dev][Node Development]] if you are modifying DamageBDD itself.
+
+You do not need to understand every part of DamageBDD before getting started.
+Install the node, confirm the local version endpoint works, and then add the
+configuration you need one piece at a time.
