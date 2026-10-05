@@ -141,7 +141,7 @@
   (interactive
    (list (read-string "Enter user@node (e.g., root@node0): " "root@node0")))
   (damagebdd-publish)
-  (let ((default-directory (expand-file-name "~/Org/damagebdd/")))
+  (let ((default-directory (expand-file-name damagebdd-project-root)))
     (async-shell-command
      (format "rsync -avz --delete -e ssh public/ %s:/var/www/damagebdd.com/" node)
      "*DamageBDD Deploy*")))
