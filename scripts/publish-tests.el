@@ -1,9 +1,11 @@
 ;;; publish-tests.el --- Integration checks for the Org publisher -*- lexical-binding: t; -*-
 ;; Run: emacs -Q --batch -l scripts/publish-tests.el -f ert-run-tests-batch-and-exit
 (require 'ert)
+(defconst damagebdd-test--publisher-file
+  (expand-file-name "publish.el" (file-name-directory (or load-file-name buffer-file-name))))
 (let ((process-environment (copy-sequence process-environment)))
   (setenv "DAMAGEBDD_PUBLISH_NO_AUTO" "1")
-  (load-file (expand-file-name "publish.el" (file-name-directory (or load-file-name buffer-file-name)))))
+  (load-file damagebdd-test--publisher-file))
 
 (defun damagebdd-test--put (relative text)
   (let ((file (expand-file-name relative damagebdd-project-root)))
@@ -164,12 +166,15 @@ kill time instead.  This also covers temporary buffers with inhibited hooks."
     (damagebdd-test--put "org/edited.org" "#+TITLE: Edited\nOld documentation.\n")
     (damagebdd-publish)
     (damagebdd-test--put "public/edited.md" "Manual edit: preserve me.\n")
+    (damagebdd-test--put "public/edited.html" "Manual HTML: preserve me.\n")
     (damagebdd-test--put "public/unrelated.md" "Unrelated: preserve me.\n")
     (delete-file (damagebdd--root "org/old.org"))
     (delete-file (damagebdd--root "org/edited.org"))
     (damagebdd-publish)
     (should-not (file-exists-p (damagebdd--root "public/old.md")))
+    (should-not (file-exists-p (damagebdd--root "public/old.html")))
     (should (equal "Manual edit: preserve me.\n" (damagebdd--read (damagebdd--root "public/edited.md"))))
+    (should (equal "Manual HTML: preserve me.\n" (damagebdd--read (damagebdd--root "public/edited.html"))))
     (should (file-exists-p (damagebdd--root "public/unrelated.md")))
     (should-not (string-match-p "old.md" (damagebdd--read (damagebdd--root "public/docs/index.md"))))))
 
@@ -178,4 +183,138 @@ kill time instead.  This also covers temporary buffers with inhibited hooks."
     (damagebdd-test--put "org/index.org" "#+TITLE: A\n#+CAPABILITY_ID: duplicate\nA.\n")
     (damagebdd-test--put "org/other.org" "#+TITLE: B\n#+CAPABILITY_ID: duplicate\nB.\n")
     (should-error (damagebdd-publish))))
+
+(defun damagebdd-test--inventory ()
+  (damagebdd--read-json (damagebdd--root "public/docs/index.json")))
+
+(defun damagebdd-test--document (source inventory)
+  (cl-find source (alist-get 'documents inventory)
+           :key (lambda (doc) (alist-get 'source_path doc)) :test #'equal))
+
+(ert-deftest damagebdd-freshness-stable-across-build-times-and-source-mtimes ()
+  (damagebdd-test--site
+    (damagebdd-test--put
+     "org/index.org"
+     (concat "#+TITLE: Stable\n#+CAPABILITY_ID: stable\n"
+             "#+LAST_MODIFIED: 2026-10-05\n#+EVIDENCE_DATE: 2026-09-25\n"
+             "* Details\nText[fn:one] with [[named-code][a code link]].\n"
+             "#+NAME: named-code\n#+BEGIN_SRC text\nhello\n#+END_SRC\n"
+             "[fn:one] Footnote.\n"))
+    (damagebdd-test--put "org/other.org" "#+TITLE: Other\nNo declared date.\n")
+    (damagebdd-publish)
+    (let* ((first (damagebdd-test--inventory))
+           (revision (alist-get 'content_revision first))
+           (html (damagebdd--hash-file (damagebdd--root "public/index.html"))))
+      (setenv "SOURCE_DATE_EPOCH" "1791237600")
+      (set-file-times (damagebdd--root "org/index.org") (seconds-to-time 1000000000))
+      (set-file-times (damagebdd--root "org/other.org") (seconds-to-time 1000000001))
+      (damagebdd-publish)
+      (let* ((second (damagebdd-test--inventory))
+             (doc (damagebdd-test--document "org/index.org" second))
+             (caps (damagebdd--read-json (damagebdd--root "public/docs/capabilities.json"))))
+        (should-not (equal (alist-get 'generated_at first) (alist-get 'generated_at second)))
+        (should (equal revision (alist-get 'content_revision second)))
+        (should (equal revision (alist-get 'content_revision caps)))
+        (should (equal html (alist-get 'html_sha256 doc)))
+        (should (equal "2026-10-05" (alist-get 'last_modified doc)))
+        (should (equal "declared" (alist-get 'last_modified_source doc)))
+        (should (equal "2026-09-25" (alist-get 'evidence_date doc)))
+        (should-not (alist-get 'last_modified (damagebdd-test--document "org/other.org" second)))
+        (should (string-match-p "<lastmod>2026-10-05</lastmod>"
+                                (damagebdd--read (damagebdd--root "public/sitemap.xml"))))
+        (should-not (string-match-p "1970-01-01\\|2001-09-09"
+                                    (damagebdd--read (damagebdd--root "public/sitemap.xml"))))))))
+
+(ert-deftest damagebdd-freshness-tracks-includes-metadata-additions-and-removals ()
+  (damagebdd-test--site
+    (damagebdd-test--put "org/index.org" "#+TITLE: Start\n#+INCLUDE: \"part.inc\"\n")
+    (damagebdd-test--put "org/part.inc" "Included version one.\n")
+    (damagebdd-publish)
+    (let* ((first (damagebdd-test--inventory))
+           (doc (damagebdd-test--document "org/index.org" first))
+           (revision (alist-get 'content_revision first)))
+      (damagebdd-test--put "org/part.inc" "Included version two.\n")
+      (damagebdd-publish)
+      (let ((changed (damagebdd-test--document "org/index.org" (damagebdd-test--inventory))))
+        (should (equal (alist-get 'source_sha256 doc) (alist-get 'source_sha256 changed)))
+        (should-not (equal (alist-get 'markdown_sha256 doc) (alist-get 'markdown_sha256 changed))))
+      (dolist (change '(metadata add remove))
+        (should-not (equal revision (alist-get 'content_revision (damagebdd-test--inventory))))
+        (setq revision (alist-get 'content_revision (damagebdd-test--inventory)))
+        (pcase change
+          ('metadata (damagebdd-test--put "org/index.org"
+                                         "#+TITLE: Start\n#+VALIDATION_STATUS: source_reviewed\n#+INCLUDE: \"part.inc\"\n"))
+          ('add (damagebdd-test--put "org/new.org" "#+TITLE: New\nNew page.\n"))
+          ('remove (delete-file (damagebdd--root "org/new.org"))))
+        (damagebdd-publish))
+      (should-not (equal revision (alist-get 'content_revision (damagebdd-test--inventory))))
+      (should-not (damagebdd-test--document "org/new.org" (damagebdd-test--inventory)))
+      (should-not (file-exists-p (damagebdd--root "public/new.html")))
+      (should-not (file-exists-p (damagebdd--root "public/new.md"))))))
+
+(ert-deftest damagebdd-freshness-tracks-html-only-and-api-changes ()
+  (damagebdd-test--site
+    (damagebdd-test--put "org/index.org" "#+TITLE: Start\nPublic documentation.\n")
+    (damagebdd-publish)
+    (let* ((first (damagebdd-test--inventory))
+           (revision (alist-get 'content_revision first))
+           (md (alist-get 'markdown_sha256 (damagebdd-test--document "org/index.org" first))))
+      (damagebdd-test--put "snippets/postamble.html" "<footer>Updated footer</footer>")
+      (damagebdd-publish)
+      (should-not (equal revision (alist-get 'content_revision (damagebdd-test--inventory))))
+      (should (equal md (alist-get 'markdown_sha256
+                                  (damagebdd-test--document "org/index.org" (damagebdd-test--inventory)))))
+      (dolist (version '("1" "2" nil))
+        (setq revision (alist-get 'content_revision (damagebdd-test--inventory)))
+        (if version
+            (damagebdd-test--put "openapi.json"
+                                (format "{\"openapi\":\"3.1.0\",\"info\":{\"title\":\"Test\",\"version\":\"%s\"},\"paths\":{}}" version))
+          (delete-file (damagebdd--root "openapi.json")))
+        (damagebdd-publish)
+        (should-not (equal revision (alist-get 'content_revision (damagebdd-test--inventory))))
+        (when version
+          (should (equal (alist-get 'sha256 (alist-get 'openapi (damagebdd-test--inventory)))
+                         (damagebdd--hash-file (damagebdd--root "public/openapi.json")))))))))
+
+(ert-deftest damagebdd-freshness-rejects-invalid-modification-dates ()
+  (damagebdd-test--site
+    (dolist (date '("yesterday" "2026-02-30" "2026-10-05T24:00:00Z"))
+      (damagebdd-test--put "org/index.org" (format "#+TITLE: Start\n#+LAST_MODIFIED: %s\nText.\n" date))
+      (should-error (damagebdd-publish)))
+    (should (equal "2026-10-05T12:13:14Z" (damagebdd--modified-date "2026-10-05T12:13:14Z")))))
+
+(ert-deftest damagebdd-freshness-git-dates-require-clean-tracked-dependencies ()
+  (skip-unless (executable-find "git"))
+  (damagebdd-test--site
+    (make-directory (damagebdd--root "scripts") t)
+    (copy-file damagebdd-test--publisher-file (damagebdd--root "scripts/publish.el"))
+    (damagebdd-test--put "org/index.org" "#+TITLE: Start\n#+INCLUDE: \"parts/outer.inc\"\n")
+    (damagebdd-test--put "org/parts/outer.inc" "#+INCLUDE: \"inner space.inc\"\n")
+    (damagebdd-test--put "org/parts/inner space.inc" "Original include.\n")
+    (dolist (key '("GIT_AUTHOR_NAME" "GIT_COMMITTER_NAME")) (setenv key "Publisher Test"))
+    (dolist (key '("GIT_AUTHOR_EMAIL" "GIT_COMMITTER_EMAIL")) (setenv key "test@example.invalid"))
+    (dolist (key '("GIT_AUTHOR_DATE" "GIT_COMMITTER_DATE")) (setenv key "2026-09-01T12:00:00Z"))
+    (should (damagebdd--git "init" "-q"))
+    (should (damagebdd--git "add" "."))
+    (should (damagebdd--git "-c" "commit.gpgsign=false" "commit" "-qm" "Fixture"))
+    (damagebdd-publish)
+    (let ((doc (damagebdd-test--document "org/index.org" (damagebdd-test--inventory))))
+      (should (equal "2026-09-01T12:00:00Z" (alist-get 'last_modified doc)))
+      (should (equal "git" (alist-get 'last_modified_source doc))))
+    (damagebdd-test--put "org/parts/inner space.inc" "Dirty include.\n")
+    (damagebdd-publish)
+    (should-not (alist-get 'last_modified (damagebdd-test--document "org/index.org" (damagebdd-test--inventory))))
+    (should (damagebdd--git "add" "org/parts/inner space.inc"))
+    (dolist (key '("GIT_AUTHOR_DATE" "GIT_COMMITTER_DATE")) (setenv key "2026-10-01T12:00:00Z"))
+    (should (damagebdd--git "-c" "commit.gpgsign=false" "commit" "-qm" "Update include"))
+    (damagebdd-publish)
+    (should (equal "2026-10-01T12:00:00Z"
+                   (alist-get 'last_modified (damagebdd-test--document "org/index.org" (damagebdd-test--inventory)))))
+    ;; An unrelated dirty source does not invalidate this page's date.
+    (damagebdd-test--put "unrelated.txt" "Not an export input.\n")
+    (damagebdd-publish)
+    (should (alist-get 'last_modified (damagebdd-test--document "org/index.org" (damagebdd-test--inventory))))
+    (damagebdd-test--put "snippets/header.html" "<meta name=\"dirty\" content=\"yes\">")
+    (damagebdd-publish)
+    (should-not (alist-get 'last_modified (damagebdd-test--document "org/index.org" (damagebdd-test--inventory))))))
 ;;; publish-tests.el ends here

@@ -20,6 +20,7 @@
 ;;   #+EVIDENCE_DATE: 2026-10-05
 ;;   #+VERIFIED_RELEASE: <release actually covered by the evidence>
 ;;   #+EVIDENCE_URL: https://example.org/report
+;;   #+LAST_MODIFIED: 2026-10-06
 ;; EVIDENCE_URL may be repeated.  Missing status is "not_recorded", never
 ;; inferred from prose or the build date.  DATE is the document date only.
 ;; Existing feature articles are recognised by path, even without these fields.
@@ -31,6 +32,12 @@
 ;; Tested with Emacs 29.3 / Org 9.6.15.
 ;; Configure the web server to serve .md as text/markdown; charset=utf-8 and
 ;; .json as application/json.  Public docs should be readable without JS.
+;; Serve current docs/discovery files with Cache-Control: no-cache and ETag.
+;; Header policy and atomic deployment are hosting responsibilities.
+;; content_revision identifies published content, independently of build time.
+;; LAST_MODIFIED accepts YYYY-MM-DD or a UTC YYYY-MM-DDTHH:MM:SSZ timestamp.
+;; Otherwise clean, tracked local dependencies in a full Git checkout supply
+;; last_modified; unknown dates are null and omitted from the XML sitemap.
 
 ;;; Code:
 (require 'cl-lib)
@@ -78,6 +85,8 @@
 (defvar damagebdd--documents nil)
 (defvar damagebdd--agent-files nil)
 (defvar damagebdd--fragment-cache nil)
+(defvar damagebdd--dependency-cache nil)
+(defvar damagebdd--git-root nil)
 (defvar httpd-root)
 (defvar httpd-port)
 (declare-function httpd-start "simple-httpd")
@@ -147,11 +156,19 @@
 
 (defun org-sitemap-date-entry-format (entry _style project)
   "Format sitemap ENTRY for PROJECT with a visible date."
-  (let ((title (org-publish-find-title entry project)))
+  (let* ((title (org-publish-find-title entry project))
+         (file (expand-file-name entry (org-publish-property :base-directory project)))
+         (date (and (file-regular-p file)
+                    (damagebdd--date (damagebdd--keyword "DATE" (damagebdd--keywords file))))))
     (if (string-empty-p title) (format "*%s*" entry)
-      (format "{{{timestamp(%s)}}} [[file:%s][%s]]"
-              (format-time-string "%Y-%m-%d" (org-publish-find-date entry project))
-              entry title))))
+      (concat (when date (format "{{{timestamp(%s)}}} " date))
+              (format "[[file:%s][%s]]" entry title)))))
+
+(defun damagebdd--new-reference (references)
+  "Allocate a deterministic export anchor unused in REFERENCES."
+  (let ((reference 1))
+    (while (rassq reference references) (setq reference (1+ reference)))
+    reference))
 
 ;; Stable anchors are added only to the export copy, never to author sources.
 (defun damagebdd--slug (title)
@@ -341,7 +358,7 @@
       ;; temporary copy instead of relying on narrowing.
       (when first-heading (delete-region first-heading (point-max)))
       (org-collect-keywords
-       '("TITLE" "DESCRIPTION" "DATE" "CAPABILITY_ID"
+       '("TITLE" "DESCRIPTION" "DATE" "LAST_MODIFIED" "CAPABILITY_ID"
          "CONTENT_CLASS" "IMPLEMENTATION_STATUS" "VALIDATION_STATUS"
          "VALIDATION_SCOPE" "EVIDENCE_DATE" "VERIFIED_RELEASE" "EVIDENCE_URL")))))
 
@@ -356,6 +373,93 @@
   (when (and text (string-match "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}" text))
     (match-string 0 text)))
 
+(defun damagebdd--modified-date (value)
+  "Validate a declared modification VALUE without normalizing invalid dates."
+  (when value
+    (unless (and (string-match-p
+                  "\\`[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}\\(?:T[0-9]\\{2\\}:[0-9]\\{2\\}:[0-9]\\{2\\}Z\\)?\\'" value)
+                 (condition-case nil
+                     (let* ((time (date-to-time (if (= (length value) 10)
+                                                    (concat value "T00:00:00Z") value)))
+                            (format (if (= (length value) 10) "%Y-%m-%d" "%Y-%m-%dT%H:%M:%SZ")))
+                       (equal value (format-time-string format time t)))
+                   (error nil)))
+      (error "Invalid LAST_MODIFIED: %s (use YYYY-MM-DD or UTC timestamp)" value))
+    value))
+
+(defun damagebdd--git (&rest args)
+  "Run Git ARGS without a shell; return stdout on success or nil."
+  (when (executable-find "git")
+    (with-temp-buffer
+      (let ((default-directory damagebdd-project-root)
+            (process-environment (cons "GIT_OPTIONAL_LOCKS=0" process-environment)))
+        (when (zerop (apply #'process-file "git" nil (list t nil) nil
+                            "--literal-pathspecs" args))
+          (string-trim-right (buffer-string)))))))
+
+(defun damagebdd--dependencies (file &optional seen)
+  "Find local export inputs for FILE, including nested includes and setup files.
+Return nil if any input cannot be resolved locally.  SEEN breaks cycles."
+  (setq file (expand-file-name file))
+  (unless (member file seen)
+    (let ((cached (and damagebdd--dependency-cache
+                       (gethash file damagebdd--dependency-cache 'missing))))
+      (if (and cached (not (eq cached 'missing)))
+          (unless (eq cached 'unknown) cached)
+        (let ((files (list file)) (valid (file-readable-p file)) inputs)
+          (when valid
+            (with-temp-buffer
+              (insert-file-contents file)
+              (org-mode)
+              (org-element-map (org-element-parse-buffer) '(keyword link)
+                (lambda (element)
+                  (cond
+                   ((and (eq (org-element-type element) 'keyword)
+                         (member (org-element-property :key element) '("INCLUDE" "SETUPFILE")))
+                    (let ((path (car (split-string-and-unquote (org-element-property :value element)))))
+                      (if path (push (car (split-string path "::")) inputs)
+                        (setq valid nil))))
+                   ((and (eq (org-element-type element) 'link)
+                         (equal (org-element-property :type element) "file")
+                         (org-element-property :search-option element))
+                    ;; Heading links depend on the target's expanded headings.
+                    (push (org-element-property :path element) inputs)))))))
+          (dolist (input inputs)
+            (setq input (string-remove-prefix "file:" input))
+            (if (string-match-p "\\`[[:alpha:]][[:alnum:]+.-]*:" input)
+                (setq valid nil)
+              (let ((path (expand-file-name input (file-name-directory file))))
+                (unless (member path (cons file seen))
+                  (let ((nested (damagebdd--dependencies path (cons file seen))))
+                    (if nested (setq files (append files nested)) (setq valid nil)))))))
+          ;; Only cache complete root traversals: caching a cycle-truncated
+          ;; subtree could miss a dirty dependency on a later page.
+          (when (and damagebdd--dependency-cache (null seen))
+            (puthash file (if valid (delete-dups files) 'unknown) damagebdd--dependency-cache))
+          (when valid (delete-dups files)))))))
+
+(defun damagebdd--git-modified (file)
+  "Return a Git date only when FILE's known export inputs are tracked and clean."
+  (when (and damagebdd--git-root
+             (not (member (file-relative-name file (damagebdd--root "org/"))
+                          '("sitemap.org" "theindex.org"))))
+    (let* ((dependencies (damagebdd--dependencies file))
+           (files (and dependencies
+                       (append dependencies
+                               (mapcar #'damagebdd--root
+                                       '("snippets/header.html" "snippets/preamble.html"
+                                         "snippets/postamble.html" "scripts/publish.el"))))))
+      (when (and files (cl-every (lambda (path)
+                                  (and (not (file-symlink-p path))
+                                       (file-in-directory-p path damagebdd--git-root))) files))
+        (let ((paths (mapcar (lambda (path) (file-relative-name path damagebdd-project-root)) files)))
+          (when (and (apply #'damagebdd--git "ls-files" "--error-unmatch" "--" paths)
+                     (equal "" (apply #'damagebdd--git "status" "--porcelain" "--untracked-files=all" "--" paths)))
+            (let ((epoch (apply #'damagebdd--git "log" "-1" "--format=%ct" "--" paths)))
+              (when (and epoch (string-match-p "\\`[0-9]+\\'" epoch))
+                (format-time-string "%Y-%m-%dT%H:%M:%SZ"
+                                    (seconds-to-time (string-to-number epoch)) t)))))))))
+
 (defun damagebdd-publish-page (plist filename pub-dir)
   "Publish FILENAME to HTML and Markdown in PUB-DIR according to PLIST."
   (let* ((keywords (damagebdd--keywords filename))
@@ -368,10 +472,14 @@
          (md-relative (concat relative-base ".md"))
          (html-url (damagebdd--url html-relative))
          (md-url (damagebdd--url md-relative))
+         (declared-modified (damagebdd--modified-date (damagebdd--keyword "LAST_MODIFIED" keywords)))
+         (modified (or declared-modified (damagebdd--git-modified filename)))
          (parsing-hook (if (boundp 'org-export-before-parsing-functions)
                            'org-export-before-parsing-functions
                          'org-export-before-parsing-hook))
          (head-extra (concat (or (plist-get plist :html-head-extra) "")
+                             "\n<link rel=\"canonical\" href=\""
+                             (org-html-encode-plain-text html-url) "\">"
                              "\n<link rel=\"alternate\" type=\"text/markdown\" href=\""
                              (org-html-encode-plain-text md-url) "\">\n"
                              "<link rel=\"describedby\" href=\""
@@ -394,6 +502,7 @@
                  (equal (expand-file-name md) (damagebdd--root (concat "public/" md-relative))))
       (error "Unexpected export destination for %s: %s / %s" source html md))
     (cl-pushnew md-relative damagebdd--agent-files :test #'equal)
+    (cl-pushnew html-relative damagebdd--agent-files :test #'equal)
     (push `((id . ,(or (damagebdd--keyword "CAPABILITY_ID" keywords)
                        (car (rassoc source damagebdd-capability-pages))))
             (title . ,(or (damagebdd--keyword "TITLE" keywords) stem))
@@ -401,6 +510,9 @@
             (source_path . ,(concat "org/" source))
             (source_sha256 . ,(damagebdd--hash-file filename))
             (markdown_sha256 . ,(damagebdd--hash-file md))
+            (html_sha256 . ,(damagebdd--hash-file html))
+            (last_modified . ,modified)
+            (last_modified_source . ,(cond (declared-modified "declared") (modified "git")))
             (html_url . ,html-url) (markdown_url . ,md-url)
             (html_path . ,html-relative) (markdown_path . ,md-relative)
             (document_date . ,(damagebdd--date (damagebdd--keyword "DATE" keywords)))
@@ -450,6 +562,34 @@
         (cl-pushnew "openapi.json" damagebdd--agent-files :test #'equal)
         (damagebdd--url "openapi.json")))))
 
+(defun damagebdd--content-revision (documents entries openapi)
+  "Hash DOCUMENTS, navigation ENTRIES and OPENAPI independently of build time."
+  (let ((json-encoding-pretty-print nil))
+    (secure-hash
+     'sha256
+     (encode-coding-string
+      (json-encode `((schema_version . 2) (site_url . ,damagebdd-site-url)
+                     (documents . ,(vconcat documents))
+                     (entry_sources . ,(vconcat (mapcar (lambda (doc) (alist-get 'source_path doc)) entries)))
+                     (openapi . ,openapi)))
+      'utf-8-unix))))
+
+(defun damagebdd--freshness-guidance ()
+  "Describe the retrieval checks required to use the current published content."
+  (concat "## Freshness\n\n"
+          (format "Before using cached documentation, revalidate [the document inventory](%s). "
+                  (damagebdd--url "docs/index.json"))
+          "Compare content_revision, fetch changed documents, and verify the SHA-256 "
+          "of their decoded HTTP response bytes against markdown_sha256 or html_sha256. "
+          "Remove cached documents that are absent from the current inventory. "
+          "Check docs/capabilities.json has the same content_revision before combining it with the inventory. "
+          "On a hash or revision mismatch, refresh the inventory and retry; do not combine releases. "
+          "Record the revision and retrieval time with your answer. If revalidation fails, "
+          "say freshness could not be verified. These checks must be implemented by the consuming agent.\n\n"
+          "generated_at is the build time. last_modified describes document inputs when known; "
+          "evidence_date and verified_release retain their historical meaning. "
+          "A new documentation revision does not establish new runtime verification.\n\n"))
+
 (defun damagebdd--discovery ()
   "Generate navigation, document inventory, capabilities and XML sitemap."
   (setq damagebdd--documents
@@ -459,6 +599,10 @@
          (capabilities (cl-remove-if-not (lambda (doc) (alist-get 'id doc)) damagebdd--documents))
          (entries (delq nil (mapcar #'damagebdd--doc-for-source damagebdd-entry-pages)))
          (openapi-url (damagebdd--copy-openapi))
+         (openapi (when openapi-url
+                    `((url . ,openapi-url)
+                      (sha256 . ,(damagebdd--hash-file (damagebdd--root "public/openapi.json"))))))
+         (revision (damagebdd--content-revision damagebdd--documents entries openapi))
          (seen (make-hash-table :test #'equal)))
     (dolist (doc capabilities)
       (let ((id (alist-get 'id doc)))
@@ -469,14 +613,19 @@
         (error "org/docs/index.org conflicts with the generated docs/index.md")))
     (damagebdd--write-json
      "docs/index.json"
-     `((schema_version . 1) (site_url . ,damagebdd-site-url) (generated_at . ,generated)
+     `((schema_version . 2) (site_url . ,damagebdd-site-url) (generated_at . ,generated)
+       (content_revision . ,revision)
+       (openapi . ,openapi)
        (document_count . ,(length damagebdd--documents))
        (documents . ,(vconcat damagebdd--documents))) t)
     (damagebdd--write-json
      "docs/capabilities.json"
-     `((schema_version . 1) (site_url . ,damagebdd-site-url) (generated_at . ,generated)
+     `((schema_version . 2) (site_url . ,damagebdd-site-url) (generated_at . ,generated)
+       (content_revision . ,revision)
+       (inventory_url . ,(damagebdd--url "docs/index.json"))
        (status_semantics . "Statuses are author-supplied Org metadata; not_recorded means absent. Build time is not verification time. Evidence is historical, not a live health check.")
        (openapi_url . ,openapi-url)
+       (openapi_sha256 . ,(alist-get 'sha256 openapi))
        (capabilities . ,(vconcat capabilities))) t)
     (damagebdd--write
      "docs/index.md"
@@ -484,6 +633,7 @@
              "Generated from the same Org sources as the HTML site. "
              "Follow a topic link rather than loading the entire site.\n\n"
              "Implementation and validation are separate. A build timestamp does not establish verification.\n\n"
+             (damagebdd--freshness-guidance)
              "## Start here\n\n" (mapconcat #'damagebdd--doc-link entries "")
              "\n## Feature references\n\n" (mapconcat #'damagebdd--doc-link capabilities "")
              "\n## All exported documents\n\n"
@@ -496,6 +646,7 @@
              "Conceptual and historical articles may describe broader goals. "
              "Read each feature's validation limits and evidence date; do not infer that "
              "all components share the same release or verification status.\n\n"
+             (damagebdd--freshness-guidance)
              "## Start here\n\n" (mapconcat #'damagebdd--doc-link entries "")
              (format "- [Documentation index](%s): All exported topics.\n" (damagebdd--url "docs/index.md"))
              "\n## Features\n\n" (mapconcat #'damagebdd--doc-link capabilities "")
@@ -510,8 +661,10 @@
      (concat "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
              "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n"
              (mapconcat (lambda (doc)
-                          (format "  <url><loc>%s</loc></url>\n"
-                                  (org-html-encode-plain-text (alist-get 'html_url doc))))
+                          (format "  <url><loc>%s</loc>%s</url>\n"
+                                  (org-html-encode-plain-text (alist-get 'html_url doc))
+                                  (if-let ((modified (alist-get 'last_modified doc)))
+                                      (format "<lastmod>%s</lastmod>" modified) "")))
                         damagebdd--documents "") "</urlset>\n") t)))
 
 (defun damagebdd--validate-artifacts ()
@@ -519,9 +672,15 @@
   (dolist (path '("docs/index.json" "docs/capabilities.json"))
     (damagebdd--read-json (damagebdd--root (concat "public/" path))))
   (dolist (doc damagebdd--documents)
-    (dolist (key '(html_path markdown_path))
-      (unless (file-regular-p (damagebdd--root (concat "public/" (alist-get key doc))))
-        (error "Missing exported target: %s" (alist-get key doc)))))
+    (dolist (pair '((html_path . html_sha256) (markdown_path . markdown_sha256)))
+      (let ((file (damagebdd--root (concat "public/" (alist-get (car pair) doc)))))
+        (unless (and (file-regular-p file)
+                     (equal (alist-get (cdr pair) doc) (damagebdd--hash-file file)))
+          (error "Missing or changed exported target: %s" (alist-get (car pair) doc))))))
+  (let ((index (damagebdd--read-json (damagebdd--root "public/docs/index.json")))
+        (caps (damagebdd--read-json (damagebdd--root "public/docs/capabilities.json"))))
+    (unless (equal (alist-get 'content_revision index) (alist-get 'content_revision caps))
+      (error "Documentation inventories have mismatched revisions")))
   (dolist (path '("llms.txt" "docs/index.md"))
     (with-temp-buffer
       (insert-file-contents (damagebdd--root (concat "public/" path)))
@@ -563,6 +722,9 @@
   (let* ((parsed-url (url-generic-parse-url damagebdd-site-url))
          (damagebdd--documents nil) (damagebdd--agent-files nil)
          (damagebdd--fragment-cache (make-hash-table :test #'equal))
+         (damagebdd--dependency-cache (make-hash-table :test #'equal))
+         (damagebdd--git-root (when (equal "false" (damagebdd--git "rev-parse" "--is-shallow-repository"))
+                               (damagebdd--git "rev-parse" "--show-toplevel")))
          (previous-file (damagebdd--root "public/.damagebdd-agent-files.json"))
          (previous (when (file-readable-p previous-file) (damagebdd--read-json previous-file)))
          (org-export-global-macros '(("timestamp" . "@@html:<span class=\"timestamp\">[$1]</span>@@")))
@@ -571,6 +733,7 @@
          (org-html-htmlize-output-type
           (if (require 'htmlize nil t) org-html-htmlize-output-type nil))
          (org-publish-use-timestamps-flag nil)
+         (org-publish-cache nil)
          (org-publish-timestamp-directory (damagebdd--root ".org-timestamps/"))
          (vc-handled-backends nil)
          org-publish-project-alist)
@@ -587,10 +750,15 @@
              :publishing-directory ,(damagebdd--root "public") :recursive t
              :publishing-function damagebdd-publish-page :auto-preamble t
              :auto-sitemap t :auto-index t :makeindex t
+             ;; The index is regenerated and exported by :makeindex.  Exclude
+             ;; its previous source from discovery so the first build agrees
+             ;; with later builds and old index entries cannot feed back in.
+             :exclude "\\`theindex\\.org\\'"
              :sitemap-title "DamageBDD - BDD At Planetary Scale."
-             :sitemap-filename "sitemap.org" :sitemap-sort-files anti-chronologically
+             :sitemap-filename "sitemap.org" :sitemap-sort-files alphabetically
              :sitemap-format-entry org-sitemap-date-entry-format :with-toc nil
              :html-doctype "html5" :html-html5-fancy t
+             :time-stamp-file nil
              :html-head-include-scripts nil :html-head-include-default-style nil
              :html-head ,damagebdd-html-head :html-preamble ,damagebdd-html-preamble
              :html-postamble ,damagebdd-html-postamble)
@@ -608,7 +776,10 @@
              :base-extension "css\\|js\\|png\\|jpg\\|jpeg\\|gif\\|webp\\|pdf\\|mp3\\|ogg\\|swf\\|ttf\\|map\\|svg\\|woff\\|woff2\\|ico\\|avif"
              :publishing-directory ,(damagebdd--root "public/assets") :recursive t
              :publishing-function org-publish-attachment)))
-    (org-publish-project "damagebdd" t)
+    ;; Org's default random anchors and export-time HTML comment would change
+    ;; hashes on every build even when the published content is unchanged.
+    (cl-letf (((symbol-function 'org-export-new-reference) #'damagebdd--new-reference))
+      (org-publish-project "damagebdd" t))
     (damagebdd--discovery)
     (damagebdd--validate-artifacts)
     (damagebdd--finish-managed-files previous)

@@ -3,14 +3,13 @@ DamageBDD agent-readable documentation
 
 Install
 -------
-Apply publish_agent_docs.patch from the repository root. It updates
-scripts/publish.el, adds these notes and scripts/publish-tests.el, and adds
-explicit status metadata to the included feature articles. Apply it after
-the current-feature article update, which placed those articles in org/articles/.
+Apply publish_freshness.patch from the website repository root, after the
+previous publisher update. It updates scripts/publish.el, these notes and the
+publisher tests. Generated sitemap sources are not included in the patch.
 
-Alternatively, install the updated publish.el as scripts/publish.el. The script
-works without the article metadata patch, but missing status fields are then
-reported as not_recorded.
+Alternatively, replace scripts/publish.el with the updated standalone file.
+Reload it before publishing if an Emacs session already has the old definitions.
+Missing capability metadata continues to be reported as not_recorded.
 
 Build
 -----
@@ -37,7 +36,7 @@ Output under public/
     docs/index.md          Complete navigable document index.
     docs/index.json        Document URLs, paths, dates, status and SHA-256 hashes.
     docs/capabilities.json Feature records and evidence metadata.
-    sitemap.xml            Canonical HTML URLs.
+    sitemap.xml            Canonical HTML URLs and known modification dates.
     openapi.json           Only when an existing root openapi.json is supplied.
 
 The publisher discovers Org pages recursively on each build. Adding or removing
@@ -53,13 +52,15 @@ content in Org prose or explicit Markdown export blocks. Babel is not executed.
 
 Keep the publisher's public/.damagebdd-agent-files.json between builds. It tracks
 generated agent files so obsolete unchanged files can be removed. Untracked
-files and manually edited obsolete files are preserved. Existing HTML cleanup
-behavior is unchanged. Do not hand-edit active generated Markdown or JSON.
+files and manually edited obsolete files are preserved. New builds also track generated HTML, so removing a page removes both its
+unchanged HTML and Markdown exports. HTML left over from a publisher version
+that did not track it is not automatically adopted or deleted. Do not hand-edit active generated Markdown or JSON.
 
 Metadata
 --------
 Add author-maintained keywords before the first heading in an Org page:
 
+    #+LAST_MODIFIED: YYYY-MM-DD
     #+CAPABILITY_ID: feature-name
     #+CONTENT_CLASS: implementation-reference
     #+IMPLEMENTATION_STATUS: source_present
@@ -83,9 +84,11 @@ evidence. generated_at is only the discovery-file build time. The companion
 article metadata records each article's existing evidence and its limits; it
 does not certify a deployment or upgrade prior validation claims.
 
-The JSON files use schema_version 1. docs/index.json contains a documents array;
+The JSON files use schema_version 2; consumers that check schema_version must
+accept this version before upgrading. docs/index.json contains a documents array;
 docs/capabilities.json contains a capabilities array. Each record contains title,
-summary, source_path, source_sha256, markdown_sha256, HTML/Markdown URLs and paths,
+summary, source_path, source_sha256, markdown_sha256, html_sha256, last_modified,
+last_modified_source, HTML/Markdown URLs and paths,
 document_date, content_class, implementation_status, validation_status,
 validation_scope, evidence_date, verified_release and evidence_urls.
 Source hashes cover the individual Org file; Markdown hashes cover exported
@@ -96,12 +99,76 @@ checks for openapi, info and paths. This is not full OpenAPI schema validation.
 The publisher does not derive an API contract from prose or create placeholder
 endpoints. If no contract is supplied, openapi_url is null and its link is omitted.
 
+Freshness
+---------
+Both JSON inventories carry the same content_revision. It is a SHA-256 identifier
+of the sorted document records, canonical site URL, exported entry-page selection
+and the optional API contract URL/hash. It changes when documents are added,
+removed or changed, including expanded includes, HTML-only content and evidence
+metadata. Source hashes are included, so source-only edits may also change it.
+It excludes generated_at: rebuilding identical content at a later time preserves
+the revision. Treat it as an opaque identifier, not a release number or signature.
+API metadata is available as openapi (url, sha256) in docs/index.json and as
+openapi_url/openapi_sha256 in docs/capabilities.json; absent contracts are null.
+
+Org's generated HTML build-time comment is disabled. Generated anchors are
+allocated deterministically during export; existing CUSTOM_ID anchors are kept.
+The generated Org sitemap sorts alphabetically and shows dates only when DATE
+is declared, so checkout file mtimes cannot change its contents. The generated
+index is excluded from ordinary source discovery and regenerated by Org's index
+publisher, avoiding different sitemap contents on the first and later builds.
+
+LAST_MODIFIED optionally declares the date of the last significant page update,
+including included content. Use YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ in UTC. Invalid
+dates fail the build. It is separate from DATE (document date) and EVIDENCE_DATE
+(runtime/source evidence date); authors must keep declarations accurate.
+
+Without LAST_MODIFIED, the publisher uses the last Git commit affecting known
+local inputs, only in a full checkout with all those inputs tracked and clean.
+Inputs include the source, nested INCLUDE/SETUPFILE files, heading-link targets,
+HTML snippets and scripts/publish.el. Dates describe those input revisions, not
+a live deployment or runtime verification. A shared template or publisher change
+can advance dates for multiple pages. Generated sitemap/index pages, unresolved
+inputs, symlinks, dirty inputs, shallow checkouts and source archives have unknown
+Git dates. Unknown dates remain null, with no lastmod element in sitemap.xml.
+The publisher never substitutes build time or a filesystem mtime for that date.
+Changes to external resources and arbitrary custom export hooks are outside
+this dependency model; declare LAST_MODIFIED if they affect meaningful content.
+
+The freshness instructions in llms.txt and docs/index.md tell agents to:
+- Revalidate docs/index.json before using cached content.
+- Compare content_revision, fetch changed pages and check their hashes against
+  the exact bytes after HTTP content decoding, before text normalization.
+- Evict cached documents absent from the current complete documents array.
+- Match capabilities.json's content_revision before combining inventories.
+- On mismatched hashes/revisions, refresh the inventory and retry with a bound;
+  report unverified freshness if the site is unavailable or remains inconsistent.
+- Record the revision and retrieval time. Never treat generated_at as new evidence.
+
+These are instructions for retrieval clients, not executable enforcement inside
+an LLM. This publisher cannot refresh an external search index or an agent's
+private cache. A consumer must implement these checks in its retrieval code.
+
 Hosting
 -------
 Serve .md as text/markdown; charset=utf-8 and .json as application/json.
 Make the intended public pages and discovery files accessible without JavaScript.
-The patch does not change the web server, robots.txt, access rules or deployment.
-It cannot guarantee that a particular crawler will choose to read llms.txt.
+Configure the web server/CDN to send Cache-Control: no-cache and valid ETag
+headers for current HTML, Markdown, JSON, llms.txt and sitemap.xml. ETags must
+change when the served representation changes. Conditional requests can return
+304 when unchanged. Invalidate any older CDN policy/cache on rollout. Writing a
+static file cannot set these HTTP headers; this script does not configure them.
+
+Publish a validated directory as one release using your hosting system's atomic
+switch mechanism. The existing damagebdd-rsync-deploy command still copies files
+in place and is not atomic; hash/revision checks let consumers detect mismatches
+and retry during a deployment, but do not make that deployment atomic. The script
+does not create immutable revision snapshots. A new content_revision describes
+the latest published documentation, not necessarily the latest repository HEAD.
+
+Allow intended search crawlers through robots.txt and the CDN and advertise
+sitemap.xml in robots.txt. The patch does not change access rules or crawler
+policies. It cannot guarantee that any crawler reads llms.txt or indexes a change.
 
 Validation
 ----------
@@ -112,6 +179,9 @@ Checked with Emacs 29.3 / Org 9.6.15:
   supplied API handling, stale-file ownership, duplicate IDs, and temporary
   heading-resolution buffer cleanup on success and error. Cleanup checks also
   confirm that unsaved edits in an open source buffer remain untouched.
+- Freshness checks cover unchanged rebuilds with different build times/mtimes,
+  include and metadata edits, page additions/removals, HTML-only and API changes,
+  declared date validation, and clean versus dirty Git dependencies.
 - Byte compilation passes with warnings treated as errors.
 - Inventory targets, source/export hashes, discovery links and sitemap entries
   were checked against the exported source tree.
