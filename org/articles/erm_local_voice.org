@@ -2,13 +2,14 @@
 #+DESCRIPTION: A local Erlang workspace with typed voice actions, optional model assistance, native speech output and inspectable service health.
 #+KEYWORDS: erm, Erlang, local voice, Whisper, Piper, GTK, MPV, ECAI
 #+AUTHOR: Steven Joseph
-#+DATE: 2026-10-05
+#+DATE: 2026-10-06
 #+CAPABILITY_ID: erm-local-voice
 #+CONTENT_CLASS: adoption-guide
 #+IMPLEMENTATION_STATUS: source_present
 #+VALIDATION_STATUS: source_review_only
 #+VALIDATION_SCOPE: Erlang voice, media, TTS, model-pull and Lens paths inspected; native binaries, microphone, playback, speaker verification and UI not run.
-#+EVIDENCE_DATE: 2026-10-05
+#+EVIDENCE_DATE: 2026-10-06
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/erm/src/erm_voice.erl
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
 #+OPTIONS: toc:2 ^:nil
@@ -25,6 +26,27 @@ The clearest first audience is a Linux developer or operator willing to run
 the local audio and GTK dependencies. Start with a few observable commands
 on your own workstation. That is enough to evaluate whether the interaction
 helps without treating the whole desktop as an autonomous agent.
+
+* Understand the parts of a voice interaction
+
+A useful voice interface has several jobs. It captures speech, decides whether
+the user is addressing it, turns the request into an allowed action, performs
+that action and reports the outcome. Separating those jobs makes a failure
+easier to locate.
+
+| Component | Role in the interaction |
+|-----------+-------------------------|
+| Capture and Whisper integration | Turn microphone audio into text |
+| Voice coordinator and intent parser | Identify a command and manage its progress |
+| MPV adapter and playlist | Apply media controls to the player |
+| Optional Ollama model | Help interpret unfamiliar phrases or answer a question |
+| Piper speech service | Speak the result using a configured local voice |
+| GTK/Lens interface | Provide a visible desktop interface alongside voice |
+
+For a workstation user, the first useful test is simple: say a command and
+observe the correct effect. A transcript alone is only one stage of that
+interaction. The table also explains why a working recogniser can coexist
+with a missing playback or speech-output dependency.
 
 * Common commands have a direct path
 
@@ -83,11 +105,18 @@ asynchronous service with manifest-driven file checks and immutable cache
 directories. Listening suppression is used around speech output to reduce
 feedback into the recogniser.
 
-The optional native voice coordinator also contains enrolment and speaker-score
-handling. The source archive does not include its native capture/Whisper
-binary implementation, and no audio was tested here. Speaker matching should
-be evaluated with recordings, other speakers and replay attempts before it is
-given any security role; the reviewed code does not establish liveness.
+The native voice coordinator also handles enrolment, speaker scores and
+model preparation. In the referenced implementation it can request missing
+configured models through =erm_model_pull=, report progress and retry failed
+preparation. The model service checks file sizes and SHA-256 digests before
+using its cache. Initial downloads require connectivity.
+
+Native capture and speech sources live in the repository's =apps/erm/c_src/=
+directory. They still need a compatible local build, installed models and
+audio devices. No microphone or playback test was run for this article.
+Evaluate speaker matching with recordings, other speakers and replay attempts
+before assigning it a security role; a speaker score alone does not establish
+that a live authorised person is issuing the command.
 
 In a running configured release, these inspection calls help separate a
 command problem from a missing model or disconnected speech backend:
@@ -114,14 +143,20 @@ The first useful result is a workstation that performs a small set of commands
 reliably and makes its failures visible. Measure accidental triggers, missed
 commands and time to recover a disconnected backend on your own hardware.
 
-* Source basis and next steps
+* Explore the implementation
 
-Reviewed modules under =apps/erm/src/=: =erm_voice=, =erm_voice_boundary=,
-=erm_voice_intent=, =erm_voice_media=, =erm_native_voice=, =erm_voice_health=,
-=erm_tts=, =erm_model_pull=, =erm_lens=, =erm_lens_wallet= and =erm_sup=.
-Isolated voice/TTS fixtures are present under =apps/erm/test/=; fake services
-and ports in those fixtures are not evidence of live hardware operation.
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/erm/src/erm_voice.erl][Voice coordination and status]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/erm/src/erm_voice_intent.erl][Direct commands, model assistance and ECAI retrieval]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/erm/src/erm_native_voice.erl][Native voice lifecycle and model preparation]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/erm/src/erm_model_pull.erl][Model installation and cache checks]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/erm/src/erm_tts.erl][Speech controls and diagnostics]]
+- [[https://github.com/DamageBDD/DamageBDD/tree/a993c0421b38de475b103dc79f31da1e091cd97a/apps/erm/c_src][Native audio, speech and GTK sources]]
+- [[https://github.com/DamageBDD/DamageBDD/tree/a993c0421b38de475b103dc79f31da1e091cd97a/apps/erm/test][Voice and desktop test fixtures]]
+
+The isolated fixtures exercise service behavior with controlled dependencies.
+Use real audio and your desktop session to assess recognition, playback,
+speech output and recovery on the machine where erm will run.
 
 - [[file:ecai_engineering_memory.org][Prepare a useful retrieval corpus]]
-- [[file:nosternity.org][Understand the separate signed-event retention path]]
+- [[file:nosternity.org][Understand signed-event retention]]
 - [[file:stack_adoption.org][Plan the next integration step]]

@@ -2,13 +2,14 @@
 #+DESCRIPTION: An IPFS-backed Blossom implementation with signed upload authorization, bounded transfers and separate ownership claims for supporting files.
 #+KEYWORDS: Blossom, Nostr, IPFS, media, content addressing, DamageBDD
 #+AUTHOR: Steven Joseph
-#+DATE: 2026-10-05
+#+DATE: 2026-10-06
 #+CAPABILITY_ID: blossom-media
 #+CONTENT_CLASS: implementation-reference
 #+IMPLEMENTATION_STATUS: source_present
 #+VALIDATION_STATUS: source_review_only
 #+VALIDATION_SCOPE: HTTP, authorization, ownership-store and route-registration source inspected; no live client interoperability, upload, pinning or restart test performed.
-#+EVIDENCE_DATE: 2026-10-05
+#+EVIDENCE_DATE: 2026-10-06
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_blossom_http.erl
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
 #+OPTIONS: toc:2 ^:nil
@@ -27,9 +28,24 @@ and deletion of ownership claims.
 
 For a Nostr client developer or operator, this is a concrete integration to
 try: upload a non-sensitive fixture, retrieve it through its hash address,
-and independently verify the digest. The 5 October application archive now
-contains the implementation; the earlier description of Blossom as only
-reported development scope is superseded by this source review.
+and independently verify the digest. This gives you a useful first result
+without requiring a complete social client or knowledge workflow.
+
+* Keep a file reference meaningful
+
+Suppose a signed event announces a report and includes an attachment link.
+A filename such as =report-final.pdf= is convenient for people, but it does
+not identify one exact version. A SHA-256 digest lets the recipient check
+whether the downloaded bytes match the attachment the event referenced.
+
+Blossom uses that digest as the blob's public identity. DamageBDD's backend
+also records an IPFS content identifier (CID), which locates the stored
+representation in its IPFS workflow. The Blossom hash and IPFS CID serve
+related purposes but are not interchangeable identifiers.
+
+The application still decides which signed event authorises the association
+and how long the file should remain available. Hash verification checks byte
+identity; storage operations and retention policy keep the bytes retrievable.
 
 * The implemented HTTP surface
 
@@ -110,16 +126,19 @@ version, server revision, active limits, storage policy and exact outcomes.
 The result should be a repeatable client integration report, not simply one
 successful HTTP response.
 
-* Source basis and related reading
+* Explore the implementation
 
-Reviewed source under =apps/damage/src/=: =damage_blossom_http=,
-=damage_blossom_auth=, =damage_blossom_rate=, =damage_nip96_store= and
-=damage_app=. No live Blossom conformance or retention test was run, and the
-uploaded test tree contained no dedicated Blossom-named acceptance suite.
-The BUD labels above describe the implementation's stated surface; the
-current upstream specification was not independently revalidated in this review.
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_blossom_http.erl][Blossom HTTP operations and limits]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_blossom_auth.erl][Signed authorization validation]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_nip96_store.erl][Shared object and ownership store]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_blossom_rate.erl][Request rate limits]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_app.erl][Application route registration]]
+
+The BUD labels in this article describe the handler's stated operations.
+No live client-conformance, upload or retention test was run for this update.
+Record the client version and exact outcomes when evaluating interoperability.
 
 - [[file:nosternity.org][Retain selected signed event records]]
 - [[file:ecai_private_knowledge.org][Understand the separate private-index boundary]]
-- [[file:damagebdd_evidence_workflows.org][Turn the pilot into an acceptance record]]
-- [[file:stack_adoption.org][Choose an adoption entry point]]
+- [[file:damagebdd_evidence_workflows.org][Turn an integration check into an acceptance record]]
+- [[file:stack_adoption.org][Choose a first workflow]]

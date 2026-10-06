@@ -54,9 +54,9 @@ repeatable [[file:articles/damagebdd_evidence_workflows.org][acceptance evidence
 [[file:articles/ecai_reviewable_repairs.org][reviewable code repairs]],
 [[file:articles/erm_local_voice.org][erm voice and desktop workflows]], and
 [[file:articles/nosternity.org][Nosternity signed-event retention]].
-Each article includes a pilot and the source-review limits as of 5 October 2026.
-The [[file:articles/features_current.org][current feature map]] records the
-implementation evidence separately from the broader product vision below.
+Each guide explains a practical use case, links to the implementation and
+suggests a first evaluation. The [[file:articles/features_current.org][component map]]
+shows the repository status and the scope of recorded validation.
 
 * What is DamageBDD?
 
@@ -195,4 +195,3 @@ This tells DamageBDD what to test – and it does the heavy lifting behind the s
   
 - 💻 [[./node][Run a Damage Node]]
   Participate in the Damage network, spend and earn DAMAGE with you computer.
- 

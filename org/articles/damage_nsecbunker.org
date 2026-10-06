@@ -2,7 +2,7 @@
 #+DESCRIPTION: The implemented DamageBDD NIP-46 bunker, its AWS custody evidence, current policy/status APIs and the exact scope of the release-build acceptance run.
 #+KEYWORDS: DamageBDD, nsecbunker, NIP-46, Nostr, AWS Secrets Manager, verification
 #+AUTHOR: Steven Joseph
-#+DATE: 2026-10-05
+#+DATE: 2026-10-06
 #+CAPABILITY_ID: damage-nsecbunker
 #+CONTENT_CLASS: implementation-reference
 #+IMPLEMENTATION_STATUS: source_present
@@ -15,17 +15,27 @@
 #+INCLUDE: "../header.org"
 #+OPTIONS: toc:2 ^:nil
 
-* Current position
+* Let a client request a signature under a policy
 
-=damage_nsecbunker= is DamageBDD's in-tree NIP-46 signing service. It places a
-policy gate between a client request and the configured vault/crypto backend.
-The supplied modules include the service, operational helpers, relay adapter,
-client bridge and BDD step implementations.
+A Nostr client may need to sign an event without holding the signing key
+itself. A remote signer can provide that separation, but it also needs rules
+for which clients, methods and event kinds are allowed.
 
-The strongest recorded operational evidence is release-build run
-=20260925132037= on 25 September 2026. The supplied console log records all
-12 scenarios passing against an installed package. This documentation uses that
-dated result; it does not claim a new production run on 5 October.
+=damage_nsecbunker= is DamageBDD's NIP-46 signing service. It places those
+policy checks between a request and the configured vault/cryptography
+backend. The relay adapter carries requests and responses; the bunker
+decides whether an operation is allowed and invokes the signing path.
+
+For example, an operator can permit a client to request an approved article
+signature while refusing other methods or event kinds. This creates a
+smaller permission to reason about than handing the client unrestricted
+signing material. The practical result still depends on the configured
+policy, vault, host and client behaviour.
+
+Release-build run =20260925132037= on 25 September 2026 records the acceptance
+scenarios described below against an installed package. The report provides
+a concrete operational example; the repository links explain the source
+interfaces separately from that historical result.
 
 * Service and transport boundaries
 
@@ -40,7 +50,7 @@ Inbound relay traffic passes through =damage_nsecbunker_relay= and
 the relay path publishes it. The adapter handles delivery, while policy and
 cryptographic operations remain in the bunker path.
 
-The supplied live test encrypts its requests through the NIP-44 client helper
+The live test encrypts its requests through the NIP-44 client helper
 and validates decrypted responses for the current request. NIP-46 provides the
 remote-signing message contract; see the [[https://github.com/nostr-protocol/nips/blob/master/46.md][upstream specification]]. The successful
 restricted-policy suite is not a claim that every optional NIP-46 method is
@@ -54,7 +64,7 @@ restrictions. It also carries signing timeout and rate-limit settings.
 Defaults and effective values depend on the installed configuration and policy
 module; the live report should be read against that configuration.
 
-For the supplied handoff, the suite exercises =ping=, =get_public_key= and
+For the recorded deployment, the suite exercises =ping=, =get_public_key= and
 allowed kind-30023 signing. It checks rejection of a non-allowlisted method
 and a kind outside the running policy. Returning a signed article and
 publishing that article are separate actions. Response events must still travel
@@ -76,38 +86,41 @@ the historical deletion of a DETS entry, a subsequent restart with that entry
 absent, the full IAM policy or the security of every host process. AWS secret
 retrieval is also not evidence of non-exportable HSM signing.
 
-The operator confirmed that setup requiring temporary Sandbox Administrator
-access was complete and that the access could be revoked. That is a handoff
-instruction recorded separately from the BDD result; the run does not prove
-that revocation actually occurred. The agreed runtime permission was
-=secretsmanager:GetSecretValue= scoped to the designated secret ARN.
+An operator should distinguish setup permissions from ongoing runtime
+permissions. The repository's AWS bootstrap guide describes the configuration
+and identity checks for that deployment path. Keep access revocation, rotation
+and recovery records alongside the acceptance report; the report alone does
+not establish that those administrative actions occurred.
 
-* Inspecting the active service
+* Inspect the active service
 
-The latest supplied service exports both =status/0= and =handoff_status/0=.
-The latter returns readiness, start time, secret provider, bunker public key
-and the authorised public-key list from active server state.
+The repository exports =damage_nsecbunker:status/0= for service status. It also
+handles an internal =handoff_status= request that returns readiness, start
+time, secret provider, bunker public key and the authorised client list from
+the running server state.
+
+At the linked revision, there is no exported =handoff_status/0= wrapper.
+An administrator using the local Erlang shell can inspect the handler with
+an explicit call:
 
 #+BEGIN_SRC erlang
 damage_nsecbunker:status().
-Handoff = damage_nsecbunker:handoff_status().
+Handoff = gen_server:call(damage_nsecbunker, handoff_status, 5000).
 maps:get(ready, Handoff).
 maps:get(secret_provider, Handoff).
 maps:get(bunker_pubkey_hex, Handoff).
 maps:get(authorized_clients, Handoff).
 #+END_SRC
 
-These are local administrative calls, not a new public HTTP API. The ordinary
-status contains a policy summary; an omitted client list there does not imply
-an empty allowlist. =policy/0= derives a policy from configuration, while
-=handoff_status/0= is the appropriate inspected interface for the active
-server's public identity and allowlist.
+These are local administrative operations, not public HTTP endpoints. The
+ordinary status contains a policy summary; an omitted client list there does
+not imply an empty allowlist. =policy/0= derives policy from configuration,
+while the handoff handler reports selected fields from active server state.
 
-After an authorised configuration change, =reload/0= validates and prepares a
-candidate runtime. Failure returns an error and retains the previous state;
-an unready server rejects reload through its not-ready branch. Always inspect
-the returned result and the active handoff state instead of assuming an edited
-configuration was applied.
+After an authorised configuration change, =reload/0= validates and prepares
+a candidate runtime. Failure returns an error and retains the previous state;
+an unready server rejects reload through its not-ready branch. Inspect the
+returned result and active state before treating the change as applied.
 
 * What the twelve scenarios cover
 
@@ -130,11 +143,11 @@ The suite also asserts audit correlation and the absence of secret material
 in its test context. Those checks do not establish that every application log,
 OS dump or unrelated storage location is secret-free.
 
-Relay scenarios use the node's existing =damage_nostr= identity. The requested
-LodgeiT client key is checked separately through the local policy gate. Its
-successful allowlist probe does not prove possession of that client's private
-key or exercise Andrew's client end to end. That external smoke test remains a
-distinct handoff action.
+Relay scenarios use the node's existing =damage_nostr= identity. The designated
+external client key is checked separately through the local policy gate.
+That confirms the configured permission, but does not exercise the external
+client's own key, connection and reply handling. Run that client's smoke test
+as a separate handoff check.
 
 * Exact release evidence
 
@@ -156,30 +169,40 @@ Runtime code hash:
 - [[https://lightning.lodgeit.org/reports/QmPd9j9xJKLbmRqFzgb4asWWLsS6Tvi2Z8SdFgy8g7ZCXQ][Execution report]]
 - [[https://lightning.lodgeit.org/context/proof?cid=QmbqLWZZ3MfSxLGvuXR9vKmxpwi7yt5AVUvCuuGustZYB2&ref=b084f257a2c67c7618bdc1d7e7bc66287ff824cf50ea701058b783e39b2e77c3][Context proof]]
 
-The references are transcribed from the supplied successful run log, not
-independently re-executed or re-fetched for this article. Its transaction
-reference is =th_FMRtRhp8hRDCgVsUmb3mc6n4vniEdvqFCXB3N37dbZPeEXGJ9=.
+These identifiers belong to the recorded September run. No new execution
+was performed for this article. Its transaction reference is =th_FMRtRhp8hRDCgVsUmb3mc6n4vniEdvqFCXB3N37dbZPeEXGJ9=.
 
-* Separate operational evidence still required
+* Complete the operating handoff
 
-The handoff discussion also names an AWSPENDING-to-AWSCURRENT rotation
-rehearsal, vault-file backup/restore test and META/010 support note. The live
-suite above does not establish those items. It likewise does not establish
-load capacity, exhaustive policy coverage or indefinite relay availability.
+A working request/signature loop is one part of running a signing service.
+The operator also needs a tested key and secret rotation procedure, a vault
+backup and restore procedure, and evidence that temporary setup access has
+been removed. Each should have a recorded result for the deployed environment.
 
-The operational next step is to attach each remaining item to its own dated
-evidence, including the external client's smoke-test result. This preserves a
-clear distinction between a green runtime suite and completion of the wider
-handoff checklist.
+For the AWS path, an AWSPENDING-to-AWSCURRENT rotation rehearsal checks how
+the service moves between secret versions. A restore exercise checks whether
+the operator can recover the required vault state. Neither follows from a
+successful signing request alone.
 
-* Sources and related documentation
+Finish with the intended external client's end-to-end smoke test. Preserve
+the configuration revision, public identities, request outcome and relevant
+audit record. These give the next operator enough context to repeat the
+handoff after an upgrade or recovery.
 
-Source basis: supplied =damage_nsecbunker.erl=,
-=damage_nsecbunker_ops.erl=, =damage_nsecbunker_relay.erl=,
-=damage_nostr_relay_client.erl= and
-=generic_live_nsecbunker_operations(1).feature=. Run evidence:
-=Pasted text(20260925-132528).txt=.
+* Explore the implementation and operating guides
+
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_nsecbunker.erl][Signing service and active-state handlers]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_nsecbunker_policy.erl][Signing policy rules]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_nsecbunker_relay.erl][Relay transport adapter]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_nsecbunker_ops.erl][Operational helpers]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/doc/nsecbunker/DAMAGE_NSECBUNKER_OPERATOR_MANUAL.md][Bunker operator manual]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/doc/nsecbunker/AWS_SECURE_BOOTSTRAP.md][AWS setup and runtime identity guide]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/features/nsecbunker/generic_live_nsecbunker_operations.feature][Live acceptance feature]]
+
+The source links pin the repository revision used for the API description.
+The execution report and context proof above remain the references for the
+separate historical live result.
 
 - [[file:nostr_reliability.org][Reply subscription, correlation and relay diagnostics]]
 - [[file:damagebdd_nostr.org][General DamageBDD Nostr integration]]
-- [[file:features_current.org][Current feature documentation and evidence map]]
+- [[file:features_current.org][Browse the component map]]

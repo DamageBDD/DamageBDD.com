@@ -1,31 +1,36 @@
 #+TITLE: ECAI Deterministic Relation Processing
-#+DESCRIPTION: Typed relations, canonical identity, explicit composition rules, proof records and structural benchmarks in the supplied ECAI implementation.
+#+DESCRIPTION: Typed relations, canonical identity, explicit composition rules, proof records and structural benchmarks in the ECAI repository.
 #+KEYWORDS: ECAI, relations, deterministic reasoning, code graph, provenance, benchmarks
 #+AUTHOR: Steven Joseph
-#+DATE: 2026-10-05
+#+DATE: 2026-10-06
 #+CAPABILITY_ID: ecai-relation-processing
 #+CONTENT_CLASS: implementation-reference
 #+IMPLEMENTATION_STATUS: source_present
 #+VALIDATION_STATUS: source_review_only
-#+EVIDENCE_DATE: 2026-10-05
+#+EVIDENCE_DATE: 2026-10-06
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_relation.erl
 #+VALIDATION_SCOPE: Relation and benchmark code inspected; no executed benchmark score or runtime result recorded in this article.
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
 #+OPTIONS: toc:2 ^:nil
 
-* Current position
+* Make a code dependency explainable
 
-ECAI's relation layer provides a small, explicit mechanism for representing and
-deriving structural facts. The 5 October 2026 application source archive contains
-=ecai_relation=, =ecai_compose=, =ecai_relation_bench= and
-=ecai_relation_learning=, with corresponding test modules. The implementation
-can extract relations from code-analysis maps, compose permitted relationships,
-attach a derivation record and compare recovered facts with analyser output.
+Before changing a shared module, a developer needs to know which parts of
+the system use it. Source search can find a function name, but a useful
+dependency answer also explains how the caller, function and owning module
+are connected.
 
-This is an implementation-level description. No new compiler run or benchmark
-measurement was performed for this documentation. The presence of benchmark
-code is evidence of an executable evaluation path, not evidence of an achieved
-score or superiority over an LLM.
+ECAI's relation layer represents those connections as typed records. A
+relation has a subject, a predicate and an object: for example, “module A
+calls function B.” Composition applies a named rule to compatible records
+and retains the premises behind the result.
+
+The repository includes relation construction, composition, code-analysis
+integration and structural benchmarks. Together they provide an inspectable
+way to derive dependencies. A benchmark of these rules measures a defined
+code-analysis task; it does not establish general language understanding or
+an accuracy advantage over a language model.
 
 * A relation has an explicit identity
 
@@ -43,7 +48,7 @@ different extraction supplies it.
 That makes deduplication and comparison straightforward. It also sets a clear
 limit: the key commits to the representation of a claim. It does not establish
 that the claim is correct. Duplicate collapse is not a complete evidence-history
-store; the supplied deduplication map retains one relation per key.
+store; the deduplication map retains one relation per key.
 
 * Curve mappings and rule processing have distinct roles
 
@@ -87,7 +92,7 @@ the absence of an LLM call. It is a replayable derivation record. It is not a
 signature, a zero-knowledge proof or independent verification of the original
 source material.
 
-The supplied rule table also composes module dependencies and derives
+The rule table also composes module dependencies and derives
 application dependencies through =belongs_to_application=. The general closure
 operation defaults to four rounds and accepts an explicit depth bound.
 Deduplication limits repeated facts, but a depth limit does not make arbitrary
@@ -137,20 +142,25 @@ rule table, input counts, depth or join strategy, and recovered/missing keys.
 The same inputs should produce the same relation identities and derivations.
 Unconnected entities and unknown predicate combinations should remain rejected.
 
-For a LodgeiT demonstration, begin with a small, reviewed set of structured
+For a domain-specific demonstration, begin with a small, reviewed set of structured
 facts and one agreed rule. Preserve the source reference for each premise and
 make the derived result inspectable. DamageBDD can then test the expected
 relation, its provenance and the refusal cases. That workflow is a proposed
 integration exercise; this documentation does not claim a completed
 economic-event reasoning deployment.
 
-* Sources and related documentation
+* Explore the implementation
 
-Source basis: =latest-apps.tar.gz= uploaded 5 October 2026, particularly
-=apps/ecai/src/ecai_relation.erl=, =ecai_compose.erl=,
-=ecai_relation_bench.erl= and =ecai_relation_learning.erl=, plus their EUnit
-sources. Examples above are derived from those APIs and were not executed here.
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_relation.erl][Typed relations and canonical identity]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_compose.erl][Composition rules and derivation records]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_relation_learning.erl][Code-analysis integration]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_relation_bench.erl][Structural benchmark implementation]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test/ecai_relation_tests.erl][Relation test cases]]
 
-- [[file:ecai_engineering_memory.org][Practical ECAI adoption guide]]
-- [[file:ecai_private_knowledge.org][Private knowledge retrieval and the model boundary]]
-- [[file:features_current.org][Current feature documentation and evidence map]]
+The examples above follow these APIs. No new runtime benchmark was executed
+for this article; retain input counts and expected edges when running your
+own evaluation.
+
+- [[file:ecai_engineering_memory.org][Use relations alongside engineering records]]
+- [[file:ecai_private_knowledge.org][Control access to private source material]]
+- [[file:features_current.org][Find related implementation guides]]

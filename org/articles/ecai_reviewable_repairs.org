@@ -2,13 +2,14 @@
 #+DESCRIPTION: Connect incident context, source identity, candidate patches and isolated validation so reviewers can assess what changed and what was actually checked.
 #+KEYWORDS: ECAI, code repair, Erlang, incident learning, patch review, worktrees
 #+AUTHOR: Steven Joseph
-#+DATE: 2026-10-05
+#+DATE: 2026-10-06
 #+CAPABILITY_ID: ecai-reviewable-repairs
 #+CONTENT_CLASS: adoption-guide
 #+IMPLEMENTATION_STATUS: source_present
 #+VALIDATION_STATUS: source_review_only
-#+VALIDATION_SCOPE: Incident learning, repair preflight, patch verification and repair capsule code inspected; no candidate generation, compilation, integration or deployment executed.
-#+EVIDENCE_DATE: 2026-10-05
+#+VALIDATION_SCOPE: Repository log bridge, repair preflight, verifier and capsule inspected; ecai_log_learning absent at the linked revision. No candidate generation, application build or deployment executed.
+#+EVIDENCE_DATE: 2026-10-06
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_patch_verifier.erl
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
 #+OPTIONS: toc:2 ^:nil
@@ -20,30 +21,40 @@ model see? Does the reported problem still exist? Did the patch apply to the
 intended files? Did a test fail because of the candidate or because the
 baseline was already broken?
 
-ECAI contains a repair workflow aimed at retaining that context. It connects
-runtime incident records and source analysis to candidate generation, patch
-validation and persistent review artifacts. Erlang teams can evaluate this
-on one reproducible maintenance issue before enabling a wider automated queue.
+ECAI's repair components retain source identity, check whether a finding is
+still relevant, validate a candidate in a separate Git worktree and preserve
+a review record. A worktree is another checkout of the same repository, so
+the candidate can be applied without changing the developer's active files.
+
+Consider a fix for a timeout. The reviewer needs the failing case, the code
+the model saw, the proposed diff and the commands used to check it. If the
+baseline already fails to compile, that fact needs to remain visible beside
+the candidate's result. The workflow gives those details a place to live.
 
 The adoption goal is a review package whose assumptions can be checked.
 Human acceptance should depend on the actual diff and validation evidence.
 
-* Carry the incident into the review
+* Keep the incident connected to its source
 
-The Damage log bridge bounds and redacts selected event text and reduces
-metadata before passing observations into ECAI. The incident-learning service
-correlates errors with module analysis and knowledge cards, then asks an audit
-model for a bounded incident card. It checkpoints queue state and exposes
-observed, learned, failed and retried counters.
+The Damage log bridge prepares bounded, redacted observations for an incident
+learner. It reduces selected metadata and checks that the receiving services
+are available before forwarding an observation.
 
-This gives maintainers a place to keep an explanation tied to the module
-that produced the observation. That learning stage does not itself execute
-a command or modify source. A separate patch workflow handles candidates.
+At the referenced revision, the bridge calls =ecai_log_learning=, but that
+module is absent from the tracked repository. Automatic log-to-incident
+learning therefore needs a complete matching implementation before it can
+serve as the entry point for a repair pilot. The patch manager, preflight,
+verifier and capsule code can still be inspected as separate components.
 
-The redaction code covers known credential patterns, including bearer values,
-Nostr secrets and common password/token labels. Pattern redaction is not a
-complete data-loss boundary. Use synthetic incidents first, and inspect what
-your configured model actually receives before admitting production logs.
+Begin with a known issue whose diagnosis and expected behavior are already
+recorded. This lets a team evaluate candidate review without depending on
+automatic incident diagnosis. Add the log-learning path once its missing
+service and integration tests are available.
+
+The bridge's redaction covers known credential patterns, including bearer
+values and common password/token labels. It cannot identify every sensitive
+fact in an application log. Synthetic incidents make it easier to inspect
+exactly what the configured model receives before using production material.
 
 * Check the source before spending another model call
 
@@ -100,15 +111,19 @@ explicitly. Record time spent reviewing and explaining a candidate, along
 with false diagnoses and rejected patches. This produces an adoption measure
 for the maintenance work your team actually does.
 
-* Source basis and next steps
+* Explore the implementation
 
-Reviewed source: =apps/damage/src/damage_ecai_log_bridge.erl= and, under
-=apps/ecai/src/=, =ecai_log_learning=, =ecai_patch_manager=,
-=ecai_repair_preflight=, =ecai_patch_verifier=, =ecai_patch_integration=,
-=ecai_repair_capsule= and =ecai_repair_commitment=. The archive contains
-dedicated preflight, integrity, retry, source-coherence and capsule tests.
-They were not executed during this documentation review.
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_ecai_log_bridge.erl][Incident observation and redaction bridge]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_patch_manager.erl][Repair queue and worker management]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_repair_preflight.erl][Source freshness and preflight decisions]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_patch_verifier.erl][Candidate and baseline validation]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_repair_capsule.erl][Persistent review capsule]]
+- [[https://github.com/DamageBDD/DamageBDD/tree/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test][ECAI repair and integrity tests]]
 
-- [[file:ecai_engineering_memory.org][Build source-backed engineering memory]]
+The linked revision contains dedicated repair and integrity tests. They were
+not executed as part of this prose update. Review the actual command output
+from your release when deciding whether a candidate is ready to accept.
+
+- [[file:ecai_engineering_memory.org][Keep the source knowledge behind an answer]]
 - [[file:damagebdd_evidence_workflows.org][Make the reproducer an acceptance scenario]]
-- [[file:stack_adoption.org][Choose a bounded pilot]]
+- [[file:stack_adoption.org][Choose a first pilot]]

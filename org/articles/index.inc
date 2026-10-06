@@ -1,8 +1,9 @@
 * Start here: practical adoption guides
 
-Choose one useful workflow and evaluate it on your own evidence. These articles
-review the application source uploaded on 5 October 2026 and include scoped
-pilots rather than unmeasured performance promises.
+Start with a problem your team already recognises: a service failure,
+a hard-to-find explanation or a repetitive desktop task. These guides explain
+how the components work, suggest a first evaluation and link directly to the
+relevant code in the [[https://github.com/DamageBDD/DamageBDD][DamageBDD repository]].
 
 - [[file:stack_adoption.org][Build an operational memory: a practical guide to the stack]]
 - [[file:damagebdd_evidence_workflows.org][DamageBDD: acceptance evidence you can share]]
@@ -15,9 +16,9 @@ pilots rather than unmeasured performance promises.
 
 * Current implementation articles
 
-Detailed feature documentation, reviewed 5 October 2026, with explicit source
-and validation boundaries. Start with the
-[[file:features_current.org][current feature overview and evidence map]].
+Use these references for API details, configuration choices and recorded test
+coverage. The [[file:features_current.org][component map]] explains the repository
+revision and distinguishes implementation details from live acceptance results.
 
 - [[file:ecai_private_knowledge.org][ECAI private knowledge retrieval and controlled LLM access]]
 - [[file:ecai_relation_processing.org][ECAI deterministic relation processing]]

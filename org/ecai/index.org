@@ -9,13 +9,16 @@
 
 * Current implementation documentation
 
-For source-backed capabilities reviewed 5 October 2026, start with
+For practical ways to retrieve engineering records, inspect dependencies and
+review candidate repairs, start with
 [[file:../articles/ecai_engineering_memory.org][ECAI engineering memory]],
 [[file:../articles/ecai_reviewable_repairs.org][reviewable repair workflows]],
 [[file:../articles/ecai_private_knowledge.org][private knowledge retrieval]] and
 [[file:../articles/ecai_relation_processing.org][deterministic relation processing]].
-The [[file:../articles/features_current.org][current feature map]] separates
-source inspection, historical tests and deployment evidence.
+Each guide explains the workflow and links to specific modules in the
+[[https://github.com/DamageBDD/DamageBDD][DamageBDD repository]]. The
+[[file:../articles/features_current.org][component map]] records the referenced
+revision, implementation gaps and scope of the available validation.
 
 The material below is the earlier conceptual position, not a description of
 measured current guarantees. The reviewed code establishes repeatable relation

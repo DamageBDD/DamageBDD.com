@@ -1,7 +1,7 @@
 #+TITLE: DamageBDD - BDD At Planetary Scale.
 
+- {{{timestamp(2026-10-06)}}} [[file:whitepaper.org][DamageBDD - Whitepaper]]
 - {{{timestamp(2026-10-05)}}} [[file:index.org][DamageBDD – Verifying Software Behaviour at Planetary Scale]]
-- {{{timestamp(2026-10-05)}}} [[file:whitepaper.org][DamageBDD - Whitepaper]]
 - {{{timestamp(2026-10-05)}}} [[file:node_admins.org][DamageBDD Node Admin Guide]]
 - {{{timestamp(2026-10-05)}}} [[file:use.org][Use DamageBDD]]
 - {{{timestamp(2026-10-05)}}} [[file:tokenomics.org][DAMAGE Token Tokenomics — Implemented Model]]
@@ -37,6 +37,9 @@
   - {{{timestamp(2025-04-24)}}} [[file:ecai/research.org][research]]
   - {{{timestamp(2025-04-24)}}} [[file:ecai/ekef-v0.3.org][ECAI Knowledge Encoding Format (EKEF v0.3)]]
 - *articles/*
+  - {{{timestamp(2026-10-06)}}} [[file:articles/quantum_of_verification.org][quantum_of_verification]]
+  - {{{timestamp(2026-10-06)}}} [[file:articles/developerzen.org][developerzen]]
+  - {{{timestamp(2026-10-06)}}} [[file:articles/whatisdamage.org][What is damage?]]
   - {{{timestamp(2026-10-05)}}} [[file:articles/stack_adoption.org][Build an Operational Memory: A Practical Guide to the DamageBDD Stack]]
   - {{{timestamp(2026-10-05)}}} [[file:articles/nosternity.org][Nosternity: Give Important Signed Events a Retention Policy]]
   - {{{timestamp(2026-10-05)}}} [[file:articles/features_current.org][Current Features: DamageBDD, ECAI, erm and Nosternity]]
@@ -47,9 +50,6 @@
   - {{{timestamp(2026-10-05)}}} [[file:articles/ecai_engineering_memory.org][ECAI: Give Engineering Knowledge a Source, a Structure and an Access Boundary]]
   - {{{timestamp(2026-10-05)}}} [[file:articles/damagebdd_evidence_workflows.org][DamageBDD: Turn Acceptance Criteria into Evidence You Can Share]]
   - {{{timestamp(2026-10-05)}}} [[file:articles/blossom_media.org][Blossom on DamageBDD: Share Files with a Verifiable Byte Identity]]
-  - {{{timestamp(2026-10-05)}}} [[file:articles/quantum_of_verification.org][quantum_of_verification]]
-  - {{{timestamp(2026-10-05)}}} [[file:articles/developerzen.org][developerzen]]
-  - {{{timestamp(2026-10-05)}}} [[file:articles/whatisdamage.org][What is damage?]]
   - {{{timestamp(2026-10-05)}}} [[file:articles/nostr_reliability.org][Nostr Reliability: Live Relay Delivery and NIP-46 Reply Correlation]]
   - {{{timestamp(2026-10-05)}}} [[file:articles/damagebdd_nostr.org][DamageBDD Nostr Integration: Identities, Events and Verification]]
   - {{{timestamp(2026-10-05)}}} [[file:articles/damage_nsecbunker.org][Damage nsecbunker: Custody, Signing Policy and Live Verification]]

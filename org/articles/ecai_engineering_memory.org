@@ -2,13 +2,14 @@
 #+DESCRIPTION: Private retrieval, typed code relations and durable indexing jobs provide concrete ways to evaluate ECAI on operational knowledge.
 #+KEYWORDS: ECAI, engineering knowledge, private RAG, relations, code analysis, indexing
 #+AUTHOR: Steven Joseph
-#+DATE: 2026-10-05
+#+DATE: 2026-10-06
 #+CAPABILITY_ID: ecai-engineering-memory
 #+CONTENT_CLASS: adoption-guide
 #+IMPLEMENTATION_STATUS: source_present
 #+VALIDATION_STATUS: source_review_only
 #+VALIDATION_SCOPE: Private index, LLM bridge, relation learning and index-job code inspected; no retrieval benchmark, real crypto-backend or live model run performed.
-#+EVIDENCE_DATE: 2026-10-05
+#+EVIDENCE_DATE: 2026-10-06
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_private_index.erl
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
 #+OPTIONS: toc:2 ^:nil
@@ -27,6 +28,23 @@ a small set of known inputs and expected outputs.
 For engineering teams, the immediate value is an inspectable path from a
 question to its supporting records. Claims about general intelligence or
 universal correctness are unnecessary to demonstrate that path.
+
+* Separate finding a record from writing an answer
+
+A corpus is a collection of records you choose to index: runbooks, approved
+incident notes or technical documents, for example. Retrieval finds records
+that match a question. A language model can then use selected excerpts to
+write an answer. This pattern is often called retrieval-augmented generation
+(RAG).
+
+The distinction is useful when answering “Why does this service retry that
+request?” Finding the right incident note is one task; accurately explaining
+its contents is another. Keep the source reference visible so the reader can
+check the explanation and identify an outdated note.
+
+ECAI's typed code relations serve a complementary purpose. They record
+structural relationships, such as which module calls a function. They can
+help locate relevant code even when the prose explanation is incomplete.
 
 * Keep corpus access and model access explicit
 
@@ -104,16 +122,23 @@ result in one does not conceal a failure in the other.
 Bring those results to the next integration discussion. They provide a
 stronger basis for adoption than an unmeasured claim of replacing every LLM.
 
-* Source basis and next steps
+* Explore the implementation
 
-Reviewed source under =apps/ecai/src/=: =ecai_private_index=,
-=ecai_private_policy=, =ecai_private_http=, =ecai_llm_bridge=,
-=ecai_relation=, =ecai_compose=, =ecai_relation_learning=,
-=ecai_index_jobs_srv=, =ecai_index_job_store= and =ecai_index_artifact=.
-The private-index tests use test crypto and model providers; their presence
-does not establish a real backend run. No benchmark score is reported here.
+The repository separates private retrieval, model access, code relations and
+indexing jobs into modules that can be inspected and tested independently.
+
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_private_index.erl][Permissioned private index]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_llm_bridge.erl][Controlled disclosure to a language model]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_relation_learning.erl][Relations derived from code analysis]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_index_jobs_srv.erl][Indexing-job service]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/docs/ecai/ECAI_DURABLE_JOBS.md][Durable indexing-job guide]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test/ecai_private_index_tests.erl][Private-index test cases]]
+
+The private-index tests use test crypto and model providers. A deployment
+evaluation must also exercise its real encryption backend, authentication
+and model destination. No new runtime benchmark is reported in this article.
 
 - [[file:ecai_private_knowledge.org][Private retrieval interfaces and limits]]
 - [[file:ecai_relation_processing.org][Relation rules and benchmark design]]
 - [[file:ecai_reviewable_repairs.org][Use source knowledge in a repair review]]
-- [[file:stack_adoption.org][Plan a first stack pilot]]
+- [[file:stack_adoption.org][Plan a first pilot]]

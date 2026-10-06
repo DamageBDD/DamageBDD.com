@@ -2,30 +2,38 @@
 #+DESCRIPTION: The current private-index implementation: encrypted segments, corpus permissions, bounded retrieval, model destinations and validation limits.
 #+KEYWORDS: ECAI, private retrieval, encrypted index, RAG, LLM, access control
 #+AUTHOR: Steven Joseph
-#+DATE: 2026-10-05
+#+DATE: 2026-10-06
 #+CAPABILITY_ID: ecai-private-knowledge
 #+CONTENT_CLASS: implementation-reference
 #+IMPLEMENTATION_STATUS: source_present
 #+VALIDATION_STATUS: source_review_only
-#+VALIDATION_SCOPE: Current source inspected; prior patch checks remain historical. No fresh compilation, EUnit, real PQC or live HTTP/LLM test performed.
-#+EVIDENCE_DATE: 2026-10-05
+#+VALIDATION_SCOPE: Repository private-index and model-dispatch paths inspected; no fresh application compilation, EUnit, real PQC or live HTTP/LLM test performed.
+#+EVIDENCE_DATE: 2026-10-06
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_private_index.erl
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
 #+OPTIONS: toc:2 ^:nil
 
-* Current position
+* Answer a question without opening the whole corpus
 
-ECAI's private-index and LLM-bridge implementation is present in the
-5 October 2026 =latest-apps.tar.gz= snapshot. Its boundary is concrete:
-encrypt a corpus on disk, authorise a reader, retrieve records inside a
-trusted worker, and send bounded excerpts to a permitted model destination.
+A team may want an assistant to explain an incident using internal notes,
+while keeping those notes out of a public search index and away from an
+unapproved model provider. That requires two decisions: who may read the
+records, and where their contents may be sent.
 
-This source review supersedes the earlier description of the implementation
-as only a supplied 2 October patch. The earlier validation record covered
-static and patch-application checks. No fresh compiler run, EUnit, real
-liboqs operation or live HTTP/model integration was performed here. The
-reported unsafe-variable pattern in the Damage log bridge is changed in
-this snapshot; that is not proof of a successful full release build.
+ECAI's private index and LLM bridge make those decisions explicit. Records
+are encrypted on disk, a reader is authorised for a particular corpus, and
+retrieval happens inside a trusted worker. The bridge sends selected excerpts
+only to a destination permitted for that corpus.
+
+For example, a support runbook and a restricted operational record may need
+different readers and model destinations. Separate corpora let the operator
+express those differences. Within a corpus, permission applies to the entire
+collection; this implementation does not provide per-record access rules.
+
+The sections below describe the repository implementation and the choices an
+operator needs to make before using private data. Start with synthetic
+records whose expected search results and permissions are easy to verify.
 
 * What becomes private
 
@@ -139,7 +147,7 @@ records. Generated source labels are not proof that every sentence is supported.
 The bridge passes source material as untrusted evidence and provides no tool
 execution interface, but model answers still need application-level checking.
 
-* A bounded LodgeiT demonstration
+* Try a small private-knowledge workflow
 
 A useful first demonstration would load a small, permissioned collection of
 operational notes and economic-event records, then ask questions whose expected
@@ -148,21 +156,29 @@ an unrelated account should receive no contents. A forbidden destination should
 be rejected before any model call. A question with no matching evidence should
 return the explicit no-source outcome.
 
-Those are proposed acceptance cases, not results of a completed LodgeiT pilot.
-The current archive contains private-index EUnit cases using test crypto
-and model providers. Their execution, real-backend behaviour, authentication,
-permission revocation and the deployed model route remain separate evidence
-needed for release acceptance.
+Test revocation after an initially successful request, and check that the
+application does not display an old answer as the result of a refused request.
+Keep the retrieved source IDs with the expected results. This gives the team
+a repeatable check when permissions, records or model configuration change.
 
-* Sources and related documentation
+The repository's EUnit cases use test crypto and model providers. Real-backend
+behaviour, authentication and the deployed model route need an integration
+run of their own. The workflow here is a proposed evaluation.
 
-Current implementation basis: =latest-apps.tar.gz=, uploaded 5 October 2026.
-Historical patch context: =ecai_private_index_llm_changed_files.tar.gz= and
-=ecai_private_validation.txt=, dated 2 October 2026.
-Principal modules: =ecai_private_index=, =ecai_private_policy=,
-=ecai_private_store=, =ecai_private_crypto=, =ecai_private_http= and
-=ecai_llm_bridge=.
+* Explore the implementation
 
-- [[file:ecai_engineering_memory.org][Practical ECAI adoption guide]]
-- [[file:ecai_relation_processing.org][Deterministic relation processing]]
-- [[file:features_current.org][Current feature documentation and evidence map]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_private_index.erl][Index, search and fetch operations]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_private_policy.erl][Corpus permissions and destination policy]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_private_store.erl][Encrypted segment storage]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_private_crypto.erl][Cryptography backend integration]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_private_http.erl][Authenticated HTTP interface]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_llm_bridge.erl][Private retrieval and model dispatch]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test/ecai_private_index_tests.erl][Private-index test cases]]
+
+The links pin the code used for this description. Consult the installation
+and backend documentation for the release you deploy; no new real-crypto or
+live-model result is asserted here.
+
+- [[file:ecai_engineering_memory.org][Put retrieval in an engineering workflow]]
+- [[file:ecai_relation_processing.org][Explore deterministic code relations]]
+- [[file:features_current.org][Find related implementation guides]]

@@ -2,13 +2,14 @@
 #+DESCRIPTION: Use readable scenarios, content-addressed reports, schedules and release identity to make service acceptance easier to reproduce and review.
 #+KEYWORDS: DamageBDD, BDD, acceptance testing, API, IPFS, release evidence, automation
 #+AUTHOR: Steven Joseph
-#+DATE: 2026-10-05
+#+DATE: 2026-10-06
 #+CAPABILITY_ID: damagebdd-evidence-workflows
 #+CONTENT_CLASS: adoption-guide
 #+IMPLEMENTATION_STATUS: source_present
 #+VALIDATION_STATUS: source_review_only
 #+VALIDATION_SCOPE: Runner, HTTP result handling, schedules and release-discovery code inspected; no new execution, payment or release-installation run.
-#+EVIDENCE_DATE: 2026-10-05
+#+EVIDENCE_DATE: 2026-10-06
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage.erl
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
 #+OPTIONS: toc:2 ^:nil
@@ -24,6 +25,18 @@ report. This is a practical entry point for API teams, integration developers,
 service operators and contractors agreeing on a delivery boundary. The first
 adoption goal can be small: turn one recurring support issue into a scenario
 that another person can run and understand.
+
+* Give the team a shared acceptance check
+
+Behaviour-driven development (BDD) describes a requirement as an example
+someone can run. In a Gherkin scenario, =Given= establishes the starting
+conditions, =When= describes an action, and =Then= checks the result. Support
+can explain the failure in the same terms a developer uses to reproduce it.
+
+For example, an integration may need an API to return both a successful
+status and a particular JSON field. Checking only the status can miss a
+breaking change. A short scenario makes the complete expectation explicit
+and keeps it available for the next release.
 
 * Begin with an observable contract
 
@@ -49,7 +62,7 @@ step implementations; ordinary prose alone is not executable coverage.
 
 * A report can travel with the discussion
 
-In the reviewed runner, the report directory is published through IPFS after
+The runner publishes the report directory through IPFS after
 run metadata is written. The returned record includes =feature_hash=,
 =report_hash=, release information and encrypted-context references. This
 gives a handoff a stable content reference instead of relying on a screenshot
@@ -90,8 +103,9 @@ For operators, the adoption value is traceability: which artifact did a report
 or deployment refer to? The code separates read-only discovery from explicit
 account-signed state changes. A token or CID identifies an artifact; it does
 not replace the build tests or establish that the software is defect-free.
-Contract files and a complete release environment were not included in this
-source-only archive, so no installation or chain operation was tested here.
+Use the repository's installation guide for a matching release and keep its
+build identity with the result. The workflow described here has not been
+validated by a new installation or chain operation for this article.
 
 * A first pilot with a clear finish
 
@@ -105,15 +119,22 @@ same evidence, and a deliberately failing case remains visible as a failure.
 Only after that should you extend the workflow into custody, payments or
 cross-node verification. Those paths need their own acceptance evidence.
 
-* Source basis and next steps
+* Explore the implementation
 
-Reviewed source: =apps/damage/src/damage.erl= (execution and report assembly),
-=damage_http.erl= (result handling), =steps_http.erl= (scenario vocabulary),
-=damage_schedule.erl=, =damage_schedule_index.erl= and
-=damage_release_nft.erl=. Tests for HTTP context and release discovery are
-present in =apps/damage/test/=; they were not run in this review.
+Start with the HTTP step reference when writing a scenario; use the code
+links when you need to inspect how the result is executed and recorded.
+
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage.erl][Scenario execution and report assembly]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_http.erl][HTTP execution results and failure handling]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/steps_http.erl][Implemented HTTP scenario vocabulary]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_schedule.erl][Scheduled feature execution]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_release_nft.erl][Release discovery and artifact verification]]
+- [[https://github.com/DamageBDD/DamageBDD/tree/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/test][Damage application tests]]
+
+These references identify the implementation. No new application execution,
+payment or release installation was run for this article.
 
 - [[file:../modules/http.org][Write an HTTP scenario]]
 - [[file:../manual.org][Use the DamageBDD manual]]
-- [[file:damage_nsecbunker.org][Explore the separately recorded nsecbunker acceptance evidence]]
-- [[file:stack_adoption.org][Choose the next stack component]]
+- [[file:damage_nsecbunker.org][Read a separately recorded acceptance example]]
+- [[file:stack_adoption.org][Choose the next component]]

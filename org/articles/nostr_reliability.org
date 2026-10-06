@@ -2,10 +2,10 @@
 #+DESCRIPTION: The subscribe-before-publish correction, stale-context protection, relay adapter behaviour and the evidence behind the live bunker tests.
 #+KEYWORDS: Nostr, NIP-46, relays, Erlang, Gun, ephemeral events, DamageBDD
 #+AUTHOR: Steven Joseph
-#+DATE: 2026-10-05
+#+DATE: 2026-10-06
 #+CAPABILITY_ID: nostr-reliability
 #+CONTENT_CLASS: implementation-reference
-#+IMPLEMENTATION_STATUS: patch_supplied
+#+IMPLEMENTATION_STATUS: source_present
 #+VALIDATION_STATUS: live_suite_passed
 #+VALIDATION_SCOPE: The documented 12 live bunker scenarios; no general relay-availability or latency guarantee.
 #+EVIDENCE_DATE: 2026-09-25
@@ -15,19 +15,27 @@
 #+INCLUDE: "../header.org"
 #+OPTIONS: toc:2 ^:nil
 
-* Current position
+* Make a fast reply observable
 
-The recent Nostr work addresses two concrete sources of misleading live-test
-results: missing a fast bunker response because its subscription starts too
-late, and retaining an old response after a later request times out. The
-supplied reply-race patch fixes both in =steps_nsecbunker_live=. The supplied
-relay adapter also owns connection workers and dispatches inbound requests
-asynchronously.
+A remote signing request can fail from the client's perspective even when
+the signer answered correctly. If the client starts listening after sending,
+a fast reply may already be gone. If it retains an old reply in its state,
+a later timeout can be mistaken for success.
 
-Release-build run =20260925132037= subsequently records all 12 live bunker
-scenarios passing. That is evidence of the tested deployment at that time.
-It is not an availability guarantee for the listed public relays or every
-Nostr feature in the application.
+DamageBDD's live NIP-46 test path addresses both cases. It establishes reply
+listeners before publication, correlates the decrypted response with the
+current request ID, and clears old response state before the next request.
+The bunker relay adapter manages its connection workers and dispatches
+incoming requests asynchronously.
+
+This matters for any integration in which a request crosses a relay and a
+separate response must come back. Connection success, request delivery and
+a completed operation are different observations. Keeping them separate
+makes a failure easier to diagnose.
+
+Release-build run =20260925132037= records the live bunker scenarios passing
+on 25 September 2026. That result remains tied to its tested release and
+deployment; public-relay conditions and later releases need fresh checks.
 
 * Why subscription order matters
 
@@ -44,11 +52,11 @@ The parent publishes only after readiness has been established for at least one
 listener. Listeners remain open while publication and bunker ingress are
 checked, allowing a fast matching reply to wait in the parent's mailbox.
 
-This supplied patch uses dedicated listener connections and the separate
-black-box publication path. It does not implement the earlier suggested design
-of putting every request and reply on one connection. The important established
-ordering is a ready reply subscription before publication, followed by continued
-listening until the matching reply or a bounded failure.
+The implementation uses dedicated listener connections and a separate
+publication path. This also exercises delivery between connections rather
+than relying on one socket to observe its own traffic. Listeners remain
+active until the matching response arrives or the operation reaches its
+bounded failure condition.
 
 * Matching the current request
 
@@ -56,7 +64,7 @@ The response filter narrows traffic by kind, expected bunker author and the
 client's recipient tag. After decryption, the response ID must match the current
 request ID. The later assertion checks that correlation again.
 
-Before creating each request, the patched function removes
+Before creating each request, the function removes
 =last_nip46_reply_event=, =last_nip46_response= and
 =last_nip46_reply_error= from its live-test namespace. It replaces that namespace
 with =maps:put/3=. The normal =put_live/2= helper merges maps and therefore cannot
@@ -73,7 +81,7 @@ bridge. It subscribes to requests addressed to the bunker and publishes signed
 response events returned by the bunker path. The module does not itself load
 vault secrets or perform signing.
 
-Its supplied implementation keeps connector workers alive as Gun connection
+The adapter keeps connector workers alive as Gun connection
 owners, tracks recently observed event IDs and exposes operational counters.
 Inbound dispatch is asynchronous. This avoids a call cycle in which the relay
 adapter waits synchronously for the client bridge while that bridge tries to
@@ -101,24 +109,25 @@ Request ingress alone does not show that response publication succeeded. A
 WebSocket upgrade alone does not establish kind-24133 delivery. These
 distinctions are why the live suite retains all of its separate assertions.
 
-* What the relay investigation actually found
+* Diagnose the layer that failed
 
-The earlier =nos.lol= investigation produced changing outcomes: successful
-upgrades, zero-response timeouts and a trace reaching nginx before HTTP 502.
-The original fixed WebSocket key also failed in the repeated comparison.
-Consequently the observations did not establish key-dependent behaviour or a
-Gun handshake defect.
+A successful WebSocket upgrade only confirms that the transport opened.
+If no request reaches the bunker, inspect the event kind, recipient filter,
+relay policy and subscription state. If the request arrives but no reply
+does, inspect signing outcome, response publication and client correlation.
 
-The practical diagnostic sequence is to identify the failing layer and repeat
-a controlled test from the actual node. Public relay selection should be based
-on present kind-24133 publication and receipt, using separate connections and
-the intended identities. A historical candidate list is not a health check.
-The current article deliberately makes no claim that a particular public relay
-is healthy today.
+Repeat the check from the node and network where the service will run.
+Use the intended identities and a current kind-24133 round trip. Public
+relay behaviour can change, so a previously working relay list is a starting
+configuration rather than evidence that today's request will complete.
+
+Keep the failing event ID, request ID and relevant counters with the report.
+Those details let another engineer repeat the same observation without
+guessing which stage a generic timeout describes.
 
 * Evidence and remaining limits
 
-The supplied release log records relay canary ingress, black-box ping and
+The recorded release result includes relay canary ingress, black-box ping and
 signing loops, ordinary live round trips, and policy-rejection responses as
 successful. The tests use the node's existing =damage_nostr= identity. A
 separate local policy probe verifies the requested external client's allowlist
@@ -130,13 +139,19 @@ and no latency target is established by a green result. A bounded negative
 query for a signed article also establishes only that it was not observed on
 the checked relay path during the check.
 
-* Sources and related documentation
+* Explore the implementation and recorded result
 
-Implementation basis: supplied =damage_nsecbunker_relay.erl=,
-=damage_nostr_relay_client.erl= and =nip46_reply_race.patch=.
-Observed result: [[https://lightning.lodgeit.org/reports/QmPd9j9xJKLbmRqFzgb4asWWLsS6Tvi2Z8SdFgy8g7ZCXQ][release-build run 20260925132037]], as recorded in the supplied console log.
-Protocol reference: [[https://github.com/nostr-protocol/nips/blob/master/46.md][NIP-46]].
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/steps_nsecbunker_live.erl][Reply listeners, state cleanup and correlation checks]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_nsecbunker_relay.erl][Relay connection ownership and asynchronous dispatch]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_nostr_relay_client.erl][Request and response bridge]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/features/nsecbunker/generic_live_nsecbunker_operations.feature][Live bunker acceptance scenarios]]
+- [[https://lightning.lodgeit.org/reports/QmPd9j9xJKLbmRqFzgb4asWWLsS6Tvi2Z8SdFgy8g7ZCXQ][Release-build run 20260925132037]]
+- [[https://github.com/nostr-protocol/nips/blob/master/46.md][NIP-46 protocol specification]]
+
+The code links pin the revision used for this explanation. The September
+report describes its recorded release; this documentation update did not
+repeat that live run or measure current relay availability.
 
 - [[file:damage_nsecbunker.org][Bunker policy, custody and verification coverage]]
-- [[file:damagebdd_nostr.org][DamageBDD Nostr integration]]
-- [[file:features_current.org][Current feature documentation and evidence map]]
+- [[file:damagebdd_nostr.org][General Nostr interfaces]]
+- [[file:features_current.org][Browse the component map]]

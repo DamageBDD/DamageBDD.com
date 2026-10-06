@@ -2,97 +2,110 @@
 #+DESCRIPTION: A source-reviewed entry point to practical workflows, implementation references and the evidence needed to evaluate the stack.
 #+KEYWORDS: DamageBDD, ECAI, erm, Nosternity, Nostr, Blossom, nsecbunker, adoption
 #+AUTHOR: Steven Joseph
-#+DATE: 2026-10-05
+#+DATE: 2026-10-06
 #+CONTENT_CLASS: implementation-overview
 #+IMPLEMENTATION_STATUS: components_present
 #+VALIDATION_STATUS: source_review_only
-#+VALIDATION_SCOPE: Selected implementation paths reviewed in the 5 October uploaded source; historical live results retain their original date and scope.
-#+EVIDENCE_DATE: 2026-10-05
+#+VALIDATION_SCOPE: Selected repository implementation paths inspected; missing integration modules identified. Historical live results retain their original date and scope.
+#+EVIDENCE_DATE: 2026-10-06
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/README.md
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
 #+OPTIONS: toc:2 ^:nil
 
-* Start with a useful workflow
 
-Read [[file:stack_adoption.org][Build an operational memory: a practical guide to the stack]]
-to choose a small adoption pilot. The articles below explain who each feature
-helps, what the source implements and how to evaluate it against a known
-problem. They are based on the application sources uploaded on 5 October 2026.
+* Find the component that fits your work
 
-| Article | Practical entry point | Evidence in this review |
-|---------+-----------------------+-------------------------|
-| [[file:damagebdd_evidence_workflows.org][DamageBDD acceptance evidence]] | Reproduce a service behaviour and share its report | Runner, HTTP, schedules and release-discovery source |
-| [[file:ecai_engineering_memory.org][ECAI engineering memory]] | Retrieve approved records and inspect code relations | Private retrieval, relation learning and index-job source |
-| [[file:ecai_reviewable_repairs.org][ECAI reviewable repairs]] | Retain the context and checks around a generated patch | Incident, preflight, verifier and capsule source |
-| [[file:erm_local_voice.org][erm local voice and desktop]] | Control media and query an appropriate local corpus | Erlang coordination and adapter source; native hardware untested |
-| [[file:nosternity.org][Nosternity event retention]] | Store selected signed events with confirmation tracking | Current event store, supervisor and relay source; delivery/recovery gaps identified |
-| [[file:blossom_media.org][Blossom supporting files]] | Retrieve bytes matching a known digest | HTTP, signed authorization, storage and ownership source |
+The stack covers several related jobs: checking software behaviour, finding
+the records behind an answer, reviewing a repair, controlling a workstation,
+and sharing signed events or supporting files. Each component has its own
+inputs, dependencies and operating limits.
 
-* Detailed implementation references
+Start with the [[file:stack_adoption.org][practical adoption guide]] if you want
+to connect these pieces around one incident or service. Use the map below to
+go directly to a component. The links in each article lead to the relevant
+implementation in the [[https://github.com/DamageBDD/DamageBDD][DamageBDD repository]].
 
-| Reference | Scope and status |
+| Component | What it helps you do | A useful first evaluation |
+|-----------+---------------------+----------------------------|
+| [[file:damagebdd_evidence_workflows.org][DamageBDD acceptance evidence]] | Express an expected behaviour and share its execution report | Reproduce a known API failure and the fix |
+| [[file:ecai_engineering_memory.org][ECAI engineering memory]] | Retrieve approved records and inspect code relationships | Find the correct supporting record for a small question set |
+| [[file:ecai_reviewable_repairs.org][ECAI repair review]] | Keep source identity and validation results with a candidate patch | Compare a repair against a known baseline |
+| [[file:erm_local_voice.org][erm voice and desktop]] | Control media and ask questions about a configured local corpus | Run a small set of commands on your own workstation |
+| [[file:blossom_media.org][Blossom supporting files]] | Share files whose bytes can be checked independently | Upload, retrieve and hash a public fixture |
+| [[file:nosternity.org][Nosternity event retention]] | Define retention for selected signed events | Complete the event-store integration and test confirmation and recovery |
+
+* Understand how the pieces connect
+
+DamageBDD gives a behaviour an executable form. ECAI can retain and retrieve
+the explanation surrounding that behaviour, and its relation layer describes
+structural facts such as which function calls another. erm provides a human
+interface to selected services. Nostr messages and Blossom files let a
+separate application share references to the resulting records.
+
+The connections are explicit. A signed announcement needs a report reference;
+an answer needs a supporting document; a repair needs the revision it was
+prepared against. Those identifiers help another person follow the reasoning
+without trusting the original author's memory.
+
+Some integrations require additional work. erm's current ECAI voice route
+uses public disk retrieval, rather than the private corpus API. The public
+repository also has incomplete incident-learning and Nosternity event-store
+integration, described below. Choose a complete path for an initial pilot.
+
+* Read the detailed references
+
+| Reference | What to look for |
 |-----------+------------------|
-| [[file:ecai_private_knowledge.org][ECAI private knowledge retrieval]] | Private implementation now present in the current archive; fresh runtime validation not performed |
-| [[file:ecai_relation_processing.org][ECAI deterministic relation processing]] | Typed relations and structural evaluation code present; no benchmark score recorded |
-| [[file:damagebdd_nostr.org][DamageBDD Nostr interfaces]] | Source-observed client interfaces and their transport boundaries |
-| [[file:nostr_reliability.org][Nostr reliability and reply correlation]] | Historical 25 September live-bunker result and transport corrections |
-| [[file:damage_nsecbunker.org][nsecbunker custody and policy]] | Historical 12-scenario release-build run; it does not certify this whole source snapshot |
+| [[file:ecai_private_knowledge.org][Private knowledge retrieval]] | Corpus permissions, encrypted storage, HTTP routes and permitted model destinations |
+| [[file:ecai_relation_processing.org][Deterministic relation processing]] | Typed identities, composition rules and the scope of structural benchmarks |
+| [[file:damagebdd_nostr.org][DamageBDD Nostr interfaces]] | Identity-backed clients, event helpers and relay configuration |
+| [[file:nostr_reliability.org][Relay reliability and reply correlation]] | Subscription ordering, request matching and transport diagnostics |
+| [[file:damage_nsecbunker.org][nsecbunker custody and signing policy]] | Restricted signing and the separately recorded September acceptance result |
 
-* What the new source changes
+* Repository status and reproducibility
 
-Blossom is no longer documented only from a development update: the current
-archive includes its HTTP facade, authorization verifier, rate limiter and
-shared ownership store. Nosternity now explicitly supervises its relay and
-Aeternity event store, validates events and supports cache rehydration.
-Its subscription filtering/broadcasting and pending-write durability remain
-incomplete. Those details supersede the historical July snapshot descriptions.
+The source links in this collection refer to [[https://github.com/DamageBDD/DamageBDD/commit/a993c0421b38de475b103dc79f31da1e091cd97a][revision a993c0421b38]], examined on
+6 October 2026. They point to specific files rather than a changing branch.
+The repository's README and installation guide are the starting points for
+running a matching checkout.
 
-ECAI's private-index and LLM-bridge modules are present in this source tree.
-The previously reported unsafe-variable pattern in the log bridge is changed,
-but that observation is not a successful compilation result. The new erm
-article documents a real retrieval connection to ECAI's public disk corpus;
-private voice access still requires its own authenticated integration.
+Two integration gaps are visible at that revision:
 
-* How to interpret evidence
+- Nosternity's supervisor and relay call =nosternity_event_store=, but that
+  module and its named test module are absent from the tracked tree. The
+  contract and integration guide are present; the separate configuration
+  example named by that guide is also absent.
+- DamageBDD's incident log bridge calls =ecai_log_learning=, but that module
+  is absent. The repair manager, preflight, verifier and capsule modules are
+  present and can be examined independently of automatic incident ingestion.
 
-A source review establishes the inspected implementation, its apparent control
-flow and its dependencies. A test file establishes a described test case, not
-that the test passed. A build or live result establishes only its recorded
-revision, environment and scenarios. The =EVIDENCE_DATE= on new articles is
-the source-review date; =VALIDATION_STATUS= is =source_review_only=.
+These are specific packaging or implementation gaps to resolve before using
+the affected paths from a clean checkout. A successful documentation build
+does not resolve them.
 
-The 25 September bunker report remains historical evidence for that run.
-It is not reused as verification for Blossom, private retrieval, voice,
-Nosternity persistence or a new release. Generated documentation timestamps
-are also separate from feature verification dates.
+* Read validation in context
 
-Deterministic relation encoding establishes repeatable identity. A signature
-binds an event to a signing key; a digest identifies bytes. None of those
-properties establishes the truth of arbitrary content. Model answers and
-application conclusions need their own supporting evidence.
+Most articles describe source behaviour and provide a proposed evaluation.
+They do not report a new application build, hardware test, model run or chain
+transaction. The nsecbunker articles also preserve a dated acceptance report
+for the release and scenarios named in that report.
 
-* Review scope
+That distinction helps you choose the next test. A private retrieval pilot
+needs access and disclosure checks; a voice pilot needs real audio; a storage
+pilot needs confirmation and restart recovery. A result from one of those
+does not establish the others.
 
-The source basis is =latest-apps.tar.gz= and the documentation baseline is
-=latest-org.tar(1).gz=, uploaded 5 October 2026. The review followed selected
-feature paths and tests; it is not an exhaustive security audit of every
-application module.
+The machine-readable metadata records these distinctions in =VALIDATION_STATUS=,
+=VALIDATION_SCOPE= and =EVIDENCE_DATE=. Current document and capability lists
+are generated during publishing, so adding or removing an article does not
+require maintaining a fixed count here.
 
-The application archive lacks the repository's =rebar.config=, contract tree,
-native C/C++ sources, relevant include directories and deployed configuration.
-No full build, EUnit/CT suite, audio device test, model inference, payment,
-chain transaction or production service operation was performed. Documentation
-exports and links are checked separately.
+* Continue reading
 
-Proposed pilot steps are acceptance goals unless explicitly identified as
-existing scenario vocabulary or API calls. Use the complete matching release,
-record its revision and configuration, and retain its own results when moving
-from a source-level evaluation to a deployment claim.
-
-* Existing documentation
-
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/README.md][Repository overview and quick start]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/INSTALL.md][Installation and operations guide]]
 - [[file:index.org][Article index]]
-- [[file:../ecai/index.org][ECAI overview and earlier conceptual material]]
-- [[file:../modules/index.org][DamageBDD module index]]
-- [[file:../install.org][Installation guide]]
+- [[file:../ecai/index.org][ECAI implementation guides and conceptual background]]
+- [[file:../modules/index.org][DamageBDD step references]]
 - [[file:../node_admins.org][Node administration]]
