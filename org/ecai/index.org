@@ -1,13 +1,22 @@
 #+TITLE: ECAI: Current Implementation and Earlier Conceptual Work
-#+DESCRIPTION: Source-backed ECAI guides for private retrieval, typed relations and reviewable repairs, followed by earlier conceptual material.
+#+DESCRIPTION: Source-backed ECAI guides for Wikipedia indexing, search evidence, index NFTs, private retrieval, typed relations and reviewable repairs, followed by earlier conceptual material.
 #+KEYWORDS: ECAI, Elliptic Curve AI, deterministic AI, cryptographic intelligence, post-quantum AI, verifiable knowledge retrieval, elliptic curve encoding, proof-based AI, Bitcoin-compatible intelligence
 
 #+INCLUDE: "../header.org"
 #+AUTHOR: Steven Joseph
 #+DATE: 2025-04-07
+#+LAST_MODIFIED: 2026-10-06
 #+OPTIONS: toc:nil num:nil
 
 * Current implementation documentation
+
+To build and share a searchable collection, start with
+[[file:../articles/ecai_wikipedia_indexing.org][Wikipedia corpus indexing]],
+[[file:../articles/ecai_indexing_workflows.org][managed indexing workflows]],
+[[file:../articles/ecai_search_evidence.org][search and evidence verification]] and
+[[file:../articles/ecai_index_nfts.org][index artifacts and NFTs]]. These guides
+describe source selection, recovery, retrieval and release identity, including
+the remaining gaps in automatic minting and payment.
 
 For practical ways to retrieve engineering records, inspect dependencies and
 review candidate repairs, start with

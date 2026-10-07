@@ -1,0 +1,151 @@
+#+TITLE: ECAI Index NFTs: Give a Knowledge Release a Verifiable Identity
+#+DESCRIPTION: What ECAI index artifacts and indexing-job NFTs represent, how IPFS and lineage fit together, and what remains before an automated paid indexing market.
+#+KEYWORDS: ECAI, index NFT, IPFS, artifact, knowledge corpus, provenance, indexing jobs
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-06
+#+LAST_MODIFIED: 2026-10-06
+#+CAPABILITY_ID: ecai-index-nfts
+#+CONTENT_CLASS: implementation-reference
+#+IMPLEMENTATION_STATUS: partial_implementation
+#+VALIDATION_STATUS: source_review_only
+#+VALIDATION_SCOPE: Artifact finalisation, NFT adapter, knowledge contract and chunk-job prototype reviewed at repository revision a993c0421b38; no live IPFS publication, chain mint, payment or marketplace acceptance test executed for this article.
+#+EVIDENCE_DATE: 2026-10-06
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_index_artifact.erl
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_nft.erl
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/priv/contracts/knowledge_nft.aes
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Make the release itself something people can reference
+
+Preparing a useful knowledge collection takes work: choosing sources,
+normalising records, building an index and checking whether it answers the
+questions users actually ask. If another team wants that collection, a URL
+labelled "latest index" provides little assurance about what it will receive.
+
+ECAI's artifact path gives the release a more precise description. A manifest
+records source identity, pipeline information, counts and output-file digests.
+Optional IPFS publication supplies content-addressed references. NFT metadata
+can then describe that release with identifiers that other applications can
+retain and check.
+
+The potential is a reusable publication unit for knowledge infrastructure.
+A curator could distribute an evaluated reference corpus, an application could
+pin the version it uses, and a later release could identify its predecessor.
+The current implementation supplies parts of that workflow. Automatic minting,
+verification of useful work and payment must be assessed separately.
+
+* Separate the finished artifact from the job
+
+The source uses NFT-related concepts in two different places.
+
+| Concept | What it describes | Current implementation boundary |
+|---------+-------------------+---------------------------------|
+| Index artifact and NFT metadata | A completed index release and its published manifest | Finalisation, hashes, optional IPFS publication and metadata generation |
+| Indexing-job NFT | A dataset chunk, line range and job identity | Metadata adapter and owner-controlled contract entry point; the reviewed mint helper dry-runs its call |
+
+A token describing work to perform is not evidence that the work was
+successfully completed. Conversely, a useful index can be built and used
+locally without minting a token.
+
+* What the artifact commits to
+
+The [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_index_artifact.erl][artifact finaliser]] constructs a canonical manifest from source and pipeline
+descriptions, target settings, record counts and file roles, lengths and
+SHA-256 digests. Local paths and build timestamps are excluded from its
+identity material. The resulting =index_root= is a digest of that canonical
+identity; it is distinct from the per-term posting roots used for search
+membership proofs.
+
+The contents depend on the indexing mode. Wikimedia visibility jobs include
+a full search snapshot and their corpus-selection material. Disk artifacts
+include posting segments and the document store. Legacy live JSONL and Yelp
+artifacts contain shared-context term headers, so they should not be sold
+as self-contained copies of a single job's dataset.
+
+A =previous_manifest_cid= can connect a release to an earlier one. The source
+frontier digest incorporates that predecessor reference and source identity.
+This records lineage; it does not prove that every upstream change was
+processed or that the build reused previous work incrementally.
+
+* Publication adds an address, not permanent availability
+
+With IPFS publication enabled, the finaliser publishes files and then the
+manifest. It reads the manifest back and compares the returned bytes before
+reporting it ready for NFT metadata. A local-only artifact can complete
+without entering that ready-to-mint condition.
+
+IPFS [[https://docs.ipfs.tech/concepts/content-addressing/][content addressing]] identifies content independently of a particular hosting
+location. A CID should not be confused with the manifest's ordinary file
+SHA-256 digest: encoding and import choices participate in IPFS addressing.
+Keeping the material retrievable still requires a
+[[https://docs.ipfs.tech/concepts/persistence/][persistence and pinning policy]]. A token reference does not supply that storage
+on its own.
+
+The generated NFT metadata carries the manifest reference and digest, index
+root, namespace, pipeline, counts and predecessor information. The schema
+version varies with the artifact path. A consumer should validate the stated
+schema and required files instead of assuming every index NFT has the same
+payload.
+
+* Where the on-chain workflow currently stops
+
+The [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/priv/contracts/knowledge_nft.aes][knowledge NFT contract]] includes ownership, transfer and approval behaviour,
+plus an owner-controlled =mint_index_job= entry point. Its job key supports
+idempotent lookup, and the contract checks token identifiers and stores
+dataset, chunk and kind indexes with the payload.
+
+The reviewed [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_nft.erl][Erlang mint_index_job helper]] constructs the chunk metadata and calls
+=damage_ae:contract_call_dry=. That path simulates a contract call; it does
+not submit the mint transaction. The durable index queue exposes ready
+metadata, but no automatic artifact-to-mint submission flow was established
+by this review.
+
+There is also a separate [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_jobs_srv.erl][chunk-job manager]] with claim, submit and pay operations.
+It keeps jobs in memory. Its =pay= operation marks the job paid locally;
+the chain creation, claim, submission and payment calls are comments or
+integration placeholders. That status is not evidence that money moved.
+
+These distinctions matter for adoption. The reviewed paths support describing
+artifacts and representing job identities, but do not establish a complete
+paid indexing market. A production workflow would need transaction submission
+and confirmation, work acceptance, durable payment state and recovery from
+partial failure.
+
+* What this could enable
+
+Versioned reference collections are the nearest opportunity. A team could
+publish a tested corpus and let several assistants use the same identifiable
+release. A research group could keep an evaluation collection fixed while
+comparing retrieval methods. A specialist curator could publish its selection
+policy and evidence alongside an index for others to inspect.
+
+A paid indexing service is a further possibility, provided the buyer can
+verify the delivered material and the payment workflow is completed. The
+valuable work would be collection quality, coverage, maintenance and reliable
+delivery. Token ownership alone does not make the source text exclusive or
+replace its existing attribution and reuse conditions.
+
+Freshness also needs a publication policy. New content creates a new release;
+an older token continues to identify its older material. A service needs an
+explicit way to discover and approve successors instead of treating every
+historical identifier as "latest".
+
+* Prove delivery before building a market around it
+
+A useful pilot begins with a public fixture collection. Publish its artifact,
+retrieve only the published files on a clean consumer, check their hashes,
+reload the index and run a fixed set of queries. Where version 2 proofs apply,
+verify them against the intended release and reject altered records.
+
+Only then add a test-chain mint with a confirmed transaction and independently
+checked ownership events. Payment needs its own end-to-end test; neither a
+dry run nor a local paid flag is sufficient. The
+[[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test/ecai_index_artifact_tests.erl][artifact tests]] provide source-level examples of identity and readiness checks,
+not a claim that this complete pilot has already passed.
+
+See [[file:ecai_wikipedia_indexing.org][Wikipedia corpus releases]],
+[[file:ecai_indexing_workflows.org][indexing workflows]] and
+[[file:ecai_search_evidence.org][search evidence and its verification limits]] for the components that make
+such a release useful.

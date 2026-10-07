@@ -1,0 +1,136 @@
+#+TITLE: ECAI and Wikipedia: Build a Corpus You Can Inspect and Reuse
+#+DESCRIPTION: How ECAI selects Wikipedia articles with pageview data, builds a searchable snapshot and preserves the material behind a corpus release.
+#+KEYWORDS: ECAI, Wikipedia, Wikimedia, indexing, CirrusSearch, corpus, retrieval
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-06
+#+LAST_MODIFIED: 2026-10-06
+#+CAPABILITY_ID: ecai-wikipedia-indexing
+#+CONTENT_CLASS: implementation-reference
+#+IMPLEMENTATION_STATUS: source_present
+#+VALIDATION_STATUS: source_review_only
+#+VALIDATION_SCOPE: Indexing modules and test source reviewed at repository revision a993c0421b38; no Erlang tests, full corpus build, live IPFS publication or chain transaction executed for this article.
+#+EVIDENCE_DATE: 2026-10-06
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_index_job_wikimedia.erl
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_wikimedia_selector.erl
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Give an assistant a collection with a history
+
+A Wikipedia-backed assistant needs more than access to an encyclopedia.
+Its operator needs to know which articles were included, which source release
+they came from and what changed when the collection was rebuilt. Those
+questions matter when comparing models, investigating an answer or sharing
+a retrieval service with another team.
+
+ECAI's Wikimedia pipeline brings those decisions into the indexing process.
+It selects articles using historical pageview activity, extracts their content
+from a particular search dump and produces a searchable snapshot with the
+selection material alongside it. That gives a corpus release an identity
+and an explanation of how it was assembled.
+
+The immediate opportunity is practical: prepare a useful public reference
+collection once, then evaluate several search interfaces or assistants against
+that same release. The source supports this workflow; its cost and retrieval
+quality still need measurement on the intended hardware and question set.
+
+* Two ways to bring Wikipedia into ECAI
+
+The repository contains both a JSONL loader and a larger Wikimedia pipeline.
+They serve different starting points.
+
+| Path | Starting material | What it does |
+|------+-------------------+--------------|
+| =wikipedia_jsonl= | Prepared article records, one JSON object per line | Streams records into the shared live search context |
+| =wikimedia_visibility= | Pageview months and CirrusSearch content shards | Selects a corpus, normalises records and builds an isolated search snapshot |
+
+The [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_wikipedia_loader.erl][JSONL loader]] is useful when a team already has a curated export. It reads
+incrementally, records progress and can pause ingestion under memory pressure.
+That pressure control does not move the live index out of memory: a collection
+that cannot fit may remain stalled until capacity or the workload changes.
+
+The [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_index_job_wikimedia.erl][Wikimedia job adapter]] handles the earlier decisions as well. Its persisted
+catalog records the selected content release, pageview months and source URLs.
+A request for the latest release is resolved during preparation and then
+retained for that job. Resuming a job therefore does not silently choose a
+newer dump halfway through the work.
+
+* Make the selection policy visible
+
+The pipeline aggregates pageviews into disk partitions, selects candidate
+articles and extracts matching content from the chosen CirrusSearch shards.
+After extraction, it applies the requested final limit to eligible records.
+The result can be smaller than that limit if too few candidates are available.
+
+Operators can choose a project, a period of activity, a minimum number of
+active months and a target collection size. Candidate oversampling helps
+compensate for records that cannot be extracted. These are configurable
+selection policies, rather than claims that a particular corpus size has
+already been demonstrated.
+
+Pageviews are a useful signal of likely demand. They are not a measure of
+accuracy or importance. A public reference assistant may benefit from broad
+coverage of frequently consulted topics, while a specialist research service
+may need obscure articles that this policy leaves out. Evaluating those
+omissions is part of choosing the corpus.
+
+The [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_wikimedia_content.erl][content normaliser]] carries titles, article URLs, language, Wikidata identifiers,
+categories, redirects, modification metadata and visibility information into
+records. Project-qualified page identities prevent the same numeric page ID
+in two projects from colliding. Abstracts have a configured size limit, so
+the searchable record should not be described as an unlimited copy of every
+article's text.
+
+* Recover work without losing the meaning of the snapshot
+
+Large source downloads and indexing runs are rarely uninterrupted. ECAI has
+resumable download handling and persists progress between pipeline stages.
+Pause and cancellation take effect at recoverable work boundaries.
+
+The visibility pipeline builds its own in-memory search context. On recovery
+from the indexing stage, it replays the retained normalised files instead of
+trusting a file offset that might be ahead of the surviving index. Stable
+record identities make replacement during replay possible.
+
+That recovery behaviour is specific to this path. The older JSONL adapter
+uses the shared search context and loader offsets; restoring an offset alone
+does not restore the records that were in memory. An operator must recover
+the corresponding index state or arrange a rebuild.
+
+* A release contains more than search results
+
+The visibility artifact includes the search snapshot, version 2 term headers,
+normalised records, source catalog and selection material. Together these let
+a recipient inspect both the collection and its construction inputs. Hashes
+bind the files produced by the job; source URLs alone do not authenticate the
+original remote bytes.
+
+The dedicated search service installs a durable copy of a completed snapshot
+and records its active identity. It currently serves one active snapshot.
+Activating another project's release replaces that snapshot; it does not
+automatically combine all language projects into a federated search service.
+
+This packaging could support shared evaluation corpora, local public-reference
+search and model comparisons in which the evidence collection remains fixed.
+An update becomes another release that can be assessed before adoption.
+Attribution, source licensing and artifact availability remain responsibilities
+of the service distributing the material.
+
+* Start with a small, inspectable evaluation
+
+Use a local fixture corpus first. Check the chosen records, interrupt and
+resume indexing, reload the finished snapshot, and ask questions whose expected
+supporting articles are known. The repository includes
+[[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test/ecai_index_job_wikimedia_tests.erl][pipeline tests]] and
+[[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test/ecai_wikipedia_loader_recovery_tests.erl][loader recovery tests]] to examine when preparing that evaluation. Their presence
+is not a report that they were executed for this article.
+
+For real sources, inspect the plan through
+[[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_wikimedia_ops.erl][ecai_wikimedia_ops]] before enqueueing a job. A small target article count can
+still require scanning substantial source data. Record elapsed time, peak
+memory, disk use and answer coverage before promising deployment capacity.
+
+Continue with [[file:ecai_indexing_workflows.org][ECAI's indexing workflows]],
+[[file:ecai_search_evidence.org][search and evidence verification]] and
+[[file:ecai_index_nfts.org][versioned artifacts and index NFTs]].

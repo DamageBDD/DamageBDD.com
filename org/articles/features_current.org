@@ -3,6 +3,7 @@
 #+KEYWORDS: DamageBDD, ECAI, erm, Nosternity, Nostr, Blossom, nsecbunker, adoption
 #+AUTHOR: Steven Joseph
 #+DATE: 2026-10-06
+#+LAST_MODIFIED: 2026-10-06
 #+CONTENT_CLASS: implementation-overview
 #+IMPLEMENTATION_STATUS: components_present
 #+VALIDATION_STATUS: source_review_only
@@ -30,6 +31,8 @@ implementation in the [[https://github.com/DamageBDD/DamageBDD][DamageBDD reposi
 |-----------+---------------------+----------------------------|
 | [[file:damagebdd_evidence_workflows.org][DamageBDD acceptance evidence]] | Express an expected behaviour and share its execution report | Reproduce a known API failure and the fix |
 | [[file:ecai_engineering_memory.org][ECAI engineering memory]] | Retrieve approved records and inspect code relationships | Find the correct supporting record for a small question set |
+| [[file:ecai_wikipedia_indexing.org][ECAI Wikipedia indexing]] | Select a public reference corpus and package its search snapshot | Build a fixture collection, recover an interruption and reload the artifact |
+| [[file:ecai_search_evidence.org][ECAI search evidence]] | Retrieve source records and inspect their release and proof identities | Check known questions and reject altered records against a trusted root |
 | [[file:ecai_reviewable_repairs.org][ECAI repair review]] | Keep source identity and validation results with a candidate patch | Compare a repair against a known baseline |
 | [[file:erm_local_voice.org][erm voice and desktop]] | Control media and ask questions about a configured local corpus | Run a small set of commands on your own workstation |
 | [[file:blossom_media.org][Blossom supporting files]] | Share files whose bytes can be checked independently | Upload, retrieve and hash a public fixture |
@@ -59,6 +62,8 @@ integration, described below. Choose a complete path for an initial pilot.
 |-----------+------------------|
 | [[file:ecai_private_knowledge.org][Private knowledge retrieval]] | Corpus permissions, encrypted storage, HTTP routes and permitted model destinations |
 | [[file:ecai_relation_processing.org][Deterministic relation processing]] | Typed identities, composition rules and the scope of structural benchmarks |
+| [[file:ecai_indexing_workflows.org][Managed indexing workflows]] | Durable queue, input adapters, disk publication and the separate ingestion journal |
+| [[file:ecai_index_nfts.org][Index artifacts and NFTs]] | Release identity, IPFS publication, lineage and remaining minting/payment work |
 | [[file:damagebdd_nostr.org][DamageBDD Nostr interfaces]] | Identity-backed clients, event helpers and relay configuration |
 | [[file:nostr_reliability.org][Relay reliability and reply correlation]] | Subscription ordering, request matching and transport diagnostics |
 | [[file:damage_nsecbunker.org][nsecbunker custody and signing policy]] | Restricted signing and the separately recorded September acceptance result |
@@ -70,7 +75,7 @@ The source links in this collection refer to [[https://github.com/DamageBDD/Dama
 The repository's README and installation guide are the starting points for
 running a matching checkout.
 
-Two integration gaps are visible at that revision:
+The following integration gaps are visible at that revision:
 
 - Nosternity's supervisor and relay call =nosternity_event_store=, but that
   module and its named test module are absent from the tracked tree. The
@@ -79,10 +84,18 @@ Two integration gaps are visible at that revision:
 - DamageBDD's incident log bridge calls =ecai_log_learning=, but that module
   is absent. The repair manager, preflight, verifier and capsule modules are
   present and can be examined independently of automatic incident ingestion.
+- ECAI's index artifacts can expose NFT metadata, but the reviewed
+  =mint_index_job= helper dry-runs its contract call. The separate chunk-job
+  prototype marks payment locally without submitting a payment transaction.
+  These paths do not establish an automated paid indexing market.
 
 These are specific packaging or implementation gaps to resolve before using
 the affected paths from a clean checkout. A successful documentation build
 does not resolve them.
+
+The [[file:ecai_search_evidence.org][search reference]] also records two implementation details to address when
+building a proof-aware service: =wikidata_id= is not an exact result filter,
+and active-snapshot restoration does not recheck the recorded file digest.
 
 * Read validation in context
 

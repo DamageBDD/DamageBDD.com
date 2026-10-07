@@ -1,0 +1,145 @@
+#+TITLE: ECAI Search: Find the Record and Check the Evidence
+#+DESCRIPTION: How ECAI's field-aware lexical search, Wikimedia filters, snapshot identity and record membership proofs can support inspectable retrieval.
+#+KEYWORDS: ECAI, search, retrieval, evidence, Merkle proof, Wikimedia, RAG
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-06
+#+LAST_MODIFIED: 2026-10-06
+#+CAPABILITY_ID: ecai-search-evidence
+#+CONTENT_CLASS: implementation-reference
+#+IMPLEMENTATION_STATUS: source_present
+#+VALIDATION_STATUS: source_review_only
+#+VALIDATION_SCOPE: Search, term extraction, proof construction and snapshot activation source reviewed at repository revision a993c0421b38; no Erlang tests, relevance benchmark or independent proof-verification run executed for this article.
+#+EVIDENCE_DATE: 2026-10-06
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_search.erl
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_wikimedia_search.erl
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Make a search result easier to inspect
+
+When an assistant quotes a document, a reader should be able to follow the
+reference. Which record was retrieved? Which collection contained it? Can
+another service check that the supplied record belongs to the published
+index?
+
+ECAI has building blocks for answering those questions. Its live search path
+returns source records with scores and previews. Its artifact and proof paths
+can bind a record to a particular index release. Together, they offer a useful
+foundation for assistants that show their supporting material and for services
+that exchange independently checkable corpus references.
+
+Applications still have to connect those pieces. A normal search response
+does not automatically attach a version 2 membership proof to every result,
+and a retrieved passage still needs interpretation in context.
+
+* Search starts with words and fields
+
+The [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_terms.erl][shared term vocabulary]] extracts keys from fields such as title, name,
+category, city, phone, text, abstract, language and Wikidata identifier.
+It includes exact terms and selected prefixes, suffixes and phone fragments.
+Text and abstract token limits bound how much of a record contributes terms.
+
+The [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_search.erl][live search engine]] gathers the corresponding posting lists and scores their
+documents. Field weights favour some kinds of match over others; term rarity
+and multiple matching terms affect the score. The code also includes
+dataset-specific signals such as business review counts and Wikimedia
+visibility data.
+
+This is lexical retrieval with explicit scoring rules. It can be useful for
+named entities, titles, directory records and source excerpts without running
+a language model to perform the search. Synonyms, paraphrases and questions
+whose useful terms never appear in the source need separate evaluation or
+additional retrieval logic.
+
+The term-to-curve mapping supplies an identifier for a term. It does not
+establish that nearby curve points represent similar meanings, or that a
+high-scoring record is factually correct.
+
+* Understand what a query promises
+
+A structured query can contain several fields, but the underlying search
+combines matching postings and scores the candidates. Supplying two fields
+does not impose an SQL-style requirement that every returned document match
+both. Applications needing exact constraints must apply explicit filters.
+
+The [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_wikimedia_search.erl][Wikimedia facade]] adds filters for language, minimum pageviews, maximum
+visibility rank and the presence of a Wikidata identifier. It can collapse
+records with the same non-empty Wikidata identifier to one representative,
+which is useful when a supplied collection contains language variants.
+
+Two details matter when designing an interface:
+
+- Filtering and entity deduplication happen after a bounded candidate fetch.
+  A restrictive filter may return fewer results than requested even when
+  additional matching records exist outside that candidate set. Reported
+  match counts describe that fetched set, not a complete corpus count.
+- The =wikidata_id= option currently contributes a search term but is not
+  checked as an equality constraint by the filter function. It should not be
+  presented as an exact entity filter without an additional check or a fix.
+
+The dedicated Wikimedia service also holds one active snapshot at a time.
+Entity deduplication does not, by itself, establish a cross-project federation.
+
+* Verify inclusion at the right level
+
+ECAI has two posting-proof formats. The older proof refers to an internal
+document number. The version 2 path uses a stable document identifier and a
+SHA-256 commitment to the canonical record, then builds a Merkle membership
+proof against the corresponding term's posting root.
+
+| Item | What a consumer can use it to check |
+|------+------------------------------------|
+| Artifact file digest | Whether received bytes match the referenced file |
+| Version 2 record commitment | Whether the record matches its committed content |
+| Version 2 posting proof | Whether that document and record commitment belong under a specified term root |
+| Trusted release reference | Which published root the consumer intended to accept |
+
+The Wikimedia artifact exports version 2 term headers. A proof-aware client
+would explicitly request =proof_for_v2/3=, verify the record commitment and
+membership path, and compare the result with a root obtained from a trusted
+release. The default =search/3= header response uses the older format; clients
+must not silently mix the two schemes.
+
+A valid membership proof establishes inclusion relative to the chosen root.
+It does not prove that the search returned every matching record, that its
+ranking is optimal, or that the underlying statement is true. A trustworthy
+answer also depends on the source, the collection's coverage and the reasoning
+applied to the retrieved text.
+
+* Keep the active collection identifiable
+
+The [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_wikimedia_search_server.erl][snapshot service]] copies a completed snapshot into storage it owns, records
+its digest and persists the active pointer. This keeps search from depending
+on a temporary job directory. It loads a replacement context before discarding
+the previous one; loading remains a synchronous server operation.
+
+One integrity gap remains visible in the reviewed source: restart restoration
+loads the saved path without comparing the file with its recorded digest.
+The existing-file branch of installation also trusts a digest-named file
+without rehashing it. A deployment relying on verified artifacts should close
+that gap and test corrupted-file rejection before describing every reload as
+cryptographically verified.
+
+Snapshot hashes identify the exact bytes produced. The current snapshot
+serializer does not establish byte-identical output for every equivalent
+rebuild across insertion orders or runtime environments. Keep reproducible
+source selection, record commitments and byte-for-byte artifact identity as
+separate claims.
+
+* A useful first product
+
+An evidence browser is a concrete starting point: show the source title,
+excerpt, URL and active corpus release beside each answer. Add proof
+verification where the release and record can be checked end to end. Such a
+browser could support public research collections, support documentation or
+comparisons between model-generated answers using the same evidence.
+
+Evaluate it with known questions, misleading near-matches, restrictive
+filters and intentionally altered records. Measure relevance and missed
+results separately from proof acceptance. The repository includes
+[[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test/ecai_wikimedia_search_tests.erl][Wikimedia search tests]] and
+[[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test/ecai_wikimedia_search_server_tests.erl][snapshot service tests]]; no new runtime or relevance result is asserted here.
+
+Read [[file:ecai_wikipedia_indexing.org][how the Wikipedia corpus is assembled]] and
+[[file:ecai_index_nfts.org][how an artifact can become a versioned release reference]].

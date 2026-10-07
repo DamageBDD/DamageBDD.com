@@ -13,6 +13,17 @@ relevant code in the [[https://github.com/DamageBDD/DamageBDD][DamageBDD reposit
 - [[file:nosternity.org][Nosternity: give signed events a retention policy]]
 - [[file:blossom_media.org][Blossom: share files with a verifiable byte identity]]
 
+* ECAI indexing, search and knowledge releases
+
+Follow the collection from source selection to search and publication. These
+articles explain the implemented paths, practical evaluation steps and the
+potential for reusable corpora and independently checkable evidence.
+
+- [[file:ecai_wikipedia_indexing.org][Wikipedia: build a corpus you can inspect and reuse]]
+- [[file:ecai_indexing_workflows.org][Indexing: turn source collections into managed work]]
+- [[file:ecai_search_evidence.org][Search: find the record and check the evidence]]
+- [[file:ecai_index_nfts.org][Index NFTs: give a knowledge release a verifiable identity]]
+
 
 * Current implementation articles
 

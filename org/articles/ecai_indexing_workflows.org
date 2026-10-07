@@ -1,0 +1,136 @@
+#+TITLE: ECAI Indexing: Turn Source Collections into Managed Work
+#+DESCRIPTION: A practical guide to ECAI's durable indexing queue, JSONL and IPFS inputs, disk indexes, ingestion journal and separate private retrieval path.
+#+KEYWORDS: ECAI, indexing, IPFS, JSONL, durable jobs, disk search, private corpus
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-06
+#+LAST_MODIFIED: 2026-10-06
+#+CAPABILITY_ID: ecai-indexing-workflows
+#+CONTENT_CLASS: implementation-reference
+#+IMPLEMENTATION_STATUS: source_present
+#+VALIDATION_STATUS: source_review_only
+#+VALIDATION_SCOPE: Queue, adapters, ingestion and disk-index source reviewed at repository revision a993c0421b38; no Erlang tests, load benchmark, live IPFS or production recovery exercise executed for this article.
+#+EVIDENCE_DATE: 2026-10-06
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_index_jobs_srv.erl
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_index_job_ipfs.erl
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* An index needs an operating workflow
+
+Building a search index once is straightforward compared with keeping one
+useful. Sources change, requests are retried, a worker stops halfway through
+an import, and someone needs to explain whether a completed job produced
+searchable data or merely recorded receipt of it.
+
+ECAI addresses these operational questions with a durable indexing queue and
+adapters for several source formats. A job has an owner, a source description,
+progress events and an output artifact. That gives teams a common place to
+observe work even when the underlying storage paths differ.
+
+For an adopter, the useful feature is control: choose a bounded collection,
+follow its progress, recover interrupted work and inspect the output before
+making it part of a search service.
+
+* Choose the output as carefully as the input
+
+The reviewed implementations do not all produce the same kind of index.
+
+| Input and path | Result | Best starting use |
+|----------------+--------+-------------------|
+| Wikipedia JSONL or Yelp NDJSON | Records in shared live search | Existing structured exports |
+| Wikimedia visibility pipeline | Isolated live-search snapshot and corpus material | A selected public reference corpus |
+| IPFS CID or manifest, =searchable_disk= | Published posting segments and document store | A public collection retained on disk |
+| IPFS CID or manifest, =ledger_only= | Durable ingestion records | Recording accepted input for later processing |
+| Private-index API | Encrypted segments under corpus permissions | A separately controlled internal collection |
+
+The private API is a separate path, not another public queue mode. Public
+indexing guards reject records marked private. Read the
+[[file:ecai_private_knowledge.org][private knowledge guide]] before bringing confidential material into a pilot.
+
+A ledger acknowledgement is also different from a searchable result. The
+IPFS adapter's journal path records durable ingestion, while artifact
+finalisation rejects =ledger_only= as a searchable index. A downstream
+consumer still has to turn those records into queryable material.
+
+* Give long-running jobs an owner and a lifecycle
+
+The [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_index_jobs_srv.erl][queue service]] stores jobs and events through a disk-backed store. It supports
+priority ordering, configurable concurrency and queue limits, owner-scoped
+idempotency, and pause, resume, cancel and retry operations. Repeating a
+submission with the same idempotency key can be distinguished from a conflicting
+request rather than silently creating another job.
+
+Workers report progress to the queue. On service recovery, interrupted work
+is returned to an appropriate recoverable state, and reports from superseded
+workers are fenced out. The exact amount of work repeated depends on the
+adapter and its checkpoints; durable queue state is not a universal promise
+of exactly-once ingestion.
+
+The [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_index_jobs_http.erl][HTTP interface]] exposes job submission and listing at =/ecai/index-jobs=,
+per-job controls, artifact retrieval and a progress-event feed. It uses the
+existing authenticated account path and scopes job access to the owner.
+Wikimedia presets let the server retain source and storage policy while the
+client chooses a named configuration.
+
+This is the operational index queue. The similarly named =ecai_jobs_srv=
+module is a separate chunk-job prototype discussed in the
+[[file:ecai_index_nfts.org][index NFT article]]. Its state and payment labels should not be confused with
+the durable queue's guarantees.
+
+* Keep the connection between a chunk and its source
+
+For IPFS input, an operator can supply one content identifier or a manifest
+describing multiple documents. The adapter fetches the material, reports
+failures with the document's position and identifier, and sends accepted
+records to the selected ingestion path.
+
+The [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_chunker.erl][shared chunker]] creates versioned UTF-8 text windows with overlap and byte
+offsets. A separate NDJSON mode keeps line records as chunks. Ingestion
+records retain source, content and chunk identities, giving later processing
+a way to relate a search excerpt to the material that produced it.
+
+This is useful for manuals, public incident reports and structured directories:
+an answer can point back to a particular source version instead of an
+unidentified excerpt. Chunk size and overlap still affect relevance, storage
+and duplicate results, so they belong in evaluation rather than being treated
+as universally optimal settings.
+
+For local structured files, source descriptors include their order, length
+and digest. Finalisation rechecks the files and rejects changed input. Local
+absolute paths are excluded from the portable source identity.
+
+* Disk storage has its own publication boundary
+
+The [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_disk_indexer.erl][disk indexer]] writes bounded batches and synchronises its document store
+before making a segment visible through the index manifest. A failed later
+batch does not imply that earlier published segments disappear. Similarly,
+a multi-document IPFS import is not one atomic transaction covering every
+document.
+
+The [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_disk_search.erl][disk search module]] retrieves and merges a term's document identifiers across
+published segments, with a cache for frequently used terms. This is a useful
+search building block. It does not by itself expose the same ranked,
+field-aware result interface as the in-memory search module.
+
+Artifact contents also differ. Wikimedia jobs package a complete search
+snapshot; legacy Wikipedia JSONL and Yelp jobs export term headers from the
+shared live context. Those headers alone are not a portable, dataset-exclusive
+copy of all records imported by that job.
+
+* A practical route to adoption
+
+Start with public records whose expected results are easy to recognise.
+Submit the same job twice, inspect idempotency behaviour, pause and resume it,
+restart the service, and verify the output that a separate consumer can load.
+Measure the disk and memory required by the chosen mode.
+
+The repository's [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test/ecai_index_jobs_srv_tests.erl][queue tests]] and
+[[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test/ecai_index_artifact_tests.erl][artifact tests]] provide starting cases to inspect and run in a matching
+environment. This article reports source review, not a completed runtime pilot.
+
+Once that workflow is measured, a team could reuse it for scheduled public
+document releases, independently built reference collections or an ingestion
+service shared by several applications. Each new source adapter would need
+its own identity, recovery and publication contract. The common queue makes
+those responsibilities visible.
