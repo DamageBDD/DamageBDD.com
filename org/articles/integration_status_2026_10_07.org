@@ -1,0 +1,134 @@
+#+TITLE: Repository Integration Review: 7 October 2026
+#+DESCRIPTION: A dated reconciliation of Nosternity persistence, ECAI incident learning, index NFTs and search gaps, separating reviewed source, public availability and runtime evidence.
+#+KEYWORDS: DamageBDD, ECAI, Nosternity, integration status, source review, recovery
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-07
+#+LAST_MODIFIED: 2026-10-07
+#+CONTENT_CLASS: implementation-reference
+#+IMPLEMENTATION_STATUS: partial_implementation
+#+VALIDATION_STATUS: source_review_only
+#+VALIDATION_SCOPE: Selected source, call sites and focused tests inspected; public develop checked at a993c0421b38. Module/test fingerprints identify files absent from that revision. No Erlang compilation, EUnit, model, chain or recovery execution performed.
+#+EVIDENCE_DATE: 2026-10-07
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/commit/a993c0421b38de475b103dc79f31da1e091cd97a
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/nosternity/src/nosternity_sup.erl
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_code_security_sup.erl
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Two source omissions are resolved; release evidence is still needed
+
+The 7 October review found =nosternity_event_store.erl= and
+=ecai_log_learning.erl= in the current integration source, together with their
+focused tests. Both connect to call sites already present in the repository.
+The earlier description of these components as unavailable must therefore
+distinguish the reviewed source from the public checkout.
+
+The public =develop= ref still resolved to
+[[https://github.com/DamageBDD/DamageBDD/commit/a993c0421b38de475b103dc79f31da1e091cd97a][a993c0421b38de475b103dc79f31da1e091cd97a]] when checked on 7 October. That tree does
+not contain the two modules or the three focused test files fingerprinted
+below. It also lacks =config/nosternity_event_store.config.example=, which its
+Nosternity guide names. Publishing those files and recording a matching
+revision remain necessary for another developer to reproduce the integrations
+from a clean public checkout.
+
+This review inspected implementations and tests. It did not execute them.
+Source presence resolves a packaging question for the reviewed tree; it does
+not establish production readiness or a passing integration run.
+
+* Nosternity: adapter present, pending work remains volatile
+
+The adapter implements author/kind selection, event validation, queue admission,
+batching, retries, contract resolution, optional deployment and decoded reads.
+The [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/nosternity/src/nosternity_sup.erl][supervisor]] starts it before the relay. The
+[[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/nosternity/src/nosternity_relay.erl][relay]] forwards accepted events and reads persisted pages during startup.
+
+With confirmation enabled, a batch leaves the retry queue only when the
+tracked contract helper returns a confirmed result. Other outcomes are
+retryable. The queue itself, however, is process state with no disk checkpoint.
+An adapter restart can lose pending events while the relay's ETS table still
+suppresses their resubmission. Chain hydration restores already stored events,
+not unsubmitted work.
+
+The next acceptance case should restart only the adapter after queue admission
+and before a confirmed write. A durable outbox or reconciliation path is needed
+if the service promises eventual retention for every locally accepted event.
+Queue-full and unavailable-contract outcomes also need explicit handling at
+the caller boundary. The relay's filter and subscriber-broadcast TODOs remain.
+
+The focused test module covers signed-event validation, tampering, author/kind
+policy and the size limit. It does not test transaction submission,
+confirmation/retry transitions, pending-queue recovery or relay interoperability.
+See the [[file:nosternity.org][updated retention guide]] for the implemented configuration and workflow.
+
+* ECAI: incident learning is connected, with a validation mismatch
+
+The [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_ecai_log_bridge.erl][log bridge]] forwards bounded observations to the learner, and the
+[[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_code_security_sup.erl][code-security supervisor]] includes its child specification. The learner uses
+module analysis and knowledge cards, calls the model pool's audit role and
+saves incident records through
+[[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_learning_store.erl][the learning store]]. It checkpoints queued and active work and restores the
+active item to the pending queue after restart.
+
+Admission checks checkpoint success before returning =ok= when learning is
+enabled. The queue is bounded and may evict older pending entries; callers
+should inspect its counters. Model-generated causes and instructions are
+diagnostic suggestions, with =automatic_execution => false= recorded on the
+incident. The module does not apply repairs.
+
+The new source review found a specific mismatch in =normalize_event/1=.
+Its target guard checks =is_atom(App)= and =is_atom(Module)=. Erlang's
+=undefined= is an atom, so a map with =module => undefined= and a non-empty
+fingerprint passes that guard. The test
+=rejects_event_without_concrete_target_test= expects that input to be rejected.
+This is a source-level finding, not an observed EUnit result. Tighten the
+target predicate and run that existing test before claiming the boundary is
+validated. The same consideration applies to an unspecified application.
+
+The inspected tests also cover redaction, bounded output, prompt construction
+and bridge helpers. They do not demonstrate model-backed processing or restart
+recovery. Validate those paths with synthetic incidents before using them as
+the entry point to a repair workflow. See
+[[file:ecai_reviewable_repairs.org][the updated repair guide]].
+
+* Search and index NFT findings remain open
+
+The relevant source files match the previously reviewed public revision. No
+implementation change closes these findings in the 7 October review:
+
+| Area | Remaining implementation boundary |
+|------+-----------------------------------|
+| Wikimedia entity filtering | =wikidata_id= contributes a query term but is not enforced as an equality filter |
+| Snapshot integrity | Restoration and existing-file reuse do not compare the file with its recorded digest |
+| Index-job mint helper | =mint_index_job/3= calls the dry-run contract path |
+| Chunk-job payment | =ecai_jobs_srv= marks a job paid in memory; the payment transaction is an integration placeholder |
+
+The [[file:ecai_search_evidence.org][search article]] and [[file:ecai_index_nfts.org][index NFT article]] retain these limits.
+Source availability for the event store and incident learner does not resolve
+the separate search-integrity or settlement work.
+
+* Identify the reviewed implementation files
+
+The following repository-relative paths identify the integration files that
+are absent at the verified public commit. Their SHA-256 fingerprints identify
+the exact bytes reviewed; they are not signatures, publication receipts or
+evidence of a successful build. Existing GitHub links above identify the
+published call sites, not these unpublished implementations.
+
+#+BEGIN_EXAMPLE
+apps/nosternity/src/nosternity_event_store.erl
+  sha256 965b63adc8b32426e17d3a8fa4a62987ef7f3dba9dc1e008290148847386e1e0
+apps/nosternity/test/nosternity_event_store_tests.erl
+  sha256 eed91fc2c3fe0808d4ddda0fe1989dda64c6789803403ddfa37cee2aabe7f072
+apps/ecai/src/ecai_log_learning.erl
+  sha256 83f09aa1d03586932b532754f2296d58408d82ca5be101ad5169e4391042ad41
+apps/ecai/test/ecai_log_learning_tests.erl
+  sha256 24f66055ac40f62e703ae9cfd22185be7c3d6dbddccbfa53a7ed18bcc4faacce
+apps/damage/test/damage_ecai_log_bridge_tests.erl
+  sha256 f019f20b6b0f0ee2c95afa289ed9ff010e82bbb4d2c118637a84cc18cebc20d1
+#+END_EXAMPLE
+
+After publishing a matching source revision, replace this publication gap with
+links to that commit and record actual compilation and test results separately.
+The [[file:features_current.org][component map]] remains the entry point for current status; this page preserves
+the scope and evidence of the 7 October review.

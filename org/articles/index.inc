@@ -33,6 +33,7 @@ revision and distinguishes implementation details from live acceptance results.
 
 - [[file:ecai_private_knowledge.org][ECAI private knowledge retrieval and controlled LLM access]]
 - [[file:ecai_relation_processing.org][ECAI deterministic relation processing]]
+- [[file:integration_status_2026_10_07.org][Repository integration review: 7 October 2026]]
 - [[file:nostr_reliability.org][Nostr reliability and NIP-46 reply correlation]]
 - [[file:blossom_media.org][Blossom media integration]]
 - [[file:nosternity.org][Nosternity event retention and current limits]]

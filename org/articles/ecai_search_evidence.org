@@ -3,13 +3,13 @@
 #+KEYWORDS: ECAI, search, retrieval, evidence, Merkle proof, Wikimedia, RAG
 #+AUTHOR: Steven Joseph
 #+DATE: 2026-10-06
-#+LAST_MODIFIED: 2026-10-06
+#+LAST_MODIFIED: 2026-10-07
 #+CAPABILITY_ID: ecai-search-evidence
 #+CONTENT_CLASS: implementation-reference
 #+IMPLEMENTATION_STATUS: source_present
 #+VALIDATION_STATUS: source_review_only
-#+VALIDATION_SCOPE: Search, term extraction, proof construction and snapshot activation source reviewed at repository revision a993c0421b38; no Erlang tests, relevance benchmark or independent proof-verification run executed for this article.
-#+EVIDENCE_DATE: 2026-10-06
+#+VALIDATION_SCOPE: Search, term extraction, proof construction and snapshot activation source reviewed at a993c0421b38; relevant files rechecked unchanged on 7 October. No Erlang tests, relevance benchmark or independent proof-verification run executed.
+#+EVIDENCE_DATE: 2026-10-07
 #+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_search.erl
 #+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_wikimedia_search.erl
 #+LANGUAGE: en
@@ -120,6 +120,9 @@ The existing-file branch of installation also trusts a digest-named file
 without rehashing it. A deployment relying on verified artifacts should close
 that gap and test corrupted-file rejection before describing every reload as
 cryptographically verified.
+
+The [[file:integration_status_2026_10_07.org][7 October integration review]] rechecked these search and snapshot modules.
+The exact-entity-filter and reload-integrity findings remain open in that source.
 
 Snapshot hashes identify the exact bytes produced. The current snapshot
 serializer does not establish byte-identical output for every equivalent

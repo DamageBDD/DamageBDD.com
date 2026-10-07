@@ -3,11 +3,12 @@
 #+KEYWORDS: DamageBDD, ECAI, erm, Nosternity, adoption, developer tools, operational knowledge
 #+AUTHOR: Steven Joseph
 #+DATE: 2026-10-06
+#+LAST_MODIFIED: 2026-10-07
 #+CONTENT_CLASS: adoption-guide
 #+IMPLEMENTATION_STATUS: components_present
 #+VALIDATION_STATUS: source_review_only
-#+VALIDATION_SCOPE: Repository components inspected; the combined workflow is an integration proposal, not a recorded deployment.
-#+EVIDENCE_DATE: 2026-10-06
+#+VALIDATION_SCOPE: Integration guidance reconciled with the 7 October source review; the combined workflow remains a proposal, not a recorded deployment. New adapter/learner files are not present at the verified public revision.
+#+EVIDENCE_DATE: 2026-10-07
 #+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/README.md
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
@@ -41,12 +42,13 @@ You can begin with the component that solves your immediate problem.
 | Generated code changes take too long to review | [[file:ecai_reviewable_repairs.org][ECAI repair review]] | A candidate patch tied to a revision and validation output |
 | Routine desktop controls interrupt focused work | [[file:erm_local_voice.org][erm voice and desktop tools]] | A spoken command with an observable action result |
 | Applications need supporting files readers can verify | [[file:blossom_media.org][Blossom media storage]] | Downloaded bytes matching the expected digest |
-| Selected signed events need a retention policy | [[file:nosternity.org][Nosternity event retention]] | A contract and integration plan, with current repository gaps identified |
+| Selected signed events need a retention policy | [[file:nosternity.org][Nosternity event retention]] | A confirmed fixture event retrieved after relay recovery |
 
 These components have different requirements. A voice pilot needs a working
 microphone and audio models. A private knowledge pilot needs a defined corpus
-and permissions. A retention pilot needs a complete event-store integration
-and a configured chain. Starting with one component keeps the result easy to
+and permissions. A retention pilot needs the event-store adapter in its
+checkout, a configured chain and a plan for pending events during failure.
+Starting with one component keeps the result easy to
 understand and the work small enough to evaluate.
 
 * Follow one incident through the stack
@@ -107,8 +109,12 @@ records. Agree on the expected outcome before the demonstration.
    authenticated integration; erm's existing retrieval route uses a public
    disk corpus.
 
-For Nosternity, complete the missing event-store integration described in its
-article before treating chain retention as an available step in this workflow.
+The 7 October source review includes Nosternity's event-store adapter and
+ECAI's incident learner. First confirm those files are included in the revision
+you deploy; they are absent from the verified public checkout. Nosternity's
+pending queue is not durable across adapter restarts, and incident learning
+still needs its focused tests and model/recovery path validated. Use the
+[[file:integration_status_2026_10_07.org][integration review]] to choose the remaining acceptance checks.
 
 * Start from the repository
 

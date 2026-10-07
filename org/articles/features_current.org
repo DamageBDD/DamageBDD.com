@@ -3,12 +3,12 @@
 #+KEYWORDS: DamageBDD, ECAI, erm, Nosternity, Nostr, Blossom, nsecbunker, adoption
 #+AUTHOR: Steven Joseph
 #+DATE: 2026-10-06
-#+LAST_MODIFIED: 2026-10-06
+#+LAST_MODIFIED: 2026-10-07
 #+CONTENT_CLASS: implementation-overview
 #+IMPLEMENTATION_STATUS: components_present
 #+VALIDATION_STATUS: source_review_only
-#+VALIDATION_SCOPE: Selected repository implementation paths inspected; missing integration modules identified. Historical live results retain their original date and scope.
-#+EVIDENCE_DATE: 2026-10-06
+#+VALIDATION_SCOPE: Integration source and focused test source rechecked on 7 October; adapter and incident learner present in reviewed source but absent at the verified public revision. No new application tests or live acceptance run. Historical live results retain their original scope.
+#+EVIDENCE_DATE: 2026-10-07
 #+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/README.md
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
@@ -36,7 +36,7 @@ implementation in the [[https://github.com/DamageBDD/DamageBDD][DamageBDD reposi
 | [[file:ecai_reviewable_repairs.org][ECAI repair review]] | Keep source identity and validation results with a candidate patch | Compare a repair against a known baseline |
 | [[file:erm_local_voice.org][erm voice and desktop]] | Control media and ask questions about a configured local corpus | Run a small set of commands on your own workstation |
 | [[file:blossom_media.org][Blossom supporting files]] | Share files whose bytes can be checked independently | Upload, retrieve and hash a public fixture |
-| [[file:nosternity.org][Nosternity event retention]] | Define retention for selected signed events | Complete the event-store integration and test confirmation and recovery |
+| [[file:nosternity.org][Nosternity event retention]] | Select signed events for batched contract storage | Check confirmation, pending-event loss and recovery with a small fixture set |
 
 * Understand how the pieces connect
 
@@ -52,9 +52,11 @@ prepared against. Those identifiers help another person follow the reasoning
 without trusting the original author's memory.
 
 Some integrations require additional work. erm's current ECAI voice route
-uses public disk retrieval, rather than the private corpus API. The public
-repository also has incomplete incident-learning and Nosternity event-store
-integration, described below. Choose a complete path for an initial pilot.
+uses public disk retrieval, rather than the private corpus API. The source
+reviewed on 7 October includes the incident learner and Nosternity event-store
+adapter previously reported missing. Their publication and validation status
+is recorded below, alongside the remaining limits. Choose a path whose
+dependencies and acceptance criteria are clear for an initial pilot.
 
 * Read the detailed references
 
@@ -64,38 +66,40 @@ integration, described below. Choose a complete path for an initial pilot.
 | [[file:ecai_relation_processing.org][Deterministic relation processing]] | Typed identities, composition rules and the scope of structural benchmarks |
 | [[file:ecai_indexing_workflows.org][Managed indexing workflows]] | Durable queue, input adapters, disk publication and the separate ingestion journal |
 | [[file:ecai_index_nfts.org][Index artifacts and NFTs]] | Release identity, IPFS publication, lineage and remaining minting/payment work |
+| [[file:integration_status_2026_10_07.org][Integration review: 7 October 2026]] | Resolved source omissions, public checkout differences, test scope and remaining gaps |
 | [[file:damagebdd_nostr.org][DamageBDD Nostr interfaces]] | Identity-backed clients, event helpers and relay configuration |
 | [[file:nostr_reliability.org][Relay reliability and reply correlation]] | Subscription ordering, request matching and transport diagnostics |
 | [[file:damage_nsecbunker.org][nsecbunker custody and signing policy]] | Restricted signing and the separately recorded September acceptance result |
 
 * Repository status and reproducibility
 
-The source links in this collection refer to [[https://github.com/DamageBDD/DamageBDD/commit/a993c0421b38de475b103dc79f31da1e091cd97a][revision a993c0421b38]], examined on
-6 October 2026. They point to specific files rather than a changing branch.
-The repository's README and installation guide are the starting points for
-running a matching checkout.
+The public =develop= ref was checked again on 7 October 2026 and still resolves
+to [[https://github.com/DamageBDD/DamageBDD/commit/a993c0421b38de475b103dc79f31da1e091cd97a][revision a993c0421b38]]. Existing source links pin that revision. The
+implementation review also examined the newer integration files listed in the
+[[file:integration_status_2026_10_07.org][dated review]], which records their paths and SHA-256 fingerprints.
 
-The following integration gaps are visible at that revision:
+The earlier missing-module findings are resolved in the reviewed source:
+=nosternity_event_store= and =ecai_log_learning= are present, along with their
+focused tests and the log-bridge test module. Those files are still absent
+from the verified public revision. A clean checkout of that revision therefore
+does not yet reproduce these integrations. The Nosternity configuration
+example named by the public guide is also absent at that revision.
 
-- Nosternity's supervisor and relay call =nosternity_event_store=, but that
-  module and its named test module are absent from the tracked tree. The
-  contract and integration guide are present; the separate configuration
-  example named by that guide is also absent.
-- DamageBDD's incident log bridge calls =ecai_log_learning=, but that module
-  is absent. The repair manager, preflight, verifier and capsule modules are
-  present and can be examined independently of automatic incident ingestion.
-- ECAI's index artifacts can expose NFT metadata, but the reviewed
-  =mint_index_job= helper dry-runs its contract call. The separate chunk-job
-  prototype marks payment locally without submitting a payment transaction.
-  These paths do not establish an automated paid indexing market.
+| Area | Source status on 7 October | Remaining work |
+|------+---------------------------+----------------|
+| Nosternity event store | Adapter, supervisor/relay wiring and validation tests are present | Publish the missing files; protect pending work across adapter restarts; validate chain writes and recovery |
+| Runtime incident learning | Bridge, checkpointed learner and incident records are connected in source | Publish the missing files; fix the concrete-target validation mismatch; exercise restart and model integration |
+| Index NFT and payment workflow | Artifact metadata is available; the job mint helper still dry-runs | Implement and confirm mint submission and settlement; the separate chunk manager only marks payment locally |
+| Wikimedia search | Existing search and snapshot activation code is unchanged | Enforce exact entity filtering where required and verify snapshot digests on reload |
 
-These are specific packaging or implementation gaps to resolve before using
-the affected paths from a clean checkout. A successful documentation build
-does not resolve them.
+The [[file:nosternity.org][retention guide]] now describes the implemented adapter and its in-memory
+pending queue. The [[file:ecai_reviewable_repairs.org][repair guide]] explains how incident learning feeds
+diagnostic records without automatically executing a repair. The
+[[file:ecai_search_evidence.org][search reference]] retains the =wikidata_id= and snapshot-integrity findings;
+the [[file:ecai_index_nfts.org][NFT reference]] retains the minting and payment boundaries.
 
-The [[file:ecai_search_evidence.org][search reference]] also records two implementation details to address when
-building a proof-aware service: =wikidata_id= is not an exact result filter,
-and active-snapshot restoration does not recheck the recorded file digest.
+Source presence, publication in a checkout and successful runtime validation
+are separate milestones. The current documentation records each explicitly.
 
 * Read validation in context
 

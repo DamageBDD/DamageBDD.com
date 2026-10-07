@@ -1,14 +1,15 @@
 #+TITLE: Nosternity: Give Important Signed Events a Retention Policy
-#+DESCRIPTION: An append-only contract and relay integration for retaining signed Nostr records, with a clear path to completing and testing the event-store adapter.
+#+DESCRIPTION: An append-only contract, event-store adapter and relay recovery path for selected signed Nostr records, with explicit pending-queue and validation limits.
 #+KEYWORDS: Nosternity, Nostr, signed events, retention, Aeternity, Erlang
 #+AUTHOR: Steven Joseph
 #+DATE: 2026-10-06
+#+LAST_MODIFIED: 2026-10-07
 #+CAPABILITY_ID: nosternity
 #+CONTENT_CLASS: implementation-reference
 #+IMPLEMENTATION_STATUS: partial_implementation
 #+VALIDATION_STATUS: source_review_only
-#+VALIDATION_SCOPE: Repository contract, relay and supervisor inspected; event-store adapter absent at the linked revision. No contract deployment, persistence or recovery run performed.
-#+EVIDENCE_DATE: 2026-10-06
+#+VALIDATION_SCOPE: Contract, relay, supervisor, event-store adapter and focused test source reviewed on 7 October. Adapter/test files are present in reviewed source but absent at the verified public revision. No compilation, contract deployment, live persistence or recovery run performed.
+#+EVIDENCE_DATE: 2026-10-07
 #+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/nosternity/src/nosternity_sup.erl
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
@@ -27,10 +28,17 @@ Nostr supplies the signed record; the contract supplies an append-only archive
 with lookup by event ID and insertion order. This can support an auditable
 history of selected public announcements, article versions or report references.
 
-The public repository contains the contract, relay hooks and integration
-guide. At the linked revision, the event-store adapter
-referenced by the supervisor is missing. The design is therefore an integration
-starting point, not a complete service you can run from that checkout.
+The source reviewed on 7 October includes the event-store adapter, its
+supervisor and relay connections, and focused validation tests. The adapter
+selects events, queues batches, submits contract writes and provides read
+operations. This resolves the source-availability question behind the earlier
+missing-module report.
+
+Publication and acceptance remain separate steps. The adapter and its tests
+are absent from the verified public revision linked below; the
+[[file:integration_status_2026_10_07.org][dated integration review]] records the reviewed file identities. Its pending
+queue is also held in memory, so the implementation is not yet a durable
+outbox for every event acknowledged by the relay.
 
 * Separate delivery from retention
 
@@ -79,38 +87,83 @@ event, and subscriber broadcasting remains a TODO. The separate WebSocket
 and HTTP interfaces need their own interoperability checks. This revision
 does not provide a complete replacement for a public Nostr relay.
 
-* Complete the adapter before configuring a service
+* What the adapter now supplies
 
-The [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/docs/nostr/NOSTERNITY_AE.md][event-store integration guide]] describes a =nosternity_event_store= process responsible
-for selection, batching, retries, tracked contract writes and read queries.
-The supervisor expects to start that process, but the tracked revision does
-not contain its module, the =nosternity_event_store_tests= module, or the
-separate configuration example named in the guide. A clean checkout cannot
-supply that child process without the missing implementation.
+The reviewed =apps/nosternity/src/nosternity_event_store.erl= is a supervised
+=gen_server=. Before accepting selected events, it checks required fields,
+lowercase hexadecimal identifiers, the canonical event ID, the signature and
+the encoded event-size limit. Author and kind policies decide which records
+are candidates for retention.
 
-The guide documents an opt-in service with author and kind filters.
-Its confirmation setting is intended to keep a batch pending until a tracked
-transaction is confirmed. Treat those settings as the documented adapter
-contract until the implementation and tests are available in your checkout.
-Do not infer working queue durability or confirmation behavior from the
-configuration example alone.
+Accepted events enter a bounded pending queue with duplicate IDs suppressed.
+The worker flushes batches through the shared =damage_ae_contract= helper.
+With =ae_event_store_confirm_writes= enabled, it removes a batch only when
+the tracked call returns =confirmed=. Submitted, unknown and failed outcomes
+remain retryable. The contract's event-ID deduplication prevents repeated
+insertion of the same event, but repeated transactions can still incur fees.
 
-The generic =damage_ae_contract= helper and the Sophia contract provide useful
-pieces for finishing this path. The first engineering task is to provide the
-adapter and verify its lifecycle with the supervisor and relay.
+This confirmation refers to the helper observing a mined successful call;
+it is not a separately demonstrated finality or reorganisation guarantee.
+With confirmation disabled, the adapter accepts the weaker submission result
+and can remove work before mining is observed.
+
+=store_sync/1= reports validation or queue admission, not chain confirmation.
+=status/0= exposes queue depth, policy, contract identity, confirmation mode
+and the last error. Read operations support lookup by ID, counts, kind indexes
+and pages of up to 100 events, which the relay's startup path uses to rebuild
+its local table.
+
+* Configure the policy and the recovery boundary
+
+The [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/docs/nostr/NOSTERNITY_AE.md][event-store integration guide]] describes the configuration keys. Their defaults
+are implemented in the reviewed adapter:
+
+| Setting | Default | Meaning |
+|---------+---------+---------|
+| =ae_event_store_enabled= | =false= | Retention is opt-in |
+| =ae_event_store_auto_deploy= | =false= | Use a configured contract unless deployment is explicitly enabled |
+| =ae_event_store_confirm_writes= | =true= | Retain a batch until a confirmed result is observed |
+| =ae_event_store_kinds= | 1, 7, 30023 | Select notes, reactions and long-form articles |
+| =ae_event_store_pubkeys= | =all= | Configure an author list to restrict paid storage |
+| =ae_event_store_queue_max= | 5,000 | Cap accepted pending events |
+| =ae_event_store_batch_size= | 10 | Bound the number of events in each write batch |
+
+The configuration example named by the guide is still absent from the verified
+public revision. Use the documented keys with a matching implementation and
+persist the contract address in application configuration. Automatic deployment
+remembers an address only for the current VM.
+
+The important remaining storage boundary is the pending queue. It is an Erlang
+process-state queue with no disk journal or checkpoint. If the adapter restarts,
+unconfirmed work can be lost while the relay keeps its already-seen IDs. The
+supervisor uses =one_for_one=, so an adapter restart does not itself clear the
+relay's deduplication table. Re-publishing an already-seen event through that
+relay will not rebuild the lost pending work.
+
+A durable outbox or explicit reconciliation mechanism is therefore needed for
+a promise that every accepted event will eventually be retained. Startup
+hydration recovers events already on chain; it cannot recover an event that
+was accepted locally but never stored. Queue-full and unavailable-contract
+outcomes also need to be visible to the service deciding what was retained.
 
 * Evaluate retention with a small event set
 
-After completing the adapter, choose one allowed author and a small set of
-public fixture events. Verify signature rejection, author/kind exclusions,
+After including the adapter in a matching checkout, choose one allowed author
+and a small set of public fixture events. Verify signature rejection, author/kind exclusions,
 duplicate handling and a confirmed contract write. Read the same event back
 by ID from a second process.
 
-Then interrupt the service before and after confirmation. Test a full queue,
+Then restart the adapter alone and the complete service before and after
+confirmation. Test a full queue,
 an unavailable chain and an uncertain submission result. The outcome should
 identify which events are retained, pending, refused or require retry. This
 is how the project can demonstrate recovery rather than merely successful
 submission.
+
+The reviewed =nosternity_event_store_tests.erl= exercises valid signatures,
+tampered events, author/kind policy and event-size rejection. It does not
+exercise batch submission, confirmation retries, pending-queue recovery or
+relay interoperability. Those tests were inspected, not executed here.
 
 The useful adoption result is a record that another process can retrieve
 after recovery, with its original event identity intact. Retention cost,
@@ -125,9 +178,11 @@ your application actually intends to keep.
 - [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_ae_contract.erl][Shared Aeternity contract lifecycle helper]]
 - [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/docs/nostr/NOSTERNITY_AE.md][event-store integration guide]]
 
-These references pin the repository revision used for this article. No
-contract deployment, live persistence or recovery test was performed for
-this documentation update.
+These links identify the published contract and integration interfaces.
+The adapter and test file fingerprints are recorded in the
+[[file:integration_status_2026_10_07.org][7 October source review]] because they are not present at that public revision.
+No compilation, contract deployment, live persistence or recovery test was
+performed for this documentation update.
 
 - [[file:blossom_media.org][Store and verify supporting files]]
 - [[file:damagebdd_evidence_workflows.org][Keep the behaviour report with the record]]

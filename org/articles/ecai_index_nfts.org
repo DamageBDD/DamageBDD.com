@@ -3,13 +3,13 @@
 #+KEYWORDS: ECAI, index NFT, IPFS, artifact, knowledge corpus, provenance, indexing jobs
 #+AUTHOR: Steven Joseph
 #+DATE: 2026-10-06
-#+LAST_MODIFIED: 2026-10-06
+#+LAST_MODIFIED: 2026-10-07
 #+CAPABILITY_ID: ecai-index-nfts
 #+CONTENT_CLASS: implementation-reference
 #+IMPLEMENTATION_STATUS: partial_implementation
 #+VALIDATION_STATUS: source_review_only
-#+VALIDATION_SCOPE: Artifact finalisation, NFT adapter, knowledge contract and chunk-job prototype reviewed at repository revision a993c0421b38; no live IPFS publication, chain mint, payment or marketplace acceptance test executed for this article.
-#+EVIDENCE_DATE: 2026-10-06
+#+VALIDATION_SCOPE: Artifact finalisation, NFT adapter, knowledge contract and chunk-job prototype reviewed at a993c0421b38; relevant files rechecked unchanged on 7 October. No live IPFS publication, chain mint, payment or marketplace acceptance test executed.
+#+EVIDENCE_DATE: 2026-10-07
 #+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_index_artifact.erl
 #+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_nft.erl
 #+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/priv/contracts/knowledge_nft.aes
@@ -112,6 +112,9 @@ artifacts and representing job identities, but do not establish a complete
 paid indexing market. A production workflow would need transaction submission
 and confirmation, work acceptance, durable payment state and recovery from
 partial failure.
+
+The [[file:integration_status_2026_10_07.org][7 October integration review]] found no change to these artifact, mint-helper
+or chunk-job paths. The mint submission and settlement gaps remain open.
 
 * What this could enable
 

@@ -3,12 +3,13 @@
 #+KEYWORDS: ECAI, code repair, Erlang, incident learning, patch review, worktrees
 #+AUTHOR: Steven Joseph
 #+DATE: 2026-10-06
+#+LAST_MODIFIED: 2026-10-07
 #+CAPABILITY_ID: ecai-reviewable-repairs
 #+CONTENT_CLASS: adoption-guide
 #+IMPLEMENTATION_STATUS: source_present
 #+VALIDATION_STATUS: source_review_only
-#+VALIDATION_SCOPE: Repository log bridge, repair preflight, verifier and capsule inspected; ecai_log_learning absent at the linked revision. No candidate generation, application build or deployment executed.
-#+EVIDENCE_DATE: 2026-10-06
+#+VALIDATION_SCOPE: Log bridge, incident learner, learning store, supervisor and focused test source rechecked on 7 October. Learner/test files are present in reviewed source but absent at the verified public revision. No EUnit, model call, candidate generation, application build or deployment executed.
+#+EVIDENCE_DATE: 2026-10-07
 #+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_patch_verifier.erl
 #+LANGUAGE: en
 #+INCLUDE: "../header.org"
@@ -40,16 +41,40 @@ The Damage log bridge prepares bounded, redacted observations for an incident
 learner. It reduces selected metadata and checks that the receiving services
 are available before forwarding an observation.
 
-At the referenced revision, the bridge calls =ecai_log_learning=, but that
-module is absent from the tracked repository. Automatic log-to-incident
-learning therefore needs a complete matching implementation before it can
-serve as the entry point for a repair pilot. The patch manager, preflight,
-verifier and capsule code can still be inspected as separate components.
+The source reviewed on 7 October includes =ecai_log_learning= and its focused
+tests. The existing code-security supervisor starts it after the learning store
+and codebase learner. The bridge forwards eligible observations through
+=observe/1= and retains pending entries when that handoff reports an error.
 
-Begin with a known issue whose diagnosis and expected behavior are already
-recorded. This lets a team evaluate candidate review without depending on
-automatic incident diagnosis. Add the log-learning path once its missing
-service and integration tests are available.
+The learner correlates a fingerprinted event with module analysis and the
+current knowledge card, then asks the model pool's =audit= role for a bounded
+incident record. That record retains the observation, analysis/source digests,
+model metadata, suggested causes and proposed verification steps. It explicitly
+records =automatic_execution => false=. Producing an incident record does not
+execute a command, apply a repair or prove the model's diagnosis.
+
+Queue state and the active item are checkpointed through the disk-backed
+=ecai_learning_store=. Restart recovery puts the interrupted item back into
+pending work. Admission checks the checkpoint result before replying with
+success. Fingerprint deduplication and retry limits help control repeated
+work, while queue overflow can evict older pending entries. Checkpointing is
+therefore not a guarantee that every observed incident will be processed.
+
+This closes the earlier source-availability gap, but the learner and its test
+files are still absent from the verified public revision. Their paths and
+fingerprints appear in the [[file:integration_status_2026_10_07.org][dated integration review]]. Confirm that a
+deployment contains them before using incident learning as its entry point.
+
+The review also found a concrete input-validation mismatch: the normaliser
+accepts any atom as a module, including =undefined=, while the test expects an
+undefined module to be rejected. That condition needs correction and a passing
+test before describing direct learner admission as enforcing a concrete target.
+The bridge's own target checks do not replace validation at the learner API.
+
+Begin with a known issue whose diagnosis and expected behaviour are already
+recorded. Check the incident card and its source identity before evaluating a
+candidate patch. Model suggestions remain hypotheses until an appropriate
+reproducer and validation run support them.
 
 The bridge's redaction covers known credential patterns, including bearer
 values and common password/token labels. It cannot identify every sensitive
@@ -120,9 +145,14 @@ for the maintenance work your team actually does.
 - [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_repair_capsule.erl][Persistent review capsule]]
 - [[https://github.com/DamageBDD/DamageBDD/tree/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test][ECAI repair and integrity tests]]
 
-The linked revision contains dedicated repair and integrity tests. They were
-not executed as part of this prose update. Review the actual command output
-from your release when deciding whether a candidate is ready to accept.
+The linked revision contains dedicated repair and integrity tests. The
+7 October review also inspected =ecai_log_learning_tests.erl= and
+=damage_ecai_log_bridge_tests.erl= in the current source. They cover
+normalisation, redaction, bounded model-card output, prompt construction and
+bridge helper behaviour. They do not establish a complete model-backed
+incident-to-repair run or recovery result, and none were executed for this
+documentation update. Review actual command output from your release when
+deciding whether a candidate is ready to accept.
 
 - [[file:ecai_engineering_memory.org][Keep the source knowledge behind an answer]]
 - [[file:damagebdd_evidence_workflows.org][Make the reproducer an acceptance scenario]]
