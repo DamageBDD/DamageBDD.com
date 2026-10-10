@@ -25,6 +25,13 @@ potential for reusable corpora and independently checkable evidence.
 - [[file:ecai_index_nfts.org][Index NFTs: give a knowledge release a verifiable identity]]
 
 
+* ECAI video: reuse and verified delivery
+
+Why regenerate an entire video when only a caption, offer or trim changes?
+[[file:ecai_video_generation.org][ECAI Video: Generate Once, Reuse with Proof]]
+explains a bring-your-own-backend pilot, signed media lineage, measured
+short-circuiting and the boundary between NFT drafts and live minting.
+
 * Current implementation articles
 
 Use these references for API details, configuration choices and recorded test

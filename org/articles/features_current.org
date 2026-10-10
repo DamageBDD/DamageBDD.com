@@ -3,7 +3,7 @@
 #+KEYWORDS: DamageBDD, ECAI, erm, Nosternity, Nostr, Blossom, nsecbunker, adoption
 #+AUTHOR: Steven Joseph
 #+DATE: 2026-10-06
-#+LAST_MODIFIED: 2026-10-07
+#+LAST_MODIFIED: 2026-10-11
 #+CONTENT_CLASS: implementation-overview
 #+IMPLEMENTATION_STATUS: components_present
 #+VALIDATION_STATUS: source_review_only
@@ -33,10 +33,15 @@ implementation in the [[https://github.com/DamageBDD/DamageBDD][DamageBDD reposi
 | [[file:ecai_engineering_memory.org][ECAI engineering memory]] | Retrieve approved records and inspect code relationships | Find the correct supporting record for a small question set |
 | [[file:ecai_wikipedia_indexing.org][ECAI Wikipedia indexing]] | Select a public reference corpus and package its search snapshot | Build a fixture collection, recover an interruption and reload the artifact |
 | [[file:ecai_search_evidence.org][ECAI search evidence]] | Retrieve source records and inspect their release and proof identities | Check known questions and reject altered records against a trusted root |
+| [[file:ecai_video_generation.org][ECAI video reuse (pilot patch)]] | Reuse approved MP4s, perform local revisions and verify signed version lineage | Import one MP4, change metadata and captions, then compare hashes and provider-call counts |
 | [[file:ecai_reviewable_repairs.org][ECAI repair review]] | Keep source identity and validation results with a candidate patch | Compare a repair against a known baseline |
 | [[file:erm_local_voice.org][erm voice and desktop]] | Control media and ask questions about a configured local corpus | Run a small set of commands on your own workstation |
 | [[file:blossom_media.org][Blossom supporting files]] | Share files whose bytes can be checked independently | Upload, retrieve and hash a public fixture |
 | [[file:nosternity.org][Nosternity event retention]] | Select signed events for batched contract storage | Check confirmation, pending-event loss and recovery with a small fixture set |
+
+The video Fastpath is a separately supplied pilot patch with local tests, not
+part of the 7 October application source review or a publicly deployed service.
+See its article for the exact scope of the available verification.
 
 * Understand how the pieces connect
 
@@ -65,6 +70,7 @@ dependencies and acceptance criteria are clear for an initial pilot.
 | [[file:ecai_private_knowledge.org][Private knowledge retrieval]] | Corpus permissions, encrypted storage, HTTP routes and permitted model destinations |
 | [[file:ecai_relation_processing.org][Deterministic relation processing]] | Typed identities, composition rules and the scope of structural benchmarks |
 | [[file:ecai_indexing_workflows.org][Managed indexing workflows]] | Durable queue, input adapters, disk publication and the separate ingestion journal |
+| [[file:ecai_video_generation.org][Video generation and reusable versions]] | Bring-your-own-backend pilot, signed media revisions, short-circuiting and remaining launch gaps |
 | [[file:ecai_index_nfts.org][Index artifacts and NFTs]] | Release identity, IPFS publication, lineage and remaining minting/payment work |
 | [[file:integration_status_2026_10_07.org][Integration review: 7 October 2026]] | Resolved source omissions, public checkout differences, test scope and remaining gaps |
 | [[file:damagebdd_nostr.org][DamageBDD Nostr interfaces]] | Identity-backed clients, event helpers and relay configuration |

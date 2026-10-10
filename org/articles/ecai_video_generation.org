@@ -1,0 +1,214 @@
+#+TITLE: ECAI Video: Generate Once, Reuse with Proof
+#+DESCRIPTION: Bring your own AI video backend, avoid unnecessary regeneration, and deliver signed, traceable video versions. The ECAI Video Fastpath pilot and its limits.
+#+KEYWORDS: ECAI, AI video, video generation, bring your own model, video reuse, provenance, video NFT, content hashing, Erlang, DamageBDD
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-10
+#+LAST_MODIFIED: 2026-10-11
+#+CAPABILITY_ID: ecai-video-fastpath
+#+CONTENT_CLASS: implementation-reference
+#+IMPLEMENTATION_STATUS: patch_supplied
+#+VALIDATION_STATUS: local_smoke_and_tests_passed
+#+VALIDATION_SCOPE: The separately supplied Video Fastpath POC passed seven local pytest cases and a localhost HTTP smoke test with FFmpeg media. An HTTP mock exercised customer-backend integration. No live commercial generation API, Erlang build in the latest DamageBDD checkout, public multi-tenant launch, global semantic-index integration, IPFS pin or on-chain NFT mint was validated.
+#+EVIDENCE_DATE: 2026-10-10
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_blender.erl
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_nft.erl
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* The expensive part is not making the first video
+
+A creator can already type a prompt into a video model and get a compelling
+clip. The difficult part begins when the customer asks for twenty variations:
+change the offer, replace the caption, shorten the cut, retain the approved
+product shot, and show exactly which version went to which market.
+
+Generating another whole clip may work. It may also change something the
+customer explicitly approved. Repeating generation also consumes provider
+credits and turns a small revision into another review cycle.
+
+*ECAI's video proposition is to preserve useful work between generations.*
+Use a model for the parts that need generation; reuse stored media for the
+parts that do not. Give every delivered version a checkable identity and a
+relationship to the original. The goal is not to out-predict the video model.
+It is to make production around that model more controlled and auditable.
+
+* Bring the model you already use
+
+ECAI Video Fastpath is designed as a narrow layer beside the customer's
+existing video workflow. Customers may upload an existing MP4, connect a
+supported HTTP generation endpoint, or configure a fal.ai-style queued
+provider. They do not need a new GPU, new model weights, or an NFT wallet to
+try the basic workflow.
+
+The pilot exposes a small Studio UI and HTTP API. An optional Erlang module,
+=ecai_video_fastpath.erl=, calls the sidecar from DamageBDD/ECAI without
+replacing existing Cowboy routes. The customer brings media or a provider;
+ECAI adds version identity, local transformations, provenance and verification.
+
+| Customer request | Fastpath response | Does it call the AI provider again? |
+|------------------+-------------------+-------------------------------------|
+| Register an approved MP4 | Validate it; store its SHA-256 identity and signed manifest | No |
+| Change an internal note, offer label or release metadata | Create a new manifest that references the *same* video bytes | No |
+| Add a caption or trim a segment | Run local FFmpeg processing; preserve source lineage | No |
+| Generate a genuinely new shot | Submit to the configured video backend; ingest and validate its output | Yes |
+| Prepare a collectible or licensed release | Prepare NFT metadata from the verified version | No mint transaction in the pilot |
+
+A metadata edit changes the record *about* the video, not pixels already
+rendered into it. A visible price or caption change needs an actual media
+transformation, which the pilot can perform for simple overlays. Replacing a
+person or product inside generative footage remains a model-dependent task.
+
+* What a customer actually gains
+
+Consider a small agency delivering regional versions of one product advert.
+It imports the approved master, attaches an Australian market note, adds a
+local caption, and supplies the resulting clips to the client. Each step has
+an explicit parent and output digest. A repeated operation can return an
+existing result rather than duplicate work.
+
+A client can ask two concrete questions: *Did this revision change the video
+bytes?* and *Which original did this file come from?* The system answers
+using the stored artifacts and signed parent references, not a description
+invented after delivery.
+
+This is a narrower and more testable advantage than claiming to generate
+better-looking video. Other products already support templates, editing,
+provenance and consistent references. ECAI's proposed product distinction is
+to connect *backend independence*, *reusable versions*, and *independent
+integrity verification* in a single customer workflow. Whether that is a
+commercial advantage should be measured against the customer's current tools.
+
+* The deterministic part begins after generation
+
+An external video generator may be stochastic. A prompt or seed is not a
+promise that a future call will return identical pixels. ECAI does not change
+that property by attaching an elliptic-curve point to the result.
+
+The pilot instead records things which *can* be checked deterministically:
+
+- The SHA-256 digest of the exact MP4 bytes.
+- A canonical manifest for the version, including processing details.
+- A parent-manifest reference for version lineage.
+- A secp256k1 ECDSA signature, verifiable against a *trusted, pinned* signer key.
+- Whether the operation reused the original bytes, rendered locally, or
+  submitted a generation request to an external backend.
+
+The signature verifies a claimed origin and the integrity of signed data.
+The hash verifies bytes. Neither proves that a video's claims are true,
+that a performer consented, or that the customer owns all intellectual
+property in its ingredients. Ordinary elliptic-curve signatures are also
+not post-quantum signatures.
+
+The current graph is a *version/dependency graph*, not yet ECAI's global
+geometric semantic index. A richer scene model with persistent character,
+object and shot relationships is an architectural direction, not a feature
+established by this POC.
+
+* Evidence from the first working pilot
+
+The initial POC is supplied as a separate patch for the DamageBDD application
+repository. Its Python service, local media processing and test fixtures are
+not represented here as already merged and publicly deployed software.
+
+The recorded localhost smoke test used an FFmpeg-generated MP4 and produced
+an original version, a metadata-only variant and a caption-rendered variant.
+The metadata variant retained the *identical* video SHA-256; the caption
+variant created new video bytes, verified against its signed manifest.
+
+| Observed in this test | Result |
+|-----------------------+--------|
+| Video imports | 1 original MP4 |
+| Follow-up revisions | 2: metadata and caption |
+| External generation requests for those revisions | 0 |
+| Metadata revision | Exact video bytes reused |
+| Caption revision | Local FFmpeg render, then integrity verification |
+| Automated tests | 7 passing local pytest cases |
+
+That establishes two *avoided provider submissions for this chosen workflow*,
+not a measured percentage cost saving, nor a benchmark against Runway, Veo,
+Kling, Shotstack or other editing suites. Separate tests also exercise an
+HTTP mock backend, tenant separation, persisted records, restart recovery,
+credential policy and rejection of altered data. A real provider account,
+real billing, production authentication and live multi-customer operations
+still need acceptance tests.
+
+* Try it with a clip you already own
+
+Apply the Video Fastpath POC patch in the *DamageBDD application checkout*
+(not in this website repository), then run the isolated pilot:
+
+#+begin_src sh
+cd apps/ecai_video_fastpath
+cp .env.example .env
+# Configure unique workspace credentials in .env.
+docker compose up --build -d
+# Open http://127.0.0.1:9011/studio
+#+end_src
+
+For the first evaluation, import a short licensed MP4 and make one metadata
+revision and one caption revision. Verify both and compare their checksums.
+Inspect =/v1/projects/{project_id}/graph= for parent relationships and
+=/v1/projects/{project_id}/value= for recorded reuse/provider counters.
+
+To connect a real backend, configure approved HTTPS provider domains,
+credential encryption, a backend type and a permitted response media host.
+The pilot supports synchronous JSON video endpoints and a queued fal-style
+adapter; exact provider request and result schemas still require validation.
+A provider connection must not become an arbitrary URL fetcher. Restrict
+outbound hosts, protect credentials and validate downloaded MP4s.
+
+The pilot's workspace bearer keys are suitable for a controlled evaluation.
+A public paid service additionally needs DamageBDD account integration,
+TLS, rate limits, entitlements, per-customer billing and operational monitoring.
+
+* Video NFTs are an optional publication step
+
+An NFT can refer to a version's manifest and media, but the NFT is *not* the
+video. The media still needs persistent storage and independent integrity
+checks. A sensible publication sequence is:
+
+1. Finalise the video and verify the local signed manifest.
+2. Publish the MP4, poster and metadata, and verify their retrieved bytes.
+3. Keep the content-addressed references available through a pinning policy.
+4. Submit an NFT mint transaction and confirm its token ID and ownership.
+5. Attach explicit licensing terms and respect all source-asset permissions.
+
+The POC currently produces *NFT metadata drafts only*. It does not pin to
+IPFS, prove a user has commercial rights, mint on Aeternity, or collect
+payments. The existing [[file:ecai_index_nfts.org][ECAI index-NFT guide]] explains the related distinction between
+artifact metadata and confirmed chain activity.
+
+* What to sell first, and how to tell whether it works
+
+The initial offer is *Verified Video Variations*: customers keep their
+preferred model and pay for controlled revisions, reusable approved outputs,
+and verifiable delivery evidence. Agencies, product marketers and studios
+producing repeated variations have a concrete reason to evaluate it. NFT
+registration can be an add-on after the media and rights workflow succeeds.
+
+A convincing pilot uses one original clip and an agreed set of changes.
+Record provider calls, elapsed editing time, review rounds, exact-byte reuse,
+verification failures and final delivery acceptance. Run the same task in the
+customer's existing workflow. That comparison, rather than the word
+"elliptic", determines whether the ECAI layer earns its place.
+
+The next engineering milestones are integrating the sidecar with DamageBDD
+account sessions, implementing a durable release/payment path, verifying live
+provider interoperability, and indexing richer scene relationships. Those
+are opportunities to expand the product, not prerequisites for showing a
+customer that their existing video can be reused and independently verified.
+
+* Explore the implementation and related work
+
+- [[file:../ecai/index.org][ECAI implementation overview]]
+- [[file:features_current.org][Component map and evidence-status conventions]]
+- [[file:ecai_index_nfts.org][Index artifacts, publication and NFT limitations]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_blender.erl][Existing ECAI Blender adapter (application source)]]
+- [[https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_nft.erl][Existing ECAI NFT adapter (application source)]]
+
+The separately supplied Fastpath patch contains
+=apps/ecai_video_fastpath/README.md=, the runnable service, tests and the
+optional =apps/ecai/src/ecai_video_fastpath.erl= bridge. Until that patch is
+merged into an application repository, it should be treated as a pilot
+artifact rather than a deployed ECAI feature.

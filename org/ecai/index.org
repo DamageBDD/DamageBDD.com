@@ -1,11 +1,11 @@
 #+TITLE: ECAI: Current Implementation and Earlier Conceptual Work
-#+DESCRIPTION: Source-backed ECAI guides for Wikipedia indexing, search evidence, index NFTs, private retrieval, typed relations and reviewable repairs, followed by earlier conceptual material.
+#+DESCRIPTION: Source-backed ECAI guides for video reuse, Wikipedia indexing, search evidence, index NFTs, private retrieval, typed relations and reviewable repairs, followed by earlier conceptual material.
 #+KEYWORDS: ECAI, Elliptic Curve AI, deterministic AI, cryptographic intelligence, post-quantum AI, verifiable knowledge retrieval, elliptic curve encoding, proof-based AI, Bitcoin-compatible intelligence
 
 #+INCLUDE: "../header.org"
 #+AUTHOR: Steven Joseph
 #+DATE: 2025-04-07
-#+LAST_MODIFIED: 2026-10-06
+#+LAST_MODIFIED: 2026-10-11
 #+OPTIONS: toc:nil num:nil
 
 * Current implementation documentation
@@ -28,6 +28,11 @@ Each guide explains the workflow and links to specific modules in the
 [[https://github.com/DamageBDD/DamageBDD][DamageBDD repository]]. The
 [[file:../articles/features_current.org][component map]] records the referenced
 revision, implementation gaps and scope of the available validation.
+
+For video creators, [[file:../articles/ecai_video_generation.org][ECAI Video Fastpath]] describes how a
+customer can keep an existing generation provider while reusing exact media,
+making local revisions and verifying signed delivery manifests. Its separate
+POC patch is not yet equivalent to a production deployment or live NFT mint.
 
 The material below is the earlier conceptual position, not a description of
 measured current guarantees. The reviewed code establishes repeatable relation

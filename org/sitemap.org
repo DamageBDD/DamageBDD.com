@@ -45,6 +45,7 @@
   - {{{timestamp(2026-10-06)}}} [[file:articles/ecai_private_knowledge.org][ECAI Private Knowledge Retrieval and Controlled LLM Access]]
   - {{{timestamp(2026-10-06)}}} [[file:articles/ecai_reviewable_repairs.org][ECAI Repair Workflows: Make a Generated Patch Easier to Review]]
   - {{{timestamp(2026-10-06)}}} [[file:articles/ecai_search_evidence.org][ECAI Search: Find the Record and Check the Evidence]]
+  - {{{timestamp(2026-10-10)}}} [[file:articles/ecai_video_generation.org][ECAI Video: Generate Once, Reuse with Proof]]
   - {{{timestamp(2026-10-06)}}} [[file:articles/ecai_wikipedia_indexing.org][ECAI and Wikipedia: Build a Corpus You Can Inspect and Reuse]]
   - {{{timestamp(2026-10-06)}}} [[file:articles/ecai_engineering_memory.org][ECAI: Give Engineering Knowledge a Source, a Structure and an Access Boundary]]
   - [[file:articles/index.org][Field notes & implementation guides]]
