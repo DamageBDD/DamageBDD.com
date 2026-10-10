@@ -21,6 +21,8 @@
 ;;   #+VERIFIED_RELEASE: <release actually covered by the evidence>
 ;;   #+EVIDENCE_URL: https://example.org/report
 ;;   #+LAST_MODIFIED: 2026-10-06
+;;   #+SITE_LAYOUT: document (default), home, or collection
+;; Shared snippets support {{base}}, {{origin}} and {{asset:assets/path}}.
 ;; EVIDENCE_URL may be repeated.  Missing status is "not_recorded", never
 ;; inferred from prose or the build date.  DATE is the document date only.
 ;; Existing feature articles are recognised by path, even without these fields.
@@ -29,7 +31,8 @@
 ;; SOURCE_DATE_EPOCH fixes the generated_at timestamp for reproducible builds.
 ;; Set DAMAGEBDD_PUBLISH_NO_AUTO=1 when loading this file from batch tests.
 ;; Uses bundled Org, ox-md and json; no MELPA packages.
-;; Tested with Emacs 29.3 / Org 9.6.15.
+;; Run publish-tests.el, site-tests.el and publish-asset-tests.el with release Emacs/Org.
+;; Publication fails before rsync if snippet tokens survive or copied assets differ.
 ;; Configure the web server to serve .md as text/markdown; charset=utf-8 and
 ;; .json as application/json.  Public docs should be readable without JS.
 ;; Serve current docs/discovery files with Cache-Control: no-cache and ETag.
@@ -86,9 +89,13 @@
 (defvar damagebdd--agent-files nil)
 (defvar damagebdd--fragment-cache nil)
 (defvar damagebdd--dependency-cache nil)
+(defvar damagebdd--snippet-assets nil
+  "Hash table of snippet asset paths and SHA-256 values for the current publish.
+Bound afresh by `damagebdd-publish'; standalone snippet reads do not retain state.")
 (defvar damagebdd--git-root nil)
 (defvar httpd-root)
 (defvar httpd-port)
+(defvar httpd-host)
 (declare-function httpd-start "simple-httpd")
 
 (defun damagebdd--root (relative)
@@ -144,9 +151,68 @@
         (json-key-type 'symbol) (json-false :json-false) (json-null nil))
     (json-read-file file)))
 
+(defun damagebdd--site-path (relative)
+  "Return a local URL for RELATIVE, respecting the deployment path prefix."
+  (let ((prefix (string-remove-suffix
+                 "/" (or (url-filename (url-generic-parse-url damagebdd-site-url)) ""))))
+    (concat prefix "/"
+            (mapconcat #'url-hexify-string (split-string relative "/") "/"))))
+
+(defun damagebdd--assert-expanded-html (html source)
+  "Reject unexpanded snippet placeholders in HTML from SOURCE.
+Check both literal and URL-encoded tokens: browsers encode leftover braces
+before requesting a malformed asset URL.  Return HTML unchanged on success."
+  (save-match-data
+    (let ((case-fold-search t))
+      (when (string-match
+             (concat "\\(?:{{\\|%7b%7b\\)"
+                     "\\(?:asset\\(?::\\|%3a\\)"
+                     "\\|\\(?:base\\|origin\\)\\(?:}}\\|%7d%7d\\)\\)")
+             html)
+        (error "Unexpanded site placeholder in %s near: %s"
+               source (substring html (match-beginning 0)
+                                 (min (length html) (+ (match-beginning 0) 120)))))))
+  html)
+
+(defun damagebdd--expand-snippet (text &optional source)
+  "Expand deployment and content-addressed asset placeholders in TEXT.
+Only local files below assets/ are accepted.  Asset changes therefore also
+change HTML hashes and the existing content_revision, without a build clock.
+SOURCE, when supplied, identifies the snippet in an error message."
+  (let ((expanded
+         (replace-regexp-in-string
+          "{{asset:\\([^}]+\\)}}"
+          (lambda (token)
+            ;; This must be INSIDE the callback.  replace-regexp-in-string
+            ;; uses the match data again after the callback returns.  URL
+            ;; parsing and file helpers may run their own regexp searches;
+            ;; leaking those matches splices URLs into the wrong positions.
+            (save-match-data
+              (let* ((relative (substring token 8 -2))
+                     (file (damagebdd--root relative)))
+                (unless (and (string-prefix-p "assets/" relative)
+                             (file-in-directory-p file (damagebdd--root "assets/"))
+                             (file-regular-p file))
+                  (error "Missing or invalid snippet asset: %s" relative))
+                (let ((hash (damagebdd--hash-file file)))
+                  (when damagebdd--snippet-assets
+                    (puthash relative hash damagebdd--snippet-assets))
+                  (concat (damagebdd--site-path relative) "?v="
+                          (substring hash 0 12))))))
+          text t t)))
+    (setq expanded
+          (replace-regexp-in-string
+           "{{base}}" (string-remove-suffix "/" (damagebdd--site-path "")) expanded t t))
+    (setq expanded
+          (replace-regexp-in-string "{{origin}}"
+                                    (string-remove-suffix "/" damagebdd-site-url)
+                                    expanded t t))
+    (damagebdd--assert-expanded-html expanded (or source "HTML snippet"))))
+
 (defun damagebdd-read-snippet (relative-path)
-  "Read HTML snippet at RELATIVE-PATH."
-  (damagebdd--read (damagebdd--root relative-path)))
+  "Read and expand the HTML snippet at RELATIVE-PATH."
+  (damagebdd--expand-snippet (damagebdd--read (damagebdd--root relative-path))
+                            relative-path))
 
 (defun damagebdd-load-html-snippets ()
   "Load existing HTML snippets without adding them to Markdown."
@@ -331,8 +397,106 @@
                              (org-combine-plists info '(:with-title nil :with-author nil
                                                         :with-date nil :with-toc nil))))))
 
+(defun damagebdd--html-attribute (text)
+  "Escape TEXT for a double-quoted HTML attribute."
+  (replace-regexp-in-string "\"" "&quot;" (org-html-encode-plain-text (or text "")) t t))
+
+(defun damagebdd--html-sidebar (info)
+  "Build a small documentation navigation and the actual page outline from INFO.
+Only existing entry pages are linked.  Search and the sitemap discover all pages."
+  (let ((current (plist-get info :damagebdd-html-path))
+        (entries '(("manual.org" "Quick start")
+                   ("install.org" "Installation")
+                   ("modules/index.org" "Module reference")
+                   ("node.org" "Run a node")
+                   ("node_admins.org" "Node administration")
+                   ("articles/features_current.org" "Component map")))
+        links outline)
+    (dolist (entry entries)
+      (when (file-regular-p (damagebdd--root (concat "org/" (car entry))))
+        (let ((path (concat (file-name-sans-extension (car entry)) ".html")))
+          (push (format "<a href=\"%s\"%s>%s</a>"
+                        (org-html-encode-plain-text (damagebdd--site-path path))
+                        (if (equal current path) " aria-current=\"page\"" "")
+                        (cadr entry)) links))))
+    (org-element-map (plist-get info :parse-tree) 'headline
+      (lambda (headline)
+        (let ((level (org-export-get-relative-level headline info)))
+          (when (<= level 2)
+            (let ((id (or (org-element-property :CUSTOM_ID headline)
+                          (org-export-get-reference headline info))))
+              (push (format "<a class=\"toc-depth-%d\" href=\"#%s\">%s</a>"
+                            level (url-hexify-string id)
+                            (org-html-encode-plain-text
+                             (org-element-property :raw-value headline))) outline))))) info)
+    (concat "<aside class=\"doc-sidebar\" aria-label=\"Documentation navigation\">"
+            (when links
+              (concat "<p class=\"sidebar-label\">Build with DamageBDD</p>"
+                      "<nav class=\"sidebar-links\" aria-label=\"Documentation sections\">"
+                      (mapconcat #'identity (nreverse links) "\n") "</nav>"))
+            (when outline
+              (concat "<nav class=\"page-outline\" aria-label=\"On this page\">"
+                      "<p class=\"sidebar-label\">On this page</p>"
+                      (mapconcat #'identity (nreverse outline) "\n") "</nav>"))
+            "</aside>")))
+
+(defun damagebdd-html-template (contents info)
+  "Wrap exported CONTENTS in the reading layout without changing Org content.
+Org remains responsible for document generation, footnotes, IDs and metadata."
+  (let* ((layout (or (plist-get info :damagebdd-layout) "document"))
+         (home (equal layout "home"))
+         (collection (equal layout "collection"))
+         (title (org-export-data (plist-get info :title) info))
+         (description (damagebdd--single-line (plist-get info :description)))
+         (markdown (plist-get info :damagebdd-md-path))
+         (modified (plist-get info :damagebdd-modified))
+         (header
+          (unless home
+            (concat
+             "<header class=\"doc-header\">"
+             (format "<nav class=\"breadcrumbs\" aria-label=\"Breadcrumb\"><a href=\"%s\">Home</a><span aria-hidden=\"true\">/</span><span>%s</span></nav>"
+                     (org-html-encode-plain-text (damagebdd--site-path ""))
+                     (if collection "Articles" "Documentation"))
+             "<h1 class=\"title\">" title "</h1>"
+             (unless (string-empty-p description)
+               (concat "<p class=\"doc-description\">"
+                       (org-html-encode-plain-text description) "</p>"))
+             "<div class=\"doc-meta\">"
+             (when modified
+               (format "<span>Updated <time datetime=\"%s\">%s</time></span>"
+                       (org-html-encode-plain-text modified)
+                       (org-html-encode-plain-text modified)))
+             (when markdown
+               (format "<a href=\"%s\">Read as Markdown ↗</a>"
+                       (org-html-encode-plain-text (damagebdd--site-path markdown))))
+             "</div></header>")))
+         (body
+          (cond
+           (home (concat "<div class=\"home-page\">" contents "</div>"))
+           (collection (concat "<div class=\"collection-layout\"><article class=\"doc-article\">"
+                               header "<div class=\"document-body\">" contents "</div></article></div>"))
+           (t (concat "<div class=\"document-layout\">" (damagebdd--html-sidebar info)
+                      "<article class=\"doc-article\">" header
+                      "<div class=\"document-body\">" contents "</div></article></div>"))))
+         (html (org-html-template body (org-combine-plists info '(:with-title nil)))))
+    (setq html (replace-regexp-in-string
+                "<body>" (format "<body class=\"page-%s\">" layout) html t t))
+    (setq html (replace-regexp-in-string "<main id=\"content\""
+                                         "<main id=\"content\" tabindex=\"-1\"" html t t))
+    ;; Older bundled Org versions do not always emit a viewport declaration.
+    (unless (string-match-p "<meta[^>]+name=[\"']viewport[\"']" html)
+      (setq html (replace-regexp-in-string
+                  "</head>" "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n</head>"
+                  html t t)))
+    html))
+
 (org-export-define-derived-backend 'damagebdd-html 'html
-  :translate-alist '((link . damagebdd-html-link)))
+  :options-alist '((:damagebdd-layout "SITE_LAYOUT" nil "document")
+                   (:damagebdd-html-path nil nil nil)
+                   (:damagebdd-md-path nil nil nil)
+                   (:damagebdd-modified nil nil nil))
+  :translate-alist '((link . damagebdd-html-link)
+                    (template . damagebdd-html-template)))
 (org-export-define-derived-backend 'damagebdd-md 'md
   :options-alist '((:damagebdd-canonical-url nil nil nil))
   :translate-alist '((link . damagebdd-md-link)
@@ -358,7 +522,7 @@
       ;; temporary copy instead of relying on narrowing.
       (when first-heading (delete-region first-heading (point-max)))
       (org-collect-keywords
-       '("TITLE" "DESCRIPTION" "DATE" "LAST_MODIFIED" "CAPABILITY_ID"
+       '("TITLE" "DESCRIPTION" "DATE" "LAST_MODIFIED" "SITE_LAYOUT" "CAPABILITY_ID"
          "CONTENT_CLASS" "IMPLEMENTATION_STATUS" "VALIDATION_STATUS"
          "VALIDATION_SCOPE" "EVIDENCE_DATE" "VERIFIED_RELEASE" "EVIDENCE_URL")))))
 
@@ -474,6 +638,16 @@ Return nil if any input cannot be resolved locally.  SEEN breaks cycles."
          (md-url (damagebdd--url md-relative))
          (declared-modified (damagebdd--modified-date (damagebdd--keyword "LAST_MODIFIED" keywords)))
          (modified (or declared-modified (damagebdd--git-modified filename)))
+         (layout (or (damagebdd--keyword "SITE_LAYOUT" keywords) "document"))
+         (section (cond ((string-prefix-p "articles/" source) "articles")
+                        ((string-prefix-p "ecai/" source) "ecai")
+                        ((equal source "pricing.org") "pricing")
+                        ((equal source "index.org") "home")
+                        (t "docs")))
+         (page-title (damagebdd--html-attribute
+                      (or (damagebdd--keyword "TITLE" keywords) stem)))
+         (page-description (damagebdd--html-attribute
+                            (damagebdd--single-line (damagebdd--keyword "DESCRIPTION" keywords))))
          (parsing-hook (if (boundp 'org-export-before-parsing-functions)
                            'org-export-before-parsing-functions
                          'org-export-before-parsing-hook))
@@ -483,12 +657,26 @@ Return nil if any input cannot be resolved locally.  SEEN breaks cycles."
                              "\n<link rel=\"alternate\" type=\"text/markdown\" href=\""
                              (org-html-encode-plain-text md-url) "\">\n"
                              "<link rel=\"describedby\" href=\""
-                             (org-html-encode-plain-text (damagebdd--url "llms.txt")) "\">"))
+                             (org-html-encode-plain-text (damagebdd--url "llms.txt")) "\">"
+                             "\n<meta name=\"damagebdd-section\" content=\"" section "\">"
+                             "\n<meta property=\"og:title\" content=\"" page-title "\">"
+                             "\n<meta property=\"og:description\" content=\"" page-description "\">"
+                             "\n<meta property=\"og:url\" content=\""
+                             (org-html-encode-plain-text html-url) "\">"
+                             "\n<meta name=\"twitter:title\" content=\"" page-title "\">"
+                             "\n<meta name=\"twitter:description\" content=\"" page-description "\">"))
          html md)
+    (unless (member layout '("home" "collection" "document"))
+      (error "Unsupported SITE_LAYOUT %s in %s" layout filename))
     (cl-progv (list parsing-hook)
         (list (cons #'damagebdd--stable-ids (symbol-value parsing-hook)))
       (setq html (org-publish-org-to 'damagebdd-html filename ".html"
-                                  (org-combine-plists plist (list :html-head-extra head-extra)) pub-dir))
+                                  (org-combine-plists
+                                   plist (list :html-head-extra head-extra
+                                               :damagebdd-layout layout
+                                               :damagebdd-html-path html-relative
+                                               :damagebdd-md-path md-relative
+                                               :damagebdd-modified modified)) pub-dir))
     (let ((org-export-global-macros '(("timestamp" . "[$1]")))
           (org-md-headline-style 'atx))
       (setq md (org-publish-org-to
@@ -667,8 +855,26 @@ Return nil if any input cannot be resolved locally.  SEEN breaks cycles."
                                       (format "<lastmod>%s</lastmod>" modified) "")))
                         damagebdd--documents "") "</urlset>\n") t)))
 
+(defun damagebdd--validate-snippet-assets ()
+  "Require every snippet asset to be copied intact into public/.
+Hash the deployed bytes, not merely the source file.  This catches missing
+attachment extensions, skipped copies and asset changes during the build."
+  (when damagebdd--snippet-assets
+    (maphash
+     (lambda (relative expected-hash)
+       (let* ((public (damagebdd--root "public/"))
+              (file (expand-file-name relative public)))
+         (unless (and (file-in-directory-p file public)
+                      (file-regular-p file))
+           (error "Missing published snippet asset: public/%s" relative))
+         (unless (equal expected-hash (damagebdd--hash-file file))
+           (error "Published snippet asset differs from its versioned source: public/%s"
+                  relative))))
+     damagebdd--snippet-assets)))
+
 (defun damagebdd--validate-artifacts ()
-  "Check generated JSON, page targets and discovery links without network calls."
+  "Check generated JSON, HTML, copied assets and links without network calls."
+  (damagebdd--validate-snippet-assets)
   (dolist (path '("docs/index.json" "docs/capabilities.json"))
     (damagebdd--read-json (damagebdd--root (concat "public/" path))))
   (dolist (doc damagebdd--documents)
@@ -676,7 +882,10 @@ Return nil if any input cannot be resolved locally.  SEEN breaks cycles."
       (let ((file (damagebdd--root (concat "public/" (alist-get (car pair) doc)))))
         (unless (and (file-regular-p file)
                      (equal (alist-get (cdr pair) doc) (damagebdd--hash-file file)))
-          (error "Missing or changed exported target: %s" (alist-get (car pair) doc))))))
+          (error "Missing or changed exported target: %s" (alist-get (car pair) doc)))
+        (when (eq (car pair) 'html_path)
+          (damagebdd--assert-expanded-html (damagebdd--read file)
+                                           (alist-get 'html_path doc))))))
   (let ((index (damagebdd--read-json (damagebdd--root "public/docs/index.json")))
         (caps (damagebdd--read-json (damagebdd--root "public/docs/capabilities.json"))))
     (unless (equal (alist-get 'content_revision index) (alist-get 'content_revision caps))
@@ -723,6 +932,7 @@ Return nil if any input cannot be resolved locally.  SEEN breaks cycles."
          (damagebdd--documents nil) (damagebdd--agent-files nil)
          (damagebdd--fragment-cache (make-hash-table :test #'equal))
          (damagebdd--dependency-cache (make-hash-table :test #'equal))
+         (damagebdd--snippet-assets (make-hash-table :test #'equal))
          (damagebdd--git-root (when (equal "false" (damagebdd--git "rev-parse" "--is-shallow-repository"))
                                (damagebdd--git "rev-parse" "--show-toplevel")))
          (previous-file (damagebdd--root "public/.damagebdd-agent-files.json"))
@@ -758,6 +968,9 @@ Return nil if any input cannot be resolved locally.  SEEN breaks cycles."
              :sitemap-filename "sitemap.org" :sitemap-sort-files alphabetically
              :sitemap-format-entry org-sitemap-date-entry-format :with-toc nil
              :html-doctype "html5" :html-html5-fancy t
+             :html-divs ((preamble "div" "preamble") (content "main" "content")
+                          (postamble "div" "postamble"))
+             :section-numbers nil :with-author nil :with-creator nil
              :time-stamp-file nil
              :html-head-include-scripts nil :html-head-include-default-style nil
              :html-head ,damagebdd-html-head :html-preamble ,damagebdd-html-preamble
@@ -793,8 +1006,13 @@ Return nil if any input cannot be resolved locally.  SEEN breaks cycles."
   (damagebdd-publish)
   (add-to-list 'load-path (damagebdd--root "scripts"))
   (require 'simple-httpd)
-  (setq httpd-root (damagebdd--root "public") httpd-port 8081)
-  (unless (process-status "httpd") (httpd-start)))
+  (setq httpd-root (damagebdd--root "public")
+        httpd-host (or (getenv "DAMAGEBDD_PREVIEW_HOST") "127.0.0.1")
+        httpd-port (string-to-number (or (getenv "DAMAGEBDD_PREVIEW_PORT") "8081")))
+  (unless (<= 1 httpd-port 65535)
+    (error "DAMAGEBDD_PREVIEW_PORT must be between 1 and 65535"))
+  (unless (process-status "httpd") (httpd-start))
+  (message "DamageBDD preview: http://%s:%d/" httpd-host httpd-port))
 
 (defun damagebdd-rsync-deploy (node)
   "Publish, then deploy public/ to NODE via rsync over SSH."
