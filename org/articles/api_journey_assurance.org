@@ -1,0 +1,109 @@
+#+TITLE: Your API Is Up. Can the Customer Finish the Job?
+#+DESCRIPTION: Turn API and browser checks into a customer-journey evaluation, with scheduled regression, negative cases and controlled load treated separately.
+#+KEYWORDS: DamageBDD, evidence, B2B SaaS, platform teams, API integrations
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-10
+#+LAST_MODIFIED: 2026-10-10
+#+CONTENT_CLASS: market-evaluation-guide
+#+IMPLEMENTATION_STATUS: documented_components
+#+VALIDATION_STATUS: documentation_review_only
+#+VALIDATION_SCOPE: Editorial evaluation guide based on accessible repository pages and the dated implementation references linked below. Complete current tree and HEAD were not retrieved; no runtime or end-to-end validation performed.
+#+EVIDENCE_DATE: 2026-10-10
+#+EVIDENCE_URL: https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/steps_http.erl
+#+EVIDENCE_URL: https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/damage_app.erl
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Start with the failure the customer can describe
+
+A booking system may answer its status endpoint while a customer cannot
+complete a booking. A partner API may return successful responses while the
+wrong account receives the result. A dashboard that says the service is up
+does not answer either question.
+
+For a B2B SaaS team, the useful buying proposition is a repeatable check of
+an important customer journey. Start with an integration the team already
+supports, rather than an abstract promise to test everything.
+
+A suitable pilot might cover creating a booking with fixture data, reading
+it back and checking the expected state. Keep cancellations, notifications
+and payment changes outside the first scope unless they are the actual
+source of failure. Never run a destructive journey against real customer
+records merely because the scenario is readable.
+
+* Use a shared requirement and the correct adapter
+
+The [[https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/steps_http.erl][HTTP step source]]
+provides request and response operations, including status, text, JSON/YAML
+checks and polling. It also contains explicit unsupported behaviour: the
+TRACE clause returns a failure. A named handler is not automatically a
+working implementation of every HTTP operation.
+
+Use the [[file:../modules/http.org][HTTP reference]] for service behaviour and the
+[[file:../modules/cdp.org][CDP reference]] when the browser interaction itself is
+part of the requirement. An API check does not establish that a real browser
+renders or interacts correctly. Browser and driver versions belong in the
+pilot record.
+
+Test authentication refusal as deliberately as authentication success.
+Capture fixture identifiers rather than credentials, personal information or
+complete production responses. Establish the report's disclosure policy
+before publishing any evidence outside the team.
+
+* Keep regression, alerting and load as distinct decisions
+
+A repeatable functional scenario can become the basis for a scheduled check.
+The repository's [[https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/damage_app.erl][application wiring]]
+loads schedules at startup and registers webhook-related handlers. The
+operational questions remain separate: which identity owns the check, what
+happens after a restart and who receives a failure notification?
+
+Introduce controlled load only after the single-run result is trustworthy.
+Agree target ownership, concurrency, duration and a stop condition. Measure
+the generator as well as the target. A failing generator cannot produce a
+credible capacity conclusion about the service.
+
+Concurrency support is not evidence of a particular throughput, and neither
+is Erlang's process model. Recheck the current aggregation and failure
+behaviour in the deployed runner before using load results commercially.
+The editorial review accompanying this series records a cached-source
+aggregation concern that needs a fresh-checkout test.
+
+* A pilot the support team can understand
+
+Choose one customer-reported failure with a reproducible fixture. Agree the
+expected result with support and engineering, record the failing version,
+then compare the repaired version under the same conditions.
+
+Add a revoked credential, a missing record and an upstream timeout. These
+negative cases establish whether the workflow fails usefully rather than
+merely whether a happy-path demonstration looks convincing. Schedule the
+safe checks only after the team has agreed their side effects and cleanup.
+
+Have someone who did not write the scenario read the report and explain the
+outcome. If they need the original author to translate it, improve the
+scenario or packet before expanding the suite. The handoff is part of the
+product value, not an afterthought.
+
+* Measure reduced ambiguity, not just more executions
+
+Useful pilot measures include time to reproduce the original incident,
+false-alert frequency, time to identify the first failing step and the
+proportion of regression reports a second person can interpret unaided.
+A growing test count is not enough.
+
+This approach is a good fit for APIs and partner integrations with stable,
+owned test environments. It is a poor first fit for uncontrolled third-party
+sites, irreversible production actions or workflows whose expected outcome
+has not yet been agreed.
+
+* Implementation and evaluation boundary
+
+This is a proposed evaluation using documented adapters and selected readable
+source. No browser session, scheduled run or load benchmark was executed for
+this article. Review the deployed [[file:../steps.org][step catalogue]] and
+[[file:damagebdd_evidence_workflows.org][reporting behaviour]] before the pilot.
+
+Begin with one customer journey. Expand only when a failure report tells
+both the operator and the customer-facing team something useful.

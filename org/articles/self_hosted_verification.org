@@ -1,0 +1,122 @@
+#+TITLE: Run Verification Where You Can Account for It
+#+DESCRIPTION: A self-hosted DamageBDD evaluation for teams needing control of execution, evidence and integrations, without treating self-hosting as automatic security.
+#+KEYWORDS: DamageBDD, evidence, platform engineering, self-hosted software, service operators
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-10
+#+LAST_MODIFIED: 2026-10-10
+#+CONTENT_CLASS: market-evaluation-guide
+#+IMPLEMENTATION_STATUS: documented_components
+#+VALIDATION_STATUS: documentation_review_only
+#+VALIDATION_SCOPE: Editorial evaluation guide based on accessible repository pages and the dated implementation references linked below. Complete current tree and HEAD were not retrieved; no runtime or end-to-end validation performed.
+#+EVIDENCE_DATE: 2026-10-10
+#+EVIDENCE_URL: https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/damage_app.erl
+#+EVIDENCE_URL: https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/config/sys.config.sample
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_release_nft.erl
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Control is useful when it can be demonstrated
+
+A platform team may want verification to run near a private service, under its
+own network policy and with an evidence retention plan it can explain. That
+is a concrete reason to evaluate a self-hosted node. Owning the machine is not,
+by itself, evidence that the deployment is isolated, recoverable or secure.
+
+DamageBDD's node and installation paths provide a starting point for such an
+evaluation. Begin with a controlled target and a small scenario. Establish
+what the installed node does, which external services it depends on and where
+its results are stored before adding more integrations.
+
+* Make a dependency map for the installed release
+
+The readable application and configuration sources expose multiple runtime
+and integration concerns. The samples and guides do not all represent the
+same revision. Use the configuration shipped with the selected artifact and
+inspect the effective application environment rather than copying an old
+example unchanged.
+
+Record listening interfaces, authentication boundaries, execution identity,
+state directories, report stores and external endpoints. Mark which services
+are required at startup and which are optional for the chosen workflow.
+Do not assume that disabling a visible payment feature removes every
+Aeternity or other network dependency from the runtime.
+
+Keep network reachability narrow during the first exercise. A configured
+loopback listener, an authenticated API and a firewall rule are different
+controls; test them from the client's actual network position.
+
+* Treat execution authority as a product boundary
+
+A verification node can interact with systems on the operator's behalf.
+The node's credentials and network access therefore need to be no broader
+than the agreed evaluation requires. Use an authorised test target and
+non-production secrets.
+
+Inspect allowed commands, administrator identities, browser drivers and any
+SSH or wallet-related surfaces in the matching checkout. Refuse unsupported
+steps explicitly. A working API response is not a reason to expose every
+integration configured in a sample file.
+
+Where a secrets backend or optional cryptographic mode is offered, verify
+which backend is actually active and how it fails when its dependency is
+missing. The name of a cryptographic algorithm is not evidence of a complete
+key lifecycle, safe logging or a deployment-wide security guarantee.
+
+* Make evidence retrieval part of the installation test
+
+Run a known success and a known failure against the same controlled service.
+Inspect the report, feature identity and target identity. Then retrieve the
+report from a separate client and confirm that the intended recipient can
+read it without inheriting unnecessary administrative access.
+
+The [[file:../install.org][installation guide]] documents a runtime version probe.
+Relate that response to the selected artifact and its recorded digest. A
+version string is useful operational data, not independent proof that a binary
+matches its claimed source.
+
+Decide whether reports may contain sensitive request or response material.
+Content addressing identifies bytes; it does not provide a read-access policy.
+Choose retention, redaction and access controls appropriate to the fixture
+before moving on to real customer information.
+
+* Restart the parts that matter
+
+An installation acceptance exercise should include the node, its evidence
+store and any worker needed by the selected scenario. Restart them in a
+controlled order and record what survives, what is reconstructed and what
+must be resubmitted.
+
+Confirm how incomplete jobs are represented. A service coming back online
+must not turn missing work into an implicit success. Test what the operator
+sees when storage is full, a dependency is unavailable or a report cannot be
+retrieved after execution.
+
+Preserve an installation record containing artifact identity, configuration
+without secret values, the scenario set, observed outcomes and recovery
+steps. This is a proposed handoff format, not an assertion that every field
+is generated automatically by the node.
+
+* Evaluate operating cost as well as installation effort
+
+Measure time to a repeatable installation, time to diagnose a failed run,
+required external services and effort to restore the evidence. Include
+storage growth and manual maintenance in the comparison with the team's
+existing hosted or self-managed tools.
+
+A good initial buyer has a specific need to control the target environment or
+the evidence lifecycle. A team without someone responsible for updates,
+secrets and recovery may prefer a managed evaluation. Self-hosting moves
+responsibility; it does not remove it.
+
+* Implementation and evaluation boundary
+
+This guide combines readable source snapshots with the site's existing
+installation and execution references. The current complete dependency graph
+and package defaults were not resolved. No installation, penetration test,
+restart drill or live node operation was performed for this article.
+
+Use [[file:release_provenance.org][release identity]] and
+[[file:api_journey_assurance.org][a bounded customer journey]] as the first two
+acceptance checks. Add integrations only when their operating purpose and
+failure behaviour are clear.

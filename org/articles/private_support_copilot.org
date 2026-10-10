@@ -1,0 +1,110 @@
+#+TITLE: A Support Copilot That Does Not Need the Whole Company
+#+DESCRIPTION: Evaluate a private support assistant around corpus permissions, controlled model destinations, source-backed answers and explicit refusal cases.
+#+KEYWORDS: DamageBDD, evidence, support engineering, private AI, knowledge management
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-10
+#+LAST_MODIFIED: 2026-10-10
+#+CONTENT_CLASS: market-evaluation-guide
+#+IMPLEMENTATION_STATUS: documented_components
+#+VALIDATION_STATUS: documentation_review_only
+#+VALIDATION_SCOPE: Editorial evaluation guide based on accessible repository pages and the dated implementation references linked below. Complete current tree and HEAD were not retrieved; no runtime or end-to-end validation performed.
+#+EVIDENCE_DATE: 2026-10-10
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_private_index.erl
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_llm_bridge.erl
+#+EVIDENCE_URL: https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Give the assistant a smaller, accountable job
+
+Consider a support engineer answering a deployment question. The answer may
+be in an approved runbook, while a nearby incident note contains credentials
+or information belonging to another customer. “Connect the assistant to all
+our documents” is not a sufficiently precise access policy.
+
+The more useful proposal is a bounded support copilot: approved sources for
+a defined group, a permitted model destination and an answer that retains
+its supporting references. ECAI's documented private-index and LLM-bridge
+work provides a basis for evaluating that workflow.
+
+[[https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/][OWASP's
+sensitive-information guidance]] emphasises access controls and restrictions
+on the data sources an LLM application can reach. That supports evaluating
+the disclosure boundary, not assuming that a reassuring prompt provides one.
+
+* Model two permissions, not one
+
+The first question is whether the requester may read the corpus. The second
+is whether its contents may be sent to the selected model service. A user who
+may read an internal runbook should not automatically gain permission to
+export it to every model provider.
+
+The [[file:ecai_private_knowledge.org][private-index implementation guide]] describes
+separate readers and writers, corpus-wide permissions, encrypted segments and
+an allowlisted model-dispatch path. It also makes an important limitation
+explicit: this is not per-record authorisation. Collections with different
+readers should not be combined merely to simplify indexing.
+
+For a pilot, create two synthetic collections with intentionally different
+readers. Give each a permitted destination and a set of questions with known
+supporting records. Keep the policy small enough that a human can review it
+without interpreting a large permission matrix.
+
+* Encrypted storage is not encrypted computation
+
+The documented retrieval worker decrypts scanned segments in memory. It does
+not search ciphertext without decryption, and the host remains inside the
+trust boundary. A compromise of that worker is a different threat from a
+person reading an encrypted disk file.
+
+The same guide describes bounded excerpts and a no-source path that does not
+call the model. Local model routing constrains the immediate destination; it
+does not prove that every downstream component, log, crash dump or proxy is
+private. Remote model use is a deliberate disclosure decision.
+
+These limits are useful purchasing information. The buyer can decide whether
+the design fits its deployment boundary, rather than discovering after a
+pilot that “private AI” meant something different to each participant.
+
+* Test refusal as carefully as the answer
+
+Ask a permitted user a question whose answer is present. Inspect the source
+reference and compare the generated answer with the actual record. Then ask
+an unrelated user the same question, select a forbidden destination and ask
+for material that is not in the collection.
+
+The proposed acceptance conditions are no unauthorised disclosure, no dispatch
+to a forbidden destination and an explicit no-evidence outcome. Also test a
+permission change after a successful response. A refused request should not
+be disguised by showing the previous answer as though it were new.
+
+Use synthetic content to examine prompts and logs. Put an instruction-like
+string inside a source document and ensure the surrounding application treats
+it as evidence to inspect, not authority to grant new tools or permissions.
+This is a test requirement, not a claim of complete prompt-injection defence.
+
+* Measure useful answers under the intended policy
+
+Track the proportion of questions with the expected supporting record, the
+rate of appropriate abstention and the time a support engineer spends
+checking the answer. Record a wrong but well-cited answer as wrong. A source
+label is not evidence that every sentence follows from the source.
+
+Compare retrieval against the team's existing search on the same corpus and
+questions. The documented private path uses term matching; do not claim a
+semantic-search advantage or a model benchmark victory without a controlled
+comparison. The advantage to demonstrate first is an inspectable access and
+disclosure workflow.
+
+* Implementation and evaluation boundary
+
+The implementation description comes from the dated private-index reference;
+its latest source and real cryptography/model backends were not revalidated
+for this article. The guide also records lifecycle limits around rotation,
+updates, deletion and rebuilding that belong in any deployment evaluation.
+
+Start with [[file:ecai_private_knowledge.org][the permission and destination model]]
+and [[file:versioned_knowledge_releases.org][a deliberately versioned corpus]].
+Sell a useful answer inside a tested boundary, not unrestricted access with
+privacy language attached afterward.

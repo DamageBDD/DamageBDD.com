@@ -1,0 +1,114 @@
+#+TITLE: Build Nostr Search Around Records, Not Just Replies
+#+DESCRIPTION: An evaluation blueprint for searchable Nostr products: signed source records, explicit ranking, retention policy and a source-linked LLM experience.
+#+KEYWORDS: DamageBDD, evidence, Nostr application developers, community knowledge, search
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-10
+#+LAST_MODIFIED: 2026-10-10
+#+CONTENT_CLASS: market-evaluation-guide
+#+IMPLEMENTATION_STATUS: evaluation_blueprint
+#+VALIDATION_STATUS: documentation_review_only
+#+VALIDATION_SCOPE: Editorial evaluation guide based on accessible repository pages and the dated implementation references linked below. Complete current tree and HEAD were not retrieved; no runtime or end-to-end validation performed.
+#+EVIDENCE_DATE: 2026-10-10
+#+EVIDENCE_URL: https://raw.githubusercontent.com/nostr-protocol/nips/master/50.md
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/nosternity/src/nosternity_relay.erl
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/docs/nostr/NOSTERNITY_AE.md
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* The useful answer must lead back to the record
+
+A community asks which release fixed a problem. The information exists in
+announcements, discussions and long-form posts, but the user has to recognise
+the right author, find the relevant version and check whether a later post
+superseded it. A fluent summary alone does not resolve those questions.
+
+A useful Nostr search product returns the underlying records as well as any
+summary. The reader should be able to inspect the author, event identity,
+time, applicable version and referenced artifacts without relying on the
+language model's retelling.
+
+That is an attractive evaluation direction for the Nostr, Nosternity and
+ECAI components. It is not a claim that the latest search relay has passed
+interoperability or relevance tests. The complete current search implementation
+was not retrievable for this review.
+
+* Protocol support is not a relevance score
+
+[[https://raw.githubusercontent.com/nostr-protocol/nips/master/50.md][NIP-50]] adds a
+human-readable =search= field to relay queries. It leaves the ranking algorithm
+to the implementation and recommends applying the result limit after ranking.
+Support for that interface is therefore different from good search results.
+
+An evaluation should test discovery of search support, interaction with
+structured filters and ranking on a representative collection. Check that a
+query restricted to the intended authors or event kinds stays restricted.
+Do not label a relay NIP-50-compatible solely because an HTTP endpoint accepts
+a query string.
+
+Compare retrieved event identities with a small, independently labelled set.
+Record which relevant events are absent, which irrelevant events appear and
+how current-version rules affect the answer. A different ranking method is
+valuable only when it helps the application's actual questions.
+
+* Decide what is current and what is retained
+
+The existing [[file:nosternity.org][Nosternity implementation reference]] distinguishes
+relay delivery from retention of selected signed events. Its historical
+integration review also identifies gaps between local acceptance, queued
+work and confirmed storage. Those findings require a fresh source and
+recovery check before making a durability promise.
+
+An archive and a current-view search index have different purposes. Keeping
+an old event can preserve history; presenting it as the current answer can
+mislead a reader. Define how replacements, deletions, expiry, duplicates and
+moderation affect the user-facing view before admitting real community data.
+
+The same policy should apply to a context API consumed by a model. Removing
+an item from search while continuing to send its text to the model does not
+provide a consistent retrieval boundary. These are proposed acceptance cases,
+not a report that every path already implements them.
+
+* Keep generated prose downstream of retrieval
+
+Begin with an event list that is useful without a model. Show identifiers,
+author information and enough context for a person to decide what to open.
+Then evaluate an optional summary generated from that bounded result set.
+
+Require the summary to identify its supporting records. When no suitable
+record is found, the interface should say so instead of supplying an
+unattributed answer. Retrieved text is untrusted input; an instruction inside
+a post must not grant access to secrets or turn on an execution tool.
+
+Publicly signed content is not automatically true. A signature helps establish
+which key signed the record, while source selection, context and evaluation
+remain separate responsibilities. Likewise, geometric or deterministic index
+operations do not prove that a generated explanation is correct.
+
+* Start with one community question
+
+Choose a public release-announcement collection or a consented support archive.
+Create a small question set with known relevant records, including changed
+answers and questions that should remain unanswered. Compare raw filtering,
+a straightforward text-search baseline and the proposed indexed retrieval.
+
+Measure useful-result rate, source-link correctness, query latency, ingestion
+lag and recovery after restart. Add malformed events and interrupted writes.
+Keep retention and chain costs separate from query costs so the operator can
+see what each service decision costs.
+
+The first buyer is an application developer who needs an inspectable knowledge
+feature, not someone seeking a universal truth engine. Keep signing, paid
+retention and language-model access optional within the evaluation until each
+has a concrete purpose.
+
+* Implementation and evaluation boundary
+
+This is a product-evaluation blueprint grounded in the linked protocol and
+dated component guides. It does not announce completed NIP-50 support in the
+latest checkout. The [[file:integration_status_2026_10_07.org][7 October review]] is a
+historical baseline, not evidence that later additions are absent or broken.
+
+Use [[file:damagebdd_nostr.org][the Nostr integration guide]] to establish the event
+path and [[file:ecai_search_evidence.org][the search-evidence guide]] to examine retrieval
+claims. Make the records useful before asking a model to speak for them.

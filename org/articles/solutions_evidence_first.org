@@ -1,0 +1,111 @@
+#+TITLE: Start With the Problem. Keep the Evidence.
+#+DESCRIPTION: Choose an evaluation path for software acceptance, private knowledge, Nostr infrastructure, Lightning-funded jobs or an inspectable local workbench.
+#+KEYWORDS: DamageBDD, evidence, software buyers, engineering leaders, product evaluation
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-10
+#+LAST_MODIFIED: 2026-10-10
+#+SITE_LAYOUT: collection
+#+CONTENT_CLASS: market-evaluation-collection
+#+IMPLEMENTATION_STATUS: evaluation_collection
+#+VALIDATION_STATUS: documentation_review_only
+#+VALIDATION_SCOPE: Editorial evaluation guide based on accessible repository pages and the dated implementation references linked below. Complete current tree and HEAD were not retrieved; no runtime or end-to-end validation performed.
+#+EVIDENCE_DATE: 2026-10-10
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD
+#+EVIDENCE_URL: https://dora.dev/research/2025/dora-report/
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Choose an outcome before choosing the whole stack
+
+You do not need to adopt every DamageBDD component to evaluate one useful
+workflow. Begin with a problem someone is already responsible for: accepting
+a change, completing a customer journey, handing over a release or controlling
+which records reach an assistant.
+
+These guides translate the implementation references into bounded evaluations.
+They describe a buyer, a first demonstration, failure cases and observations
+to collect. They are not customer case studies, benchmark results or a claim
+that every integration is production-ready.
+
+* Accept software changes with evidence
+
+For a team already shipping software, the most direct starting point is a
+known failure and an agreed definition of success. Add evidence to the process
+the team already uses rather than asking it to replace its entire toolchain.
+
+| Your immediate problem | Evaluation guide |
+|------------------------+------------------|
+| A coding assistant proposes a convincing patch | [[file:ai_change_acceptance.org][AI Can Write the Change. What Accepts It?]] |
+| The service is reachable but the customer workflow fails | [[file:api_journey_assurance.org][Your API Is Up. Can the Customer Finish the Job?]] |
+| A delivery milestone takes too many clarification meetings | [[file:software_delivery_acceptance.org][Deliver the Evidence, Not Another Status Meeting]] |
+| Nobody can relate the deployed package to its report | [[file:release_provenance.org][Know Which Build Produced the Evidence]] |
+| Verification must run in an environment your team controls | [[file:self_hosted_verification.org][Run Verification Where You Can Account for It]] |
+
+This is the recommended first commercial track: a small acceptance engagement
+with an inspectable result. That recommendation is an editorial assessment,
+not measured proof of product-market fit.
+
+* Make knowledge and assisted repairs reviewable
+
+An answer is more useful when the reader can inspect its sources and the
+operator can explain which data was allowed to reach the model. A proposed
+patch needs a similarly explicit route from incident to review.
+
+| Your immediate problem | Evaluation guide |
+|------------------------+------------------|
+| An assistant needs selected support material, not unrestricted access | [[file:private_support_copilot.org][A Support Copilot That Does Not Need the Whole Company]] |
+| The corpus changed and answers changed with it | [[file:versioned_knowledge_releases.org][Treat the Knowledge Corpus Like a Software Release]] |
+| A suggested repair arrives without a reproducible context | [[file:incident_to_reviewed_patch.org][From an Incident to a Patch Someone Can Review]] |
+
+Keep source access, model access and permission to act separate. Start with
+synthetic or approved material and compare results against a simple baseline.
+No geometry or encryption label substitutes for that evaluation.
+
+* Build specialised infrastructure around explicit permissions
+
+For Nostr and Bitcoin application teams, the useful questions are concrete:
+which key may sign, which event is relevant, which bytes are retained and
+which job a payment refers to. Treat these as focused integration projects,
+not reasons every software buyer must adopt every protocol.
+
+| Your immediate problem | Evaluation guide |
+|------------------------+------------------|
+| An application needs signatures without unrestricted key custody | [[file:nostr_signing_governance.org][Let the Application Ask for a Signature, Not Own the Key]] |
+| A community needs searchable records behind its answers | [[file:nostr_search_for_products.org][Build Nostr Search Around Records, Not Just Replies]] |
+| A verification API needs a clearly defined paid unit of work | [[file:lightning_api_economics.org][Charge for a Verification Job, Not a Vague Promise]] |
+| Supporting attachments disappear after the conversation | [[file:verifiable_media_evidence.org][Make the Attachment Part of the Evidence]] |
+
+The search and payment guides are explicitly evaluation blueprints. They do
+not announce current end-to-end protocol conformance, durable retention,
+settlement or liquidity guarantees.
+
+* Evaluate a local operations workbench
+
+For a Linux or Erlang team exploring local interaction, read
+[[file:local_operations_workbench.org][A Local Workbench for Operators, Not Another Chat Window]].
+Start with a small typed action set and a visible recovery path. Treat erm as
+a design-partner evaluation rather than a promise that every desktop or
+voice workflow is already supported.
+
+* Read the evidence boundary before adopting a claim
+
+The [[file:features_current.org][component map]] leads to the implementation guides.
+The [[file:integration_status_2026_10_07.org][dated integration review]] records historical
+source-availability and validation gaps. This series does not silently upgrade
+those statuses or transfer an older passing run to a newer release.
+
+The repository could not be retrieved as a complete current checkout during
+this editorial review. Some accessible source pages were cached. Each guide
+therefore keeps documentation review separate from runtime validation and
+links its implementation basis.
+
+[[https://dora.dev/research/2025/dora-report/][DORA's 2025 research]] frames AI as an
+amplifier of an organisation's existing strengths and weaknesses. The practical
+response is to improve a real workflow and measure it, not to add an impressive
+label to an untested process.
+
+Select one guide, one controlled target or corpus, one responsible reviewer
+and a short list of acceptance cases. Bring that scope to a discussion through
+[[file:../socials.org][the project's Nostr profile]]. Expand only after the demonstration
+produces evidence worth keeping.

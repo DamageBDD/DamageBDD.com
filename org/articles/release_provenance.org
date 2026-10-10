@@ -1,0 +1,109 @@
+#+TITLE: Know Which Build Produced the Evidence
+#+DESCRIPTION: Connect software artifacts, runtime identity and acceptance reports in a release evaluation; distinguish release NFTs from certification and availability.
+#+KEYWORDS: DamageBDD, evidence, platform engineering, release management, software supply chain
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-10
+#+LAST_MODIFIED: 2026-10-10
+#+CONTENT_CLASS: market-evaluation-guide
+#+IMPLEMENTATION_STATUS: documented_components
+#+VALIDATION_STATUS: documentation_review_only
+#+VALIDATION_SCOPE: Editorial evaluation guide based on accessible repository pages and the dated implementation references linked below. Complete current tree and HEAD were not retrieved; no runtime or end-to-end validation performed.
+#+EVIDENCE_DATE: 2026-10-10
+#+EVIDENCE_URL: https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/README.md
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_release_nft.erl
+#+EVIDENCE_URL: https://slsa.dev/spec/v1.2/provenance
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* A green report needs a build identity
+
+A test report says the scenario passed. The package on the download page has
+since been replaced. The staging server was restarted from another branch.
+Which result belongs to the build the customer is actually running?
+
+For a release manager, that is a more useful question than whether the
+release has a fashionable label. The commercial value of a release record
+is the ability to relate one set of bytes to one source revision and one
+body of evidence.
+
+DamageBDD's documented release-artifact work is relevant to this problem.
+The first demonstration should show a buyer how to trace a build and reject
+a mismatch, not ask the buyer to begin by trading an NFT.
+
+* Give each identity a specific job
+
+The [[file:../install.org][installation guide]] documents =/api/version= as a runtime/build probe.
+Use it as one input to a release check, not as a cryptographic attestation
+by itself. A process reporting a Git SHA has not independently proved how
+its executable was built.
+
+The [[file:damagebdd_evidence_workflows.org][release and execution reference]] links
+the artifact-discovery and verification implementation. Keep four questions
+separate: which source was selected, which artifact was produced, which
+artifact is running, and which checks were performed against it?
+
+An NFT or contract entry may be used to identify or discover a release
+record. It does not establish that the build was reproducible, the issuer was
+trustworthy, the tests were adequate or the artifact will remain available.
+Those are separate acceptance conditions.
+
+* Complement provenance standards instead of claiming compliance
+
+[[https://slsa.dev/spec/v1.2/provenance][SLSA provenance]] describes verifiable
+information about an artifact's origin and production. Build provenance and
+behavioural test evidence answer related but different questions.
+
+A sensible integration proposal retains the buyer's existing provenance
+records and adds a reference to the scoped behaviour report. A source-to-build
+claim should remain inspectable on its own. A test result should identify its
+target and exclusions on its own.
+
+This article does not claim a SLSA level, a signed-attestation format or a
+completed connection to the buyer's signing infrastructure. Treat such a
+connection as a separately specified integration, with its own verifier and
+negative tests.
+
+* Demonstrate a mismatch, not just a download
+
+Select a disposable release artifact and record its digest, source identity
+and expected issuer. Retrieve it through the intended distribution path,
+check the identity and execute a small agreed acceptance scenario.
+
+Next, alter the artifact, substitute an unexpected issuer and provide an old
+report for a different build. The verifier or release procedure should reject
+those mismatches visibly. Do not infer that these refusal cases are already
+implemented end to end merely because an individual module has a relevant
+function name.
+
+Include a restoration exercise. Keep the previous accepted artifact and its
+configuration requirements available, then demonstrate that the team can
+restore the intended version. A rollback policy is not a guarantee that
+application data can always be rolled back safely.
+
+* Buy traceability at the release boundary
+
+This is a good fit for a team handing packages to another operator:
+a self-hosted product vendor, managed-service provider or platform team with
+multiple deployment environments. The buyer already has a reason to care
+which build is running.
+
+Measure the time required to answer that question, the number of artifacts
+with a complete evidence association and whether a second operator detects
+the deliberately substituted build. Keep provenance generation, storage and
+verification costs visible in the evaluation.
+
+Do not position this as a speculative asset product. A release identity has
+engineering value when someone can use it to make a better deployment or
+acceptance decision, regardless of whether it is transferable.
+
+* Implementation and evaluation boundary
+
+The runtime probe is documented in the existing installation guide. The
+release helper is described in the dated implementation guide; its latest
+source and on-chain path were not revalidated in this review. No package,
+NFT mint, signature verification or rollback was executed for this article.
+
+Use the [[file:../node.org][node guide]] and the
+[[file:self_hosted_verification.org][self-hosted evaluation]] to make artifact
+identity part of a practical installation trial.

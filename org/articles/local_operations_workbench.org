@@ -1,0 +1,113 @@
+#+TITLE: A Local Workbench for Operators, Not Another Chat Window
+#+DESCRIPTION: Evaluate erm as a supervised Linux workspace for typed commands, media and local operational knowledge, with observable services and explicit permissions.
+#+KEYWORDS: DamageBDD, evidence, Linux developers, Erlang teams, local AI operations
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-10
+#+LAST_MODIFIED: 2026-10-10
+#+CONTENT_CLASS: market-evaluation-guide
+#+IMPLEMENTATION_STATUS: documented_components
+#+VALIDATION_STATUS: documentation_review_only
+#+VALIDATION_SCOPE: Editorial evaluation guide based on accessible repository pages and the dated implementation references linked below. Complete current tree and HEAD were not retrieved; no runtime or end-to-end validation performed.
+#+EVIDENCE_DATE: 2026-10-10
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/erm/src/erm_voice.erl
+#+EVIDENCE_URL: https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/erm/src/erm.app.src
+#+EVIDENCE_URL: https://www.erlang.org/doc/system/sup_princ.html
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Put the operation where the operator already works
+
+An engineer investigating a service failure moves between a terminal, a
+runbook, audio controls and an assistant window. Adding another chat interface
+can simply create another place to maintain context. The more useful question
+is which small operations can become easier without making their effects
+harder to inspect.
+
+erm approaches that question as a local Erlang/OTP workspace. The documented
+voice, media and knowledge components are interesting because they can share
+service state while keeping the visible interface replaceable. That is a
+more specific proposition than “an AI operating system.”
+
+The first audience is a Linux developer or operations team willing to evaluate
+native dependencies and a bounded set of actions. It is not a claim that an
+unmodified consumer desktop can be replaced without integration work.
+
+* Services own the work; windows present it
+
+The [[https://www.erlang.org/doc/system/sup_princ.html][Erlang/OTP supervision model]]
+provides a structure for restarting child processes according to a chosen
+strategy. It does not automatically persist application state, restore an
+external player or make a window survive a whole-machine restart.
+
+For an erm evaluation, identify which process owns each operation and what
+state must survive an interface restart. A GTKGS window should expose that
+state rather than become the only place where an operation exists. Test the
+ownership boundary instead of assuming it from the presence of a supervisor.
+
+Start with a media command and a visible service-health view. Interrupt the
+interface, reconnect it and check whether the underlying operation remains
+understood and controllable. Treat stronger session-survival guarantees as
+separate acceptance requirements.
+
+* Prefer typed actions to a model's invented command
+
+The [[file:erm_local_voice.org][local voice reference]] describes a direct path for
+common media actions and optional model assistance for unfamiliar phrases.
+It also separates speech recognition, intent handling, media control and
+speech output. That makes a failed interaction easier to locate than a
+single opaque “assistant failed” message.
+
+A transcript is not the completed action. The pilot should observe the player
+state or other intended effect, then check that the spoken and visible
+responses match the result. Include negated phrases, incomplete utterances,
+duplicate transcripts and an unavailable speech-output dependency.
+
+Do not make an arbitrary shell command the default interpretation of an
+unrecognised sentence. Keep the action vocabulary explicit and require a
+separate permission decision before adding an operation that can change
+files, access secrets or affect a remote service.
+
+* Local is a data-flow property, not a label
+
+Local Whisper or Piper integration and a local model endpoint are useful
+components, but the complete deployment also includes model retrieval,
+configuration, logs and any enabled network integrations. Inspect that path
+before promising that every interaction stays offline.
+
+Define which documents the knowledge interface may retrieve and which model
+may receive their contents. A model listening on loopback says where the
+immediate request goes; it does not establish every subsequent action of
+that model service.
+
+Voice recognition is also not an authorisation system. This evaluation does
+not assert biometric authentication, safe voice-triggered spending or
+permission to administer a machine merely because a wake phrase was heard.
+Keep sensitive operations out of the initial action set.
+
+* Demonstrate one interruption and one recovery
+
+Choose a handful of everyday commands and one approved runbook lookup.
+Measure whether they complete, how long feedback takes and whether the
+operator can explain a failure using the service-health view. Compare this
+with the same task performed through existing controls.
+
+Disconnect a native dependency, stop a model service and restart the UI.
+Record which component reports the failure, whether an action is repeated
+unexpectedly and what the operator must do to recover. A polished success
+animation is less informative than a clearly bounded failure.
+
+For a team pilot, preserve configuration and model identities with the result.
+A successful test on one microphone, GPU or desktop session should not be
+advertised as coverage of every Linux workstation.
+
+* Implementation and evaluation boundary
+
+The feature detail here comes from the dated voice/media guide and readable
+application declaration. No microphone, native GTKGS surface, model, player or
+workstation recovery test was exercised for this article. Other recent desktop
+applications are not enumerated as verified additions by this review.
+
+Begin with [[file:erm_local_voice.org][the implementation guide]]. Evaluate erm as
+an inspectable local workbench for a specific operator, then expand only the
+actions whose behaviour and recovery have been demonstrated.

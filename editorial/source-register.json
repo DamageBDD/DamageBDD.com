@@ -1,0 +1,329 @@
+{
+  "review_date": "2026-10-10",
+  "web_sources": [
+    {
+      "id": "repo-root",
+      "url": "https://github.com/DamageBDD/DamageBDD",
+      "boundary": "Repository page; branch develop displayed; full tree/history could not be resolved."
+    },
+    {
+      "id": "runner",
+      "url": "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/damage.erl",
+      "boundary": "Selected parsing/execution/report and concurrency paths read; cached moving-branch snapshot."
+    },
+    {
+      "id": "http",
+      "url": "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/steps_http.erl",
+      "boundary": "Selected request/assertion/TRACE paths read; cached snapshot."
+    },
+    {
+      "id": "app",
+      "url": "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/damage_app.erl",
+      "boundary": "Selected application/start-phase/routes wiring read; cached snapshot."
+    },
+    {
+      "id": "build",
+      "url": "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/rebar.config",
+      "boundary": "Umbrella application and build declarations; cached snapshot."
+    },
+    {
+      "id": "ecai-supervisor",
+      "url": "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/ecai/src/ecai_sup.erl",
+      "boundary": "Supervisor declarations, not validation of all children."
+    },
+    {
+      "id": "ecai-search",
+      "url": "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/ecai/src/ecai_search_server.erl",
+      "boundary": "Context selection/loading and search dispatch paths; cached snapshot."
+    },
+    {
+      "id": "config",
+      "url": "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/config/sys.config.sample",
+      "boundary": "Readable older configuration; unsafe to treat as current package defaults."
+    },
+    {
+      "id": "readme",
+      "url": "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/README.md",
+      "boundary": "Readable snapshots inconsistent across fetches; not used as authority for exact current defaults."
+    },
+    {
+      "id": "damage-app",
+      "url": "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/damage.app.src",
+      "boundary": "Application declaration."
+    },
+    {
+      "id": "ecai-app",
+      "url": "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/ecai/src/ecai.app.src",
+      "boundary": "Application declaration."
+    },
+    {
+      "id": "erm-app",
+      "url": "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/erm/src/erm.app.src",
+      "boundary": "Application declaration, not native-workstation evidence."
+    },
+    {
+      "id": "survey",
+      "url": "https://survey.stackoverflow.co/2025/ai",
+      "boundary": "Dated 2025 survey; accuracy distrust/trust question. Not a DamageBDD customer survey."
+    },
+    {
+      "id": "dora",
+      "url": "https://dora.dev/research/2025/dora-report/",
+      "boundary": "Dated 2025 report overview; organisational amplification, not product ROI."
+    },
+    {
+      "id": "owasp-data",
+      "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/",
+      "boundary": "Primary security guidance on source restrictions and least privilege."
+    },
+    {
+      "id": "owasp-agency",
+      "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/",
+      "boundary": "Primary security guidance on functionality, permissions and autonomy."
+    },
+    {
+      "id": "slsa",
+      "url": "https://slsa.dev/spec/v1.2/provenance",
+      "boundary": "Provenance concept only; no SLSA conformance claim."
+    },
+    {
+      "id": "nip46",
+      "url": "https://raw.githubusercontent.com/nostr-protocol/nips/master/46.md",
+      "boundary": "Remote signing specification, not validation of deployed signer."
+    },
+    {
+      "id": "nip47",
+      "url": "https://raw.githubusercontent.com/nostr-protocol/nips/master/47.md",
+      "boundary": "Wallet protocol specification, not validation of current integration."
+    },
+    {
+      "id": "nip50",
+      "url": "https://raw.githubusercontent.com/nostr-protocol/nips/master/50.md",
+      "boundary": "Search-filter and ranking semantics, not validation of current relay."
+    },
+    {
+      "id": "ipfs",
+      "url": "https://docs.ipfs.tech/how-to/pin-files/",
+      "boundary": "Pinning and local retention; no indefinite hosting guarantee."
+    },
+    {
+      "id": "otp",
+      "url": "https://www.erlang.org/doc/system/sup_princ.html",
+      "boundary": "Supervision semantics, not application persistence or security."
+    }
+  ],
+  "existing_reference_catalogue": [
+    {
+      "page": "blossom_media.org",
+      "title": "Blossom on DamageBDD: Share Files with a Verifiable Byte Identity",
+      "sources": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_app.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_blossom_auth.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_blossom_http.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_blossom_rate.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_nip96_store.erl"
+      ]
+    },
+    {
+      "page": "damage_nsecbunker.org",
+      "title": "Damage nsecbunker: Custody, Signing Policy and Live Verification",
+      "sources": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_nsecbunker.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_nsecbunker_ops.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_nsecbunker_policy.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_nsecbunker_relay.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/doc/nsecbunker/AWS_SECURE_BOOTSTRAP.md",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/doc/nsecbunker/DAMAGE_NSECBUNKER_OPERATOR_MANUAL.md",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/features/nsecbunker/generic_live_nsecbunker_operations.feature"
+      ]
+    },
+    {
+      "page": "damagebdd_evidence_workflows.org",
+      "title": "DamageBDD: Turn Acceptance Criteria into Evidence You Can Share",
+      "sources": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_http.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_release_nft.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_schedule.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/steps_http.erl",
+        "https://github.com/DamageBDD/DamageBDD/tree/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/test"
+      ]
+    },
+    {
+      "page": "damagebdd_nostr.org",
+      "title": "DamageBDD Nostr Integration: Identities, Events and Verification",
+      "sources": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_nostr.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_nostr_event.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_nostr_relay_client.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_nsecbunker_relay.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/config/sys.config.sample"
+      ]
+    },
+    {
+      "page": "ecai_engineering_memory.org",
+      "title": "ECAI: Give Engineering Knowledge a Source, a Structure and an Access Boundary",
+      "sources": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_index_jobs_srv.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_llm_bridge.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_private_index.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_relation_learning.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test/ecai_private_index_tests.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/docs/ecai/ECAI_DURABLE_JOBS.md"
+      ]
+    },
+    {
+      "page": "ecai_index_nfts.org",
+      "title": "ECAI Index NFTs: Give a Knowledge Release a Verifiable Identity",
+      "sources": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/priv/contracts/knowledge_nft.aes",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_index_artifact.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_jobs_srv.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_nft.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test/ecai_index_artifact_tests.erl"
+      ]
+    },
+    {
+      "page": "ecai_indexing_workflows.org",
+      "title": "ECAI Indexing: Turn Source Collections into Managed Work",
+      "sources": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_chunker.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_disk_indexer.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_disk_search.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_index_job_ipfs.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_index_jobs_http.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_index_jobs_srv.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test/ecai_index_artifact_tests.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test/ecai_index_jobs_srv_tests.erl"
+      ]
+    },
+    {
+      "page": "ecai_private_knowledge.org",
+      "title": "ECAI Private Knowledge Retrieval and Controlled LLM Access",
+      "sources": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_llm_bridge.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_private_crypto.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_private_http.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_private_index.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_private_policy.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_private_store.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test/ecai_private_index_tests.erl"
+      ]
+    },
+    {
+      "page": "ecai_relation_processing.org",
+      "title": "ECAI Deterministic Relation Processing",
+      "sources": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_compose.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_relation.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_relation_bench.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_relation_learning.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test/ecai_relation_tests.erl"
+      ]
+    },
+    {
+      "page": "ecai_reviewable_repairs.org",
+      "title": "ECAI Repair Workflows: Make a Generated Patch Easier to Review",
+      "sources": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_ecai_log_bridge.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_patch_manager.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_patch_verifier.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_repair_capsule.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_repair_preflight.erl",
+        "https://github.com/DamageBDD/DamageBDD/tree/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test"
+      ]
+    },
+    {
+      "page": "ecai_search_evidence.org",
+      "title": "ECAI Search: Find the Record and Check the Evidence",
+      "sources": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_search.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_terms.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_wikimedia_search.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_wikimedia_search_server.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test/ecai_wikimedia_search_server_tests.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test/ecai_wikimedia_search_tests.erl"
+      ]
+    },
+    {
+      "page": "ecai_wikipedia_indexing.org",
+      "title": "ECAI and Wikipedia: Build a Corpus You Can Inspect and Reuse",
+      "sources": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_index_job_wikimedia.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_wikimedia_content.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_wikimedia_ops.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_wikimedia_selector.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_wikipedia_loader.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test/ecai_index_job_wikimedia_tests.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/test/ecai_wikipedia_loader_recovery_tests.erl"
+      ]
+    },
+    {
+      "page": "erm_local_voice.org",
+      "title": "erm: Bring Voice, Media and Operational Knowledge to Your Desktop",
+      "sources": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/erm/src/erm_model_pull.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/erm/src/erm_native_voice.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/erm/src/erm_tts.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/erm/src/erm_voice.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/erm/src/erm_voice_intent.erl",
+        "https://github.com/DamageBDD/DamageBDD/tree/a993c0421b38de475b103dc79f31da1e091cd97a/apps/erm/c_src",
+        "https://github.com/DamageBDD/DamageBDD/tree/a993c0421b38de475b103dc79f31da1e091cd97a/apps/erm/test"
+      ]
+    },
+    {
+      "page": "features_current.org",
+      "title": "Current Features: DamageBDD, ECAI, erm and Nosternity",
+      "sources": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/INSTALL.md",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/README.md",
+        "https://github.com/DamageBDD/DamageBDD/commit/a993c0421b38de475b103dc79f31da1e091cd97a"
+      ]
+    },
+    {
+      "page": "integration_status_2026_10_07.org",
+      "title": "Repository Integration Review: 7 October 2026",
+      "sources": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_ecai_log_bridge.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_code_security_sup.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_learning_store.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/nosternity/src/nosternity_relay.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/nosternity/src/nosternity_sup.erl",
+        "https://github.com/DamageBDD/DamageBDD/commit/a993c0421b38de475b103dc79f31da1e091cd97a"
+      ]
+    },
+    {
+      "page": "nosternity.org",
+      "title": "Nosternity: Give Important Signed Events a Retention Policy",
+      "sources": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_ae_contract.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/nosternity/priv/contracts/NostrEventStore.aes",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/nosternity/src/nosternity_relay.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/nosternity/src/nosternity_sup.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/docs/nostr/NOSTERNITY_AE.md"
+      ]
+    },
+    {
+      "page": "nostr_reliability.org",
+      "title": "Nostr Reliability: Live Relay Delivery and NIP-46 Reply Correlation",
+      "sources": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_nostr_relay_client.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_nsecbunker_relay.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/steps_nsecbunker_live.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/features/nsecbunker/generic_live_nsecbunker_operations.feature"
+      ]
+    },
+    {
+      "page": "stack_adoption.org",
+      "title": "Build an Operational Memory: A Practical Guide to the DamageBDD Stack",
+      "sources": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/INSTALL.md",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/README.md"
+      ]
+    }
+  ],
+  "historical_repository_revision_in_existing_guides": "a993c0421b38de475b103dc79f31da1e091cd97a",
+  "historical_revision_is_current_head": false,
+  "historical_links_independently_refetched": false,
+  "note": "The existing-reference catalogue identifies guide links, not freshly fetched source files. No missing file is deemed absent solely because a fetch failed."
+}

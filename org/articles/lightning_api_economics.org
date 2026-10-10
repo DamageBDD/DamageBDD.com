@@ -1,0 +1,114 @@
+#+TITLE: Charge for a Verification Job, Not a Vague Promise
+#+DESCRIPTION: Evaluate Lightning-funded verification with separate records for payment, execution and evidence; keep wallet authority and token accounting explicit.
+#+KEYWORDS: DamageBDD, evidence, Bitcoin application developers, API operators, verification services
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-10
+#+LAST_MODIFIED: 2026-10-10
+#+CONTENT_CLASS: market-evaluation-guide
+#+IMPLEMENTATION_STATUS: evaluation_blueprint
+#+VALIDATION_STATUS: documentation_review_only
+#+VALIDATION_SCOPE: Editorial evaluation guide based on accessible repository pages and the dated implementation references linked below. Complete current tree and HEAD were not retrieved; no runtime or end-to-end validation performed.
+#+EVIDENCE_DATE: 2026-10-10
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage.erl
+#+EVIDENCE_URL: https://raw.githubusercontent.com/nostr-protocol/nips/master/47.md
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Define the unit of work before the payment button
+
+An API operator considering paid verification needs to know what a customer
+is buying. Is it permission to submit one job, a bounded execution attempt,
+a completed report, or acceptance of an agreed result? Those are different
+service promises with different failure cases.
+
+Start with a narrowly defined job against a target the buyer owns or is
+authorised to test. Specify the input limits, execution budget, result format,
+retention period and cancellation policy. Then decide how payment relates
+to that job. Payment machinery cannot repair an ambiguous service definition.
+
+The DamageBDD stack's execution and payment-related components make this a
+useful integration topic. This article proposes an evaluation; it does not
+announce a demonstrated end-to-end commercial settlement service.
+
+* Separate three records
+
+The first record concerns payment: what request was made and what settlement
+state was observed? The second concerns execution: which input ran against
+which target, and did it complete? The third concerns evidence: what result
+and artifact can the customer inspect?
+
+A successful payment is not proof that a scenario passed. A passing scenario
+is not proof that a payment settled. A report reference is not proof that the
+artifact remains retrievable. Link these records using a stable job identity
+without collapsing them into a single green status.
+
+The [[file:damagebdd_evidence_workflows.org][execution reference]] describes results,
+report references and accounting context. Treat the commercial job ledger and
+its reconciliation rules as requirements to verify in the installed release,
+not features inferred from that report alone.
+
+* API access and wallet control are not the same permission
+
+A Lightning-based access challenge, such as an L402-style integration, concerns
+payment for access to a service. A remote wallet protocol concerns authority
+to ask a wallet to perform operations. Neither should implicitly grant the
+other's privileges.
+
+[[https://raw.githubusercontent.com/nostr-protocol/nips/master/47.md][NIP-47]] describes
+Nostr wallet request/response communication and supported methods. Protocol
+support does not establish this deployment's spending limits, approval policy,
+custody model or reconciliation behaviour.
+
+Inspect the exact wallet implementation and active configuration before
+exposing it. Test a forbidden method and an unauthorised client, not just an
+invoice that succeeds. Keep unused wallet endpoints inaccessible until their
+permissions and restart behaviour are understood. This is a deployment
+requirement, not a claim that a particular configuration key disables them.
+
+* Failure handling is the product demonstration
+
+Use a test environment or deliberately tiny controlled budget. Try payment
+without a completed run, a run interrupted after payment, a duplicated request,
+a delayed payment notification and an unavailable evidence store. The buyer
+should see a defined outcome for each case.
+
+Confirm whether retries reuse an existing job or create a new charge. Decide
+which party may cancel, how uncertain payment states are reconciled and what
+happens when the verification budget is exhausted. These are proposed tests;
+no idempotent billing, automatic refund or escrow guarantee is asserted here.
+
+A bounded execution attempt can be a sensible product even when a target
+fails its checks. The customer must know that distinction before paying.
+Avoid language that treats a failed test as a platform failure or implies that
+payment buys a passing result.
+
+* Keep the underlying dependencies visible
+
+Bitcoin/Lightning integration and DAMAGE/Aeternity accounting are separate
+parts of the project. Do not describe every execution path as Bitcoin-only
+or chain-independent without demonstrating that configuration from startup
+through report retrieval.
+
+Likewise, a token-denominated charge does not establish liquid conversion,
+a guaranteed buyback, an income level or a reserve guarantee. Such claims
+require evidence beyond execution code and are not part of this proposed
+service offer.
+
+Measure operator cost per attempted job, payment-state reconciliation effort,
+completion rate and time to a usable report. Record infrastructure, storage,
+chain interaction and failed-attempt costs rather than quoting a headline fee
+that hides them. Publish prices only after those costs and service terms are
+chosen for an actual deployment.
+
+* Implementation and evaluation boundary
+
+Payment-related integration availability is not a verified transaction history.
+No wallet, invoice, token transfer or paid verification run was exercised for
+this article. A fresh implementation review must establish the actual L402,
+NWC and accounting paths before advertising specific supported payment flows.
+
+Begin with [[file:software_delivery_acceptance.org][a clear acceptance deliverable]]
+and [[file:self_hosted_verification.org][a controlled node evaluation]]. Sell a
+well-defined job with a recoverable record, not a promise that financial
+integration makes every other uncertainty disappear.

@@ -1,0 +1,114 @@
+#+TITLE: Let the Application Ask for a Signature, Not Own the Key
+#+DESCRIPTION: A policy-bound signing evaluation for Nostr publishers and applications, covering allowlists, vault operations, relay replies and handoff evidence.
+#+KEYWORDS: DamageBDD, evidence, Nostr publishers, identity operators, signing services
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-10
+#+LAST_MODIFIED: 2026-10-10
+#+CONTENT_CLASS: market-evaluation-guide
+#+IMPLEMENTATION_STATUS: documented_components
+#+VALIDATION_STATUS: documentation_review_only
+#+VALIDATION_SCOPE: Editorial evaluation guide based on accessible repository pages and the dated implementation references linked below. Complete current tree and HEAD were not retrieved; no runtime or end-to-end validation performed.
+#+EVIDENCE_DATE: 2026-10-10
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_nsecbunker_policy.erl
+#+EVIDENCE_URL: https://raw.githubusercontent.com/nostr-protocol/nips/master/46.md
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Separate publishing convenience from signing authority
+
+Imagine a publishing application used by several people. It needs an
+approved article signed under a recognised identity, but it should not gain
+unrestricted control of that identity simply because it can prepare content.
+
+That is the business problem for a remote signing service. The application
+asks for a narrowly permitted operation; the signing boundary decides whether
+to allow it. Damage nsecbunker should be evaluated as that boundary, not
+marketed as a generic promise that private keys can never be compromised.
+
+[[https://raw.githubusercontent.com/nostr-protocol/nips/master/46.md][NIP-46]] defines
+a remote-signing protocol. It does not decide an organisation's approval
+rules, custody procedure or operational responsibilities. Those remain part
+of the product integration.
+
+* Start with a policy a human can understand
+
+The [[file:damage_nsecbunker.org][nsecbunker guide]] describes client, method and
+event-kind policy, readiness checks, request limits and redacted audit
+records. A useful first policy permits one client to request one approved
+class of signature and refuses everything outside that scope.
+
+Make the refusal cases specific. An unknown client should not gain access
+because it can reach the relay. A permitted client should not gain a second
+method merely because the server implements it. Stale, replayed or oversized
+requests should have defined outcomes.
+
+A signature identifies the signing key and signed content. It does not
+establish that a human approved the facts in the content or that a business
+process was followed. Retain the approval association separately when the
+application requires one.
+
+* Test the entire conversation
+
+Signing locally is only one part of a Nostr integration. The client must
+submit its request, the relay path must deliver it, the signer must apply
+policy and the corresponding reply must return to the correct client.
+
+The [[file:nostr_reliability.org][relay-reliability guide]] explains why a relay
+acknowledgement should not be confused with a complete request/reply result.
+A pilot must use the buyer's actual client identity and connection path,
+not only the node's own test identity.
+
+Exercise one permitted signature and one prohibited request through that
+same path. Correlate the reply with the request, inspect the resulting
+signature and distinguish response publication from publication of the
+business event itself. Include reconnects and timeouts in the handoff.
+
+* Make the custody procedure part of the deliverable
+
+The documented AWS path separates secret retrieval from the signing policy.
+Retrieving a secret from AWS Secrets Manager is not the same as a
+non-exportable HSM signing operation. The host, backend, IAM permissions and
+recovery process still matter.
+
+For an AWS-only deployment, inspect the effective secret provider and the
+absence of the prohibited local passphrase entry. Then restart into that
+state and test recovery. A single inspection of current state is not a
+record of historical deletion or proof that temporary access was revoked.
+
+Agree who can authorise policy changes, who holds recovery material and how
+a client is revoked. Keep setup access separate from runtime permissions.
+The acceptance record should say which of those procedures was actually
+exercised rather than bundling them under a generic “secure” label.
+
+* A historical run is a starting point, not universal coverage
+
+The existing nsecbunker article retains a dated September release run and
+its exact scenario scope. That is more useful than an undated green badge.
+It does not validate every external client, every policy or a later build.
+
+Use that record to design the new client's acceptance exercise. Do not
+copy its status onto a different release. A failed relay test or a pending
+recovery procedure should remain visible even when the core signer works.
+
+* Measure a controlled handoff
+
+Track whether the intended client completes the permitted operation, whether
+refused operations remain refused and whether an operator can explain the
+policy and recover the service from documented material. These are proposed
+acceptance observations, not reported outcomes from this article.
+
+This is a good first fit for a Nostr publisher or application with a small,
+well-defined signing policy. It is not automatically an enterprise PKI,
+qualified-signature service or a replacement for all wallet custody models.
+
+* Implementation and evaluation boundary
+
+The feature description relies on the dated implementation guide and
+protocol reference. No new vault, AWS account, relay session or signing run
+was exercised here. The historical evidence retains its original release
+and scope.
+
+Begin with [[file:damage_nsecbunker.org][the operator and evidence guide]]. Buy a
+policy-bound signing workflow that can be demonstrated, not an unrestricted
+key hidden behind another API.

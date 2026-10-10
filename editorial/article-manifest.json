@@ -1,0 +1,204 @@
+{
+  "review_date": "2026-10-10",
+  "article_count": 14,
+  "long_form_count": 13,
+  "audience_priority_is": "Editorial hypothesis; not measured customer demand",
+  "articles": [
+    {
+      "slug": "ai_change_acceptance",
+      "title": "AI Can Write the Change. What Accepts It?",
+      "description": "A practical acceptance workflow for AI-assisted development: agreed behaviour, explicit failures, repeatable checks and a reviewable evidence record.",
+      "audience": "engineering leaders, AI-assisted development, QA",
+      "priority": "first",
+      "source_urls": [
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/damage.erl",
+        "https://survey.stackoverflow.co/2025/ai"
+      ],
+      "body_word_count": 721,
+      "sha256": "edd337643b2f3d6cf785b819b595fefc2cacb704f56f6d41efde99c5315a2b80"
+    },
+    {
+      "slug": "api_journey_assurance",
+      "title": "Your API Is Up. Can the Customer Finish the Job?",
+      "description": "Turn API and browser checks into a customer-journey evaluation, with scheduled regression, negative cases and controlled load treated separately.",
+      "audience": "B2B SaaS, platform teams, API integrations",
+      "priority": "first",
+      "source_urls": [
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/steps_http.erl",
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/damage_app.erl"
+      ],
+      "body_word_count": 708,
+      "sha256": "18176b7e4f065326a712affcc3fd2741d7c5965cea1114479b7d7b7e89b76817"
+    },
+    {
+      "slug": "software_delivery_acceptance",
+      "title": "Deliver the Evidence, Not Another Status Meeting",
+      "description": "A scoped software handoff for agencies and internal delivery teams: agreed acceptance criteria, reproducible evidence and explicit exclusions.",
+      "audience": "software agencies, consultancies, delivery managers",
+      "priority": "first",
+      "source_urls": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage.erl",
+        "https://docs.ipfs.tech/how-to/pin-files/"
+      ],
+      "body_word_count": 672,
+      "sha256": "fe1f76cbccf7ae009664a5ca8233734fa1e8fe907d762ce39b4abaa503801334"
+    },
+    {
+      "slug": "release_provenance",
+      "title": "Know Which Build Produced the Evidence",
+      "description": "Connect software artifacts, runtime identity and acceptance reports in a release evaluation; distinguish release NFTs from certification and availability.",
+      "audience": "platform engineering, release management, software supply chain",
+      "priority": "first",
+      "source_urls": [
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/README.md",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_release_nft.erl",
+        "https://slsa.dev/spec/v1.2/provenance"
+      ],
+      "body_word_count": 681,
+      "sha256": "d289ae5fd917b73419ece9945e49e81ab934d7bfa5886e0575a1bcd846dd5f2f"
+    },
+    {
+      "slug": "private_support_copilot",
+      "title": "A Support Copilot That Does Not Need the Whole Company",
+      "description": "Evaluate a private support assistant around corpus permissions, controlled model destinations, source-backed answers and explicit refusal cases.",
+      "audience": "support engineering, private AI, knowledge management",
+      "priority": "first",
+      "source_urls": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_private_index.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_llm_bridge.erl",
+        "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+      ],
+      "body_word_count": 712,
+      "sha256": "b24ead29b4f0c28cf3c30eddc602df1959e4d1cdbd0722db2011e9c70793d58c"
+    },
+    {
+      "slug": "versioned_knowledge_releases",
+      "title": "Treat the Knowledge Corpus Like a Software Release",
+      "description": "Package and evaluate knowledge collections with source identity, reproducible questions, recovery checks and explicit limits on NFT and settlement claims.",
+      "audience": "AI platform teams, data curators, retrieval evaluation",
+      "priority": "second",
+      "source_urls": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_index_artifact.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_index_jobs_srv.erl",
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/ecai/src/ecai_search_server.erl"
+      ],
+      "body_word_count": 693,
+      "sha256": "f2d4e2095326ec6380c16a18ba8344967c19502b1fcafc7336cb182c527eca88"
+    },
+    {
+      "slug": "incident_to_reviewed_patch",
+      "title": "From an Incident to a Patch Someone Can Review",
+      "description": "Evaluate ECAI incident learning, relation analysis and repair capsules as a human-reviewed engineering workflow, not an autonomous production repair claim.",
+      "audience": "Erlang teams, incident response, AI code review",
+      "priority": "second",
+      "source_urls": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_repair_preflight.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_repair_capsule.erl",
+        "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+      ],
+      "body_word_count": 722,
+      "sha256": "d4269f824634c181e6853514b2243aedbf81b6aa813c3182c15ded6e76923a42"
+    },
+    {
+      "slug": "nostr_signing_governance",
+      "title": "Let the Application Ask for a Signature, Not Own the Key",
+      "description": "A policy-bound signing evaluation for Nostr publishers and applications, covering allowlists, vault operations, relay replies and handoff evidence.",
+      "audience": "Nostr publishers, identity operators, signing services",
+      "priority": "first",
+      "source_urls": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_nsecbunker_policy.erl",
+        "https://raw.githubusercontent.com/nostr-protocol/nips/master/46.md"
+      ],
+      "body_word_count": 735,
+      "sha256": "3e123bc6cd62bf61b66e96157a03a799c68c07971c6bbf0ecb39494383862e03"
+    },
+    {
+      "slug": "nostr_search_for_products",
+      "title": "Build Nostr Search Around Records, Not Just Replies",
+      "description": "An evaluation blueprint for searchable Nostr products: signed source records, explicit ranking, retention policy and a source-linked LLM experience.",
+      "audience": "Nostr application developers, community knowledge, search",
+      "priority": "specialist",
+      "source_urls": [
+        "https://raw.githubusercontent.com/nostr-protocol/nips/master/50.md",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/nosternity/src/nosternity_relay.erl",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/docs/nostr/NOSTERNITY_AE.md"
+      ],
+      "body_word_count": 755,
+      "sha256": "5f2c9863240962d7a6f5ef6c2b688890836de8e2364981624b6c2385c00d3aea"
+    },
+    {
+      "slug": "lightning_api_economics",
+      "title": "Charge for a Verification Job, Not a Vague Promise",
+      "description": "Evaluate Lightning-funded verification with separate records for payment, execution and evidence; keep wallet authority and token accounting explicit.",
+      "audience": "Bitcoin application developers, API operators, verification services",
+      "priority": "specialist",
+      "source_urls": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage.erl",
+        "https://raw.githubusercontent.com/nostr-protocol/nips/master/47.md"
+      ],
+      "body_word_count": 729,
+      "sha256": "30f4a05c7eca7369decf92b6bcc424ab60f31eb718174c60be9853e96c8bf377"
+    },
+    {
+      "slug": "verifiable_media_evidence",
+      "title": "Make the Attachment Part of the Evidence",
+      "description": "Use content-addressed media to preserve inspectable supporting files, with explicit ownership, public-read boundaries and a tested retention plan.",
+      "audience": "Nostr publishers, support teams, software delivery",
+      "priority": "specialist",
+      "source_urls": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_blossom_http.erl",
+        "https://docs.ipfs.tech/how-to/pin-files/"
+      ],
+      "body_word_count": 692,
+      "sha256": "fef1d72c59166fb3241c7d5ce38d5d3752a563c8761faa2f93bc7844c8f0325e"
+    },
+    {
+      "slug": "local_operations_workbench",
+      "title": "A Local Workbench for Operators, Not Another Chat Window",
+      "description": "Evaluate erm as a supervised Linux workspace for typed commands, media and local operational knowledge, with observable services and explicit permissions.",
+      "audience": "Linux developers, Erlang teams, local AI operations",
+      "priority": "design-partner",
+      "source_urls": [
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/erm/src/erm_voice.erl",
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/erm/src/erm.app.src",
+        "https://www.erlang.org/doc/system/sup_princ.html"
+      ],
+      "body_word_count": 731,
+      "sha256": "7fe347efbc5a107c1bb09839fa85fed54c9e57c1647f0e8a9cd1d22d8a9e827f"
+    },
+    {
+      "slug": "self_hosted_verification",
+      "title": "Run Verification Where You Can Account for It",
+      "description": "A self-hosted DamageBDD evaluation for teams needing control of execution, evidence and integrations, without treating self-hosting as automatic security.",
+      "audience": "platform engineering, self-hosted software, service operators",
+      "priority": "first",
+      "source_urls": [
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/damage_app.erl",
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/config/sys.config.sample",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_release_nft.erl"
+      ],
+      "body_word_count": 771,
+      "sha256": "77d8a266b1384bf14d3c713c0663e76f264e4eaf1099faa7c77a40c46af52bf3"
+    },
+    {
+      "slug": "solutions_evidence_first",
+      "title": "Start With the Problem. Keep the Evidence.",
+      "description": "Choose an evaluation path for software acceptance, private knowledge, Nostr infrastructure, Lightning-funded jobs or an inspectable local workbench.",
+      "audience": "software buyers, engineering leaders, product evaluation",
+      "priority": "hub",
+      "source_urls": [
+        "https://github.com/DamageBDD/DamageBDD",
+        "https://dora.dev/research/2025/dora-report/"
+      ],
+      "body_word_count": 787,
+      "sha256": "7557d8740a56db497c43f7a336c39440ccf9a61cc6514fcc8538607cad7d18d8"
+    }
+  ],
+  "schema_version": 1,
+  "current_repository_head": null,
+  "complete_current_tree_reviewed": false,
+  "runtime_tests_performed": false,
+  "index_baseline_sha256": "b2d437ae8a21b50f7fa87135363e777421a8b00c76e9892799a08d995337dfda",
+  "baseline_org_pages": 77,
+  "baseline_article_pages": 39
+}

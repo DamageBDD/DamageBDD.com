@@ -1,0 +1,107 @@
+#+TITLE: Deliver the Evidence, Not Another Status Meeting
+#+DESCRIPTION: A scoped software handoff for agencies and internal delivery teams: agreed acceptance criteria, reproducible evidence and explicit exclusions.
+#+KEYWORDS: DamageBDD, evidence, software agencies, consultancies, delivery managers
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-10
+#+LAST_MODIFIED: 2026-10-10
+#+CONTENT_CLASS: market-evaluation-guide
+#+IMPLEMENTATION_STATUS: documented_components
+#+VALIDATION_STATUS: documentation_review_only
+#+VALIDATION_SCOPE: Editorial evaluation guide based on accessible repository pages and the dated implementation references linked below. Complete current tree and HEAD were not retrieved; no runtime or end-to-end validation performed.
+#+EVIDENCE_DATE: 2026-10-10
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage.erl
+#+EVIDENCE_URL: https://docs.ipfs.tech/how-to/pin-files/
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* Make completion something another person can inspect
+
+Imagine a delivery team finishing a partner integration. The developer says
+it works. The customer asks which environment was tested. Support asks how
+to repeat the result. A week later, the same conversation begins again.
+
+The problem is not a shortage of status updates. It is the absence of a
+shared acceptance record. DamageBDD can be evaluated as the execution layer
+for that record, without turning the first engagement into a token-market
+or distributed-consensus project.
+
+For an agency, the proposed offer is straightforward: one delivery milestone,
+a small agreed scenario set and an evidence handoff the customer can rerun.
+For an internal platform team, the same structure can support a service
+handover between the team building an integration and the team operating it.
+
+* Agree what the milestone actually means
+
+Describe observable behaviour, its environment and its exclusions before
+implementation is declared complete. A statement such as “the integration
+works” is too broad. A statement about a fixture request, expected response
+and refusal case gives both sides something to inspect.
+
+Separate commercial acceptance from technical evidence. A report can support
+a decision about a milestone; it does not write the agreement, resolve every
+dispute or decide whether the scope was commercially adequate. Both parties
+still need to agree what they will accept.
+
+Use the [[file:damagebdd_evidence_workflows.org][existing acceptance-evidence guide]]
+to understand the documented relationship between feature execution and
+reports. Record any fields the delivery process must add manually instead of
+implying that the platform already automates the entire handoff.
+
+* Design the handoff for someone who was not in the room
+
+A useful pilot packet identifies the feature revision, target revision,
+fixture setup, result, report reference and excluded cases. Include a short
+reproduction procedure and a named owner for the test environment. These
+are proposed delivery requirements, not a new report schema.
+
+Include unsuccessful attempts when they explain a material limitation.
+A missing integration should be described as missing, not hidden behind an
+unrelated passing scenario. Preserve the baseline failure when demonstrating
+a fix so the recipient can see what changed.
+
+Use non-sensitive fixtures wherever possible. If a report contains a secret,
+publishing its hash does not remove the secret from the underlying bytes.
+Decide who may retrieve the evidence and how long it should remain available
+before distributing the link.
+
+* Content identity and availability are different jobs
+
+A content-addressed reference helps identify a particular artifact. It does
+not pay for indefinite storage. The [[https://docs.ipfs.tech/how-to/pin-files/][IPFS
+pinning documentation]] explains how pinning protects selected content from
+local garbage collection; the operator still needs a retention and recovery
+plan.
+
+For the pilot, retrieve the report from a second machine, verify that it is
+the expected artifact and repeat retrieval after the planned service restart.
+Write down the retention owner and the procedure for moving the evidence
+when a contractor leaves. An important handoff should not depend on an
+unrecorded workstation cache.
+
+* Make the commercial test measurable
+
+Compare one evidence-led handoff with the team's previous process. Measure
+clarification rounds, time from implementation to technical acceptance and
+whether a new operator can repeat the agreed checks without assistance.
+These are observations to collect, not promised improvements.
+
+A suitable first scope is a bounded API integration or service repair. Avoid
+starting with an entire enterprise acceptance programme, a legal compliance
+claim or a promise of automatic dispute resolution.
+
+No automatic escrow release is assumed here. Payment, job allocation and
+multi-node agreement require independent implementation and operational
+evidence. A useful delivery packet can exist before any of those integrations
+are introduced.
+
+* Implementation and evaluation boundary
+
+The execution and report design is documented in the linked implementation
+reference. This article adds a proposed buyer-facing workflow; it records no
+new customer outcome, payment or acceptance run. A report is evidence of
+specified checks, not proof that all requirements were correct or complete.
+
+Begin with the [[file:../manual.org][execution manual]] and a written milestone.
+Deliver something the next engineer can inspect, not just something the
+original engineer can explain.

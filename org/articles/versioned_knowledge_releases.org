@@ -1,0 +1,111 @@
+#+TITLE: Treat the Knowledge Corpus Like a Software Release
+#+DESCRIPTION: Package and evaluate knowledge collections with source identity, reproducible questions, recovery checks and explicit limits on NFT and settlement claims.
+#+KEYWORDS: DamageBDD, evidence, AI platform teams, data curators, retrieval evaluation
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-10
+#+LAST_MODIFIED: 2026-10-10
+#+CONTENT_CLASS: market-evaluation-guide
+#+IMPLEMENTATION_STATUS: documented_components
+#+VALIDATION_STATUS: documentation_review_only
+#+VALIDATION_SCOPE: Editorial evaluation guide based on accessible repository pages and the dated implementation references linked below. Complete current tree and HEAD were not retrieved; no runtime or end-to-end validation performed.
+#+EVIDENCE_DATE: 2026-10-10
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_index_artifact.erl
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_index_jobs_srv.erl
+#+EVIDENCE_URL: https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/ecai/src/ecai_search_server.erl
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* “The latest index” is not enough to reproduce an answer
+
+Imagine two assistants answering the same operational question from
+apparently identical collections. One contains last week's runbook. The
+other contains a revised procedure and an old duplicate. Comparing their
+models will not explain the difference until the team identifies the data
+each assistant actually used.
+
+For an AI platform team or specialist curator, the useful offer is a
+versioned knowledge release: a selected corpus, a recorded transformation,
+an identifiable artifact and an evaluation set. ECAI's indexing and artifact
+work can be assessed against that delivery problem.
+
+This is a nearer-term proposition than an automated marketplace for
+intelligence. The customer can inspect an index release before deciding
+whether any token or contract representation adds value.
+
+* Separate selection, processing and publication
+
+The [[file:ecai_wikipedia_indexing.org][Wikimedia guide]] describes selecting a public
+reference collection, while the [[file:ecai_indexing_workflows.org][indexing guide]]
+describes chunking, disk-oriented paths and managed work. The
+[[file:ecai_index_nfts.org][artifact guide]] describes manifests, file digests,
+source/pipeline identity and optional publication.
+
+Those stages solve different problems. A reliable queue does not establish
+that the selected sources are useful. A manifest does not establish that a
+consumer can load the artifact. A token does not establish that either has
+been tested.
+
+For a first release, write down why each source belongs in the collection.
+Retain attribution and applicable reuse terms. An index or NFT does not grant
+new rights to the underlying material. Keep sensitive collections on the
+separate [[file:ecai_private_knowledge.org][private path]] rather than assuming a
+public artifact becomes confidential because an assistant reads it.
+
+* Freeze the questions before comparing retrieval
+
+Build a small question set with expected records, known ambiguities and
+questions the corpus cannot answer. Record the source versions and the
+retrieval configuration alongside the expected outcomes.
+
+Compare precision, missing-record behaviour, startup time, query latency and
+storage cost on the same machine and corpus. These are proposed measurements,
+not existing benchmark results. Include an ordinary search baseline so a
+specialised implementation must demonstrate its value rather than receive
+credit for its terminology.
+
+When releasing a successor, keep the old question set and add cases that
+exercise the new material. Record whether an answer changed because the
+source changed, the processing changed or the query path changed. That is
+more useful than one composite score with no explanation.
+
+* Make clean-consumer recovery part of delivery
+
+Have a second environment retrieve only the declared release files and
+attempt to load the index. Compare the files with the manifest and run the
+fixed questions. Then interrupt indexing and exercise the documented recovery
+procedure before accepting the producer workflow.
+
+The readable [[https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/ecai/src/ecai_search_server.erl][search-server source]]
+selects a snapshot or configured context file and retains its existing
+context if loading fails. That makes failure visibility and expected-context
+checks important: a process still running does not establish that it loaded
+the intended release.
+
+The dated [[file:ecai_search_evidence.org][search-evidence guide]] records integrity
+and filtering limitations. The [[file:integration_status_2026_10_07.org][7 October
+review]] did not close them. Recheck those findings on the release being
+evaluated; do not silently turn an old warning into either a new guarantee
+or a claim about code that has not been fetched.
+
+* Keep artifact identity separate from payment
+
+The dated NFT guide distinguishes completed artifact metadata from an
+indexing-job token. It records a dry-run mint helper and a separate chunk-job
+payment placeholder. A local “paid” state is not a settlement receipt.
+
+A credible pilot can stop at successful delivery of a reusable collection.
+A later paid-work integration needs confirmed transaction handling,
+idempotency, acceptance policy and recovery from partial failure. Do not
+present those as solved because the artifact itself has a digest.
+
+* Implementation and evaluation boundary
+
+The opportunity is evaluated through the linked implementation guides and
+selected readable source. No corpus build, clean-consumer recovery, mint or
+payment was run for this article. The latest repository tree was not
+available for a complete recheck.
+
+Begin with one [[file:ecai_wikipedia_indexing.org][public fixture collection]] or one
+approved internal corpus. Make its identity and usefulness reproducible before
+making it larger or attaching an economy to it.

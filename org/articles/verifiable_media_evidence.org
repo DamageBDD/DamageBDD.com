@@ -1,0 +1,110 @@
+#+TITLE: Make the Attachment Part of the Evidence
+#+DESCRIPTION: Use content-addressed media to preserve inspectable supporting files, with explicit ownership, public-read boundaries and a tested retention plan.
+#+KEYWORDS: DamageBDD, evidence, Nostr publishers, support teams, software delivery
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-10
+#+LAST_MODIFIED: 2026-10-10
+#+CONTENT_CLASS: market-evaluation-guide
+#+IMPLEMENTATION_STATUS: documented_components
+#+VALIDATION_STATUS: documentation_review_only
+#+VALIDATION_SCOPE: Editorial evaluation guide based on accessible repository pages and the dated implementation references linked below. Complete current tree and HEAD were not retrieved; no runtime or end-to-end validation performed.
+#+EVIDENCE_DATE: 2026-10-10
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_blossom_http.erl
+#+EVIDENCE_URL: https://docs.ipfs.tech/how-to/pin-files/
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* The report survives, but the screenshot disappears
+
+A support investigation ends with a useful screenshot, a log extract and a
+report. Weeks later, the chat attachment has expired or the file has been
+renamed on a contractor's laptop. The report remains, but the material needed
+to understand it does not.
+
+Treat supporting files as part of the evidence handoff. Identify the expected
+bytes, record who may publish or remove their storage claim, and decide who
+will keep them available. A content-addressed media service is useful here
+because the reference can be tied to a specific artifact rather than a
+changeable filename.
+
+DamageBDD's [[file:blossom_media.org][Blossom implementation guide]] describes a
+Nostr-oriented path for this work. The first market is a publisher or team
+already sharing public, or deliberately publishable, supporting material.
+Do not begin by assuming the same retrieval interface is a confidential
+company file store.
+
+* Know what each identifier means
+
+The documented Blossom interface uses a SHA-256 digest for byte identity.
+Its IPFS storage references have a different role and are not interchangeable
+with that digest. A client should verify the identity expected by its own
+protocol rather than substituting whichever hash appears in a response.
+
+For a delivery packet, record the supporting file's digest, intended type,
+report association and retrieval location. The digest helps detect a changed
+file. It does not explain what the screenshot depicts, establish permission
+to publish it or certify the accuracy of its contents.
+
+Use synthetic screenshots and scrubbed logs during the pilot. A verifiable
+secret leak is still a secret leak. Review the bytes before placing them in
+a service designed for public retrieval.
+
+* Upload permission does not make downloads private
+
+The implementation reference describes signed upload and deletion claims,
+while hash-based retrieval is public. An authenticated uploader should not
+infer that only that uploader can read the object.
+
+The guide also describes a shared storage path with NIP-96 and source-scoped
+ownership claims. Removing one Blossom claim does not automatically remove
+another service's claim to the same content. The storage lifecycle and the
+application's idea of ownership must be tested together.
+
+Decide how the application presents duplicate uploads, co-ownership, quota
+failures and deletion requests. Do not promise universal erasure from a
+content-addressed network; other parties may retain copies independently.
+
+* Availability needs an owner
+
+The [[https://docs.ipfs.tech/how-to/pin-files/][IPFS pinning guide]] distinguishes
+retaining local content from allowing garbage collection. A pin is not a
+contract for indefinite public availability. Capacity, process health and
+backup or replication arrangements remain operational responsibilities.
+
+Choose a retention period and record the operator responsible for it.
+Retrieve a fixture from a second client, restart the service and repeat the
+retrieval. Test what happens when the primary store is unavailable and what
+an operator must do to restore access.
+
+For evidence expected to outlive a project, provide a transfer procedure.
+The next operator should be able to identify and retain the same bytes
+without relying on the original uploader's session or workstation state.
+
+* Run a small interoperability evaluation
+
+Use two clients and a small fixture set: an image, a text artifact and a
+file near the configured size limit. Compare uploaded and downloaded digests,
+inspect response headers and exercise both permitted and refused operations.
+Add an invalid signature, an unauthorised deletion and a second ownership
+claim for already-stored content.
+
+Verify the exact protocol features used by those clients. A module covering
+several BUD handlers is not proof of complete Blossom conformance or support
+for every client convention. Keep an explicit interoperability matrix with
+versions, cases and outcomes.
+
+Measure retrieval success after restart, the time to reconstruct an evidence
+packet and storage consumed by the fixture lifecycle. These are proposed
+observations, not benchmark results from this review.
+
+* Implementation and evaluation boundary
+
+The linked guide contains a historical source review, not a new live storage
+test. This article does not assert confidential reads, permanent availability,
+network-wide deletion or newly verified client interoperability.
+
+Pair the media path with [[file:software_delivery_acceptance.org][a delivery packet]]
+or [[file:nostr_search_for_products.org][a source-linked Nostr product]]. The useful
+outcome is an attachment the recipient can identify and retrieve when the
+original conversation is no longer available.

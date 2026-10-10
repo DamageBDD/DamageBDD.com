@@ -7,5 +7,14 @@ Read the [[file:stack_adoption.org][stack adoption guide]] for a practical first
 For implementation and validation status, use the [[file:features_current.org][component map]].
 Search above to find a page by title, summary or document path.
 
+* Choose a customer problem
+
+Explore [[file:solutions_evidence_first.org][Start With the Problem. Keep the Evidence.]]
+for new evaluation guides on software acceptance, private knowledge, release
+identity, Nostr infrastructure, Lightning-funded jobs and a local operations
+workbench. Each guide identifies a first demonstration and its evidence limits.
+
+* Browse every article
+
 #+INCLUDE: "index.inc"
 

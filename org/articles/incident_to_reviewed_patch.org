@@ -1,0 +1,117 @@
+#+TITLE: From an Incident to a Patch Someone Can Review
+#+DESCRIPTION: Evaluate ECAI incident learning, relation analysis and repair capsules as a human-reviewed engineering workflow, not an autonomous production repair claim.
+#+KEYWORDS: DamageBDD, evidence, Erlang teams, incident response, AI code review
+#+AUTHOR: Steven Joseph
+#+DATE: 2026-10-10
+#+LAST_MODIFIED: 2026-10-10
+#+CONTENT_CLASS: market-evaluation-guide
+#+IMPLEMENTATION_STATUS: documented_components
+#+VALIDATION_STATUS: documentation_review_only
+#+VALIDATION_SCOPE: Editorial evaluation guide based on accessible repository pages and the dated implementation references linked below. Complete current tree and HEAD were not retrieved; no runtime or end-to-end validation performed.
+#+EVIDENCE_DATE: 2026-10-10
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_repair_preflight.erl
+#+EVIDENCE_URL: https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/ecai/src/ecai_repair_capsule.erl
+#+EVIDENCE_URL: https://genai.owasp.org/llmrisk/llm062025-excessive-agency/
+#+LANGUAGE: en
+#+INCLUDE: "../header.org"
+#+OPTIONS: toc:2 ^:nil
+
+* The useful output is not just another diff
+
+A service fails, someone pastes logs into an assistant and a patch appears.
+The reviewer then has to reconstruct the source revision, determine whether
+the failure still exists and work out which test results belong to the
+baseline rather than the candidate.
+
+For an Erlang engineering team, a stronger product proposition is a review
+packet that keeps those questions together. The goal is to make a candidate
+repair easier to reject or approve, not to remove the person accountable for
+production.
+
+ECAI's documented relation, incident and repair components are worth
+evaluating at that boundary. Treat “suggest a repair”, “validate a candidate”
+and “authorise deployment” as separate operations.
+
+* Preserve the relationship between the incident and the source
+
+The [[file:ecai_relation_processing.org][relation guide]] describes structural facts
+and deterministic relation processing. Such information can help a reviewer
+navigate the code relevant to a failure. It does not establish the semantic
+correctness of a proposed repair.
+
+The [[file:ecai_reviewable_repairs.org][repair guide]] describes source identity,
+preflight checks, candidate verification in a separate worktree and retained
+review records. These provide a basis for asking whether the candidate still
+applies to the actual code under review.
+
+A worktree separates files, not privileges. Running an untrusted candidate's
+build or tests still requires an appropriate execution boundary. Do not give
+a candidate production credentials merely because it was generated in a
+separate checkout.
+
+* Keep the model in a diagnostic role
+
+The dated integration review describes a log-to-learning path and an incident
+learner that records suggestions rather than applying repairs automatically.
+Logs and model prompts should be treated as disclosure surfaces. Synthetic
+incidents are a better first test than unrestricted production telemetry.
+
+[[https://genai.owasp.org/llmrisk/llm062025-excessive-agency/][OWASP's excessive-agency
+guidance]] identifies risk from excessive functionality, permissions and
+autonomy. The practical implication for this evaluation is to give the
+assistant a narrowly defined output and require a separate decision before
+any privileged action.
+
+Do not infer that a model-written explanation is correct because its input
+has a fingerprint or its output has been saved. Those mechanisms help retain
+identity. They do not turn a hypothesis into a verified cause.
+
+* Evaluate a repair with a known answer
+
+Choose a small, intentionally broken module with a reproducible failure.
+Record the baseline results, produce a candidate and evaluate it against the
+same tests plus a few independently selected regression cases.
+
+Then change the source after the candidate was prepared. The review path
+should identify that its context is stale rather than confidently applying
+the wrong repair. Include a candidate that does not apply, one that builds
+but fails the target scenario and one that changes unrelated behaviour.
+
+Make the reviewer explain the acceptance decision using only the packet.
+If the reviewer cannot identify the source revision, baseline state and
+remaining failures, the output is not yet a useful handoff.
+
+* Be explicit about unfinished integrations
+
+The [[file:integration_status_2026_10_07.org][7 October integration review]] records a
+publication gap for the incident learner and a source/test mismatch involving
+an =undefined= target. Those are historical findings, not proof that the
+same issue remains in the latest checkout. They have not been closed by
+this editorial review.
+
+Before starting a release-specific pilot, fetch and pin the actual tree,
+confirm the modules are present and execute the relevant target-validation,
+redaction, recovery and candidate-verification tests. A green isolated helper
+test is not a demonstration of a model-backed repair from a real incident.
+
+* Measure the review, not the number of generated patches
+
+Track how long a reviewer needs to establish context, how often a candidate
+is correctly rejected and whether accepted repairs reproduce the expected
+behaviour. Record reasons for rejection. A high rejection rate can be useful
+information when the alternative is unsafe acceptance.
+
+This is a good fit for a team with a bounded Erlang service and a known
+regression backlog. It should not be treated as unattended
+production healing across arbitrary infrastructure.
+
+* Implementation and evaluation boundary
+
+This article translates the dated repair documentation into a pilot design.
+It records no new model run, build, test result or successful repair. Current
+source publication and complete execution remain prerequisites for a
+release-specific claim.
+
+Pair the [[file:ecai_reviewable_repairs.org][repair reference]] with
+[[file:ai_change_acceptance.org][an independent acceptance gate]]. The buyer should
+receive a better engineering decision, not merely a more confident patch.

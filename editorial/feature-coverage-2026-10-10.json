@@ -1,0 +1,562 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-10",
+  "scope": "Observed and documented feature areas; not an exhaustive inventory of latest additions",
+  "current_head": null,
+  "latest_complete_tree_available": false,
+  "feature_area_count": 43,
+  "features": [
+    {
+      "id": "bdd",
+      "feature_area": "Gherkin scenarios, backgrounds and outlines",
+      "evidence_level": "readable_source_snapshot",
+      "evidence": [
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/damage.erl"
+      ],
+      "article_slugs": [
+        "ai_change_acceptance",
+        "software_delivery_acceptance"
+      ],
+      "boundary": "Selected runner paths read; complete tree, current revision and runtime behaviour unverified."
+    },
+    {
+      "id": "strict",
+      "feature_area": "Strict step handling and failure propagation",
+      "evidence_level": "readable_source_snapshot",
+      "evidence": [
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/damage.erl"
+      ],
+      "article_slugs": [
+        "ai_change_acceptance",
+        "self_hosted_verification"
+      ],
+      "boundary": "Unsupported steps and catch-all behaviour require negative tests in the selected release; no all-steps coverage claim."
+    },
+    {
+      "id": "http",
+      "feature_area": "HTTP requests, auth, JSON/YAML and polling",
+      "evidence_level": "readable_source_snapshot",
+      "evidence": [
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/steps_http.erl"
+      ],
+      "article_slugs": [
+        "api_journey_assurance"
+      ],
+      "boundary": "TRACE clause in the readable snapshot is explicitly unimplemented. Presence of a handler is not success evidence."
+    },
+    {
+      "id": "browser",
+      "feature_area": "Browser automation and CDP",
+      "evidence_level": "existing_implementation_reference",
+      "evidence": [
+        "org/modules/cdp.org",
+        "org/modules/http.org"
+      ],
+      "article_slugs": [
+        "api_journey_assurance"
+      ],
+      "boundary": "Driver, browser and user interaction behaviour not exercised."
+    },
+    {
+      "id": "load",
+      "feature_area": "Concurrent and load execution",
+      "evidence_level": "readable_source_snapshot",
+      "evidence": [
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/damage.erl"
+      ],
+      "article_slugs": [
+        "api_journey_assurance"
+      ],
+      "boundary": "Cached-source aggregation concern requires fresh-checkout recheck. No throughput or scalability result."
+    },
+    {
+      "id": "schedules",
+      "feature_area": "Scheduled runs and webhook wiring",
+      "evidence_level": "readable_source_and_existing_reference",
+      "evidence": [
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/damage_app.erl",
+        "org/articles/damagebdd_evidence_workflows.org"
+      ],
+      "article_slugs": [
+        "api_journey_assurance"
+      ],
+      "boundary": "Wiring was readable, not delivery/restart validation of a scheduled notification."
+    },
+    {
+      "id": "reports",
+      "feature_area": "Report metadata and IPFS evidence references",
+      "evidence_level": "readable_source_and_existing_reference",
+      "evidence": [
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/damage.erl",
+        "org/articles/damagebdd_evidence_workflows.org"
+      ],
+      "article_slugs": [
+        "software_delivery_acceptance",
+        "release_provenance"
+      ],
+      "boundary": "Identity, disclosure and availability are separate. No new report upload/download run."
+    },
+    {
+      "id": "cid",
+      "feature_area": "Feature and report content addressing",
+      "evidence_level": "existing_implementation_reference",
+      "evidence": [
+        "org/articles/damagebdd_evidence_workflows.org"
+      ],
+      "article_slugs": [
+        "software_delivery_acceptance"
+      ],
+      "boundary": "Executing by content reference does not establish correct expectations or indefinite retention."
+    },
+    {
+      "id": "version",
+      "feature_area": "Runtime/build identity probe",
+      "evidence_level": "existing_implementation_reference",
+      "evidence": [
+        "org/install.org"
+      ],
+      "article_slugs": [
+        "release_provenance",
+        "self_hosted_verification"
+      ],
+      "boundary": "The guide documents /api/version; probe not executed and response not an independent build attestation."
+    },
+    {
+      "id": "release",
+      "feature_area": "Release NFT discovery and artifact verification",
+      "evidence_level": "existing_implementation_reference",
+      "evidence": [
+        "org/articles/damagebdd_evidence_workflows.org",
+        "https://github.com/DamageBDD/DamageBDD/blob/a993c0421b38de475b103dc79f31da1e091cd97a/apps/damage/src/damage_release_nft.erl"
+      ],
+      "article_slugs": [
+        "release_provenance"
+      ],
+      "boundary": "Historical guide describes lookup and verification; current artifacts, minting and installation not tested."
+    },
+    {
+      "id": "multinode",
+      "feature_area": "Distributed execution, consensus and shared payout narrative",
+      "evidence_level": "unverified_end_to_end",
+      "evidence": [
+        "org/whitepaper.org",
+        "org/articles/damagebdd_evidence_workflows.org"
+      ],
+      "article_slugs": [
+        "software_delivery_acceptance",
+        "lightning_api_economics"
+      ],
+      "boundary": "No complete current implementation audit, multi-node consensus run or linked settlement evidence retrieved. Not announced as delivered."
+    },
+    {
+      "id": "accounting",
+      "feature_area": "DAMAGE/Aeternity accounting context",
+      "evidence_level": "readable_source_and_existing_reference",
+      "evidence": [
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/damage.erl",
+        "org/articles/damagebdd_evidence_workflows.org"
+      ],
+      "article_slugs": [
+        "lightning_api_economics"
+      ],
+      "boundary": "Report accounting metadata does not establish token settlement, liquidity or earnings."
+    },
+    {
+      "id": "bitcoin",
+      "feature_area": "Bitcoin RPC, Core Lightning and LND integrations",
+      "evidence_level": "repository_overview_only",
+      "evidence": [
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/README.md"
+      ],
+      "article_slugs": [
+        "lightning_api_economics",
+        "self_hosted_verification"
+      ],
+      "boundary": "Readable overview names integrations; no live wallet, channel or invoice validation. README snapshots were inconsistent."
+    },
+    {
+      "id": "l402",
+      "feature_area": "L402-style access payment",
+      "evidence_level": "not_currently_source_verified",
+      "evidence": [
+        "https://github.com/DamageBDD/DamageBDD"
+      ],
+      "article_slugs": [
+        "lightning_api_economics"
+      ],
+      "boundary": "An evaluation topic, not a release-specific protocol or paid-execution claim; full path needs fresh review."
+    },
+    {
+      "id": "nwc",
+      "feature_area": "Nostr Wallet Connect authority",
+      "evidence_level": "protocol_reference_not_deployment_evidence",
+      "evidence": [
+        "https://raw.githubusercontent.com/nostr-protocol/nips/master/47.md"
+      ],
+      "article_slugs": [
+        "lightning_api_economics"
+      ],
+      "boundary": "Protocol text read; exact current DamageBDD endpoint permissions/defaults were not established."
+    },
+    {
+      "id": "secrets",
+      "feature_area": "Encrypted secrets and optional cryptographic backends",
+      "evidence_level": "repository_overview_and_evaluation_requirement",
+      "evidence": [
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/README.md",
+        "org/security/index.org"
+      ],
+      "article_slugs": [
+        "self_hosted_verification",
+        "private_support_copilot"
+      ],
+      "boundary": "No deployment-wide post-quantum or non-exportable-key claim. Backend selection and key lifecycle require direct validation."
+    },
+    {
+      "id": "node",
+      "feature_area": "Packaged and source-based node operation",
+      "evidence_level": "existing_implementation_reference",
+      "evidence": [
+        "org/install.org",
+        "org/node.org",
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/config/sys.config.sample"
+      ],
+      "article_slugs": [
+        "self_hosted_verification"
+      ],
+      "boundary": "Samples differ by revision; do not copy old defaults or assume optional features remove all startup dependencies."
+    },
+    {
+      "id": "ops",
+      "feature_area": "Application wiring, interfaces and operational controls",
+      "evidence_level": "readable_source_snapshot",
+      "evidence": [
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/damage/src/damage_app.erl",
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/config/sys.config.sample"
+      ],
+      "article_slugs": [
+        "self_hosted_verification"
+      ],
+      "boundary": "No fresh dependency graph, access-control audit or recovery test."
+    },
+    {
+      "id": "private",
+      "feature_area": "Encrypted private corpus and corpus permissions",
+      "evidence_level": "existing_implementation_reference",
+      "evidence": [
+        "org/articles/ecai_private_knowledge.org"
+      ],
+      "article_slugs": [
+        "private_support_copilot"
+      ],
+      "boundary": "Historical design decrypts scanned segments in trusted-worker memory; corpus-wide policy, not ciphertext inference or row-level isolation."
+    },
+    {
+      "id": "llm",
+      "feature_area": "Bounded retrieval-to-model bridge",
+      "evidence_level": "existing_implementation_reference",
+      "evidence": [
+        "org/articles/ecai_private_knowledge.org",
+        "org/articles/ecai_engineering_memory.org"
+      ],
+      "article_slugs": [
+        "private_support_copilot"
+      ],
+      "boundary": "Local endpoint routing and remote allowlists do not prove every onward data flow. No live model or provider test."
+    },
+    {
+      "id": "terms",
+      "feature_area": "Lexical retrieval and selected search context",
+      "evidence_level": "readable_source_and_existing_reference",
+      "evidence": [
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/ecai/src/ecai_search_server.erl",
+        "org/articles/ecai_private_knowledge.org"
+      ],
+      "article_slugs": [
+        "private_support_copilot",
+        "versioned_knowledge_releases"
+      ],
+      "boundary": "Deterministic lookup and retained context do not guarantee semantic relevance or correct answers."
+    },
+    {
+      "id": "jobs",
+      "feature_area": "Durable indexing jobs and ingest/WAL components",
+      "evidence_level": "readable_source_and_existing_reference",
+      "evidence": [
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/ecai/src/ecai_sup.erl",
+        "org/articles/ecai_indexing_workflows.org"
+      ],
+      "article_slugs": [
+        "versioned_knowledge_releases"
+      ],
+      "boundary": "Supervisor declarations and described recovery design are not a fresh interruption/recovery test."
+    },
+    {
+      "id": "wikipedia",
+      "feature_area": "Wikimedia selection and knowledge snapshots",
+      "evidence_level": "existing_implementation_reference",
+      "evidence": [
+        "org/articles/ecai_wikipedia_indexing.org",
+        "org/articles/integration_status_2026_10_07.org"
+      ],
+      "article_slugs": [
+        "versioned_knowledge_releases"
+      ],
+      "boundary": "Historical Wikidata filter and restore-integrity questions must be rechecked; no all-Wikipedia scale benchmark."
+    },
+    {
+      "id": "disk",
+      "feature_area": "Disk-backed indexes and bounded indexing pipelines",
+      "evidence_level": "existing_implementation_reference",
+      "evidence": [
+        "org/articles/ecai_indexing_workflows.org"
+      ],
+      "article_slugs": [
+        "versioned_knowledge_releases"
+      ],
+      "boundary": "Artifact completeness, supported queries and clean-consumer portability require release-specific checks."
+    },
+    {
+      "id": "integrity",
+      "feature_area": "Search evidence, hashes and proof boundaries",
+      "evidence_level": "existing_implementation_reference",
+      "evidence": [
+        "org/articles/ecai_search_evidence.org",
+        "org/articles/integration_status_2026_10_07.org"
+      ],
+      "article_slugs": [
+        "versioned_knowledge_releases",
+        "nostr_search_for_products"
+      ],
+      "boundary": "Integrity identities do not establish relevance, truth or correctness of source selection."
+    },
+    {
+      "id": "index-artifact",
+      "feature_area": "Canonical index manifests and lineage",
+      "evidence_level": "existing_implementation_reference",
+      "evidence": [
+        "org/articles/ecai_index_nfts.org"
+      ],
+      "article_slugs": [
+        "versioned_knowledge_releases"
+      ],
+      "boundary": "Artifact types differ; lineage reference is not proof of complete incremental recomputation."
+    },
+    {
+      "id": "index-mint",
+      "feature_area": "Index NFT preparation and mint boundary",
+      "evidence_level": "historical_open_finding",
+      "evidence": [
+        "org/articles/ecai_index_nfts.org",
+        "org/articles/integration_status_2026_10_07.org"
+      ],
+      "article_slugs": [
+        "versioned_knowledge_releases"
+      ],
+      "boundary": "Historical mint helper uses a dry call; not evidence of submitted/confirmed mint. Current status unknown."
+    },
+    {
+      "id": "index-paid",
+      "feature_area": "Index-job payment/settlement boundary",
+      "evidence_level": "historical_open_finding",
+      "evidence": [
+        "org/articles/ecai_index_nfts.org",
+        "org/articles/integration_status_2026_10_07.org"
+      ],
+      "article_slugs": [
+        "versioned_knowledge_releases",
+        "lightning_api_economics"
+      ],
+      "boundary": "Historical in-memory paid flag is not settlement. Do not transfer that description to latest code without recheck."
+    },
+    {
+      "id": "relation",
+      "feature_area": "Deterministic relation processing",
+      "evidence_level": "existing_implementation_reference",
+      "evidence": [
+        "org/articles/ecai_relation_processing.org"
+      ],
+      "article_slugs": [
+        "incident_to_reviewed_patch"
+      ],
+      "boundary": "Structural relations can support investigation; no semantic proof or benchmark victory inferred."
+    },
+    {
+      "id": "repair",
+      "feature_area": "Repair preflight, candidate verification and capsules",
+      "evidence_level": "existing_implementation_reference",
+      "evidence": [
+        "org/articles/ecai_reviewable_repairs.org"
+      ],
+      "article_slugs": [
+        "incident_to_reviewed_patch"
+      ],
+      "boundary": "A separate worktree is not a security sandbox; current tests and real repairs not run."
+    },
+    {
+      "id": "learner",
+      "feature_area": "Incident log-to-learning integration",
+      "evidence_level": "historical_source_publication_gap",
+      "evidence": [
+        "org/articles/integration_status_2026_10_07.org",
+        "org/articles/ecai_reviewable_repairs.org"
+      ],
+      "article_slugs": [
+        "incident_to_reviewed_patch"
+      ],
+      "boundary": "Dated guide reports learner absent from linked public revision and target-validation mismatch. Current resolution not known."
+    },
+    {
+      "id": "nostr",
+      "feature_area": "Signed Nostr events and relay-client integration",
+      "evidence_level": "existing_implementation_reference",
+      "evidence": [
+        "org/articles/damagebdd_nostr.org",
+        "org/articles/nostr_reliability.org"
+      ],
+      "article_slugs": [
+        "nostr_signing_governance",
+        "nostr_search_for_products"
+      ],
+      "boundary": "Signature/authorship, relay acknowledgement and complete request/reply are separate outcomes."
+    },
+    {
+      "id": "retention",
+      "feature_area": "Nosternity selected-event archive",
+      "evidence_level": "existing_implementation_reference",
+      "evidence": [
+        "org/articles/nosternity.org"
+      ],
+      "article_slugs": [
+        "nostr_search_for_products"
+      ],
+      "boundary": "Historical full-event archive has owner-controlled writes; append-only archive does not itself implement current-view search semantics."
+    },
+    {
+      "id": "outbox",
+      "feature_area": "Nosternity persistence and recovery boundary",
+      "evidence_level": "historical_open_finding",
+      "evidence": [
+        "org/articles/integration_status_2026_10_07.org",
+        "org/articles/nosternity.org"
+      ],
+      "article_slugs": [
+        "nostr_search_for_products"
+      ],
+      "boundary": "Historical volatile pending queue can lose unsubmitted work. No current durability conclusion without fresh code."
+    },
+    {
+      "id": "search50",
+      "feature_area": "Recent search relay / NIP-50 and context integration",
+      "evidence_level": "not_currently_source_verified",
+      "evidence": [
+        "https://raw.githubusercontent.com/nostr-protocol/nips/master/50.md",
+        "org/articles/nosternity.org"
+      ],
+      "article_slugs": [
+        "nostr_search_for_products"
+      ],
+      "boundary": "NIP-50 semantics reviewed; latest implementation, endpoint names and tests not retrieved. Article deliberately a blueprint."
+    },
+    {
+      "id": "bunker",
+      "feature_area": "nsecbunker signing policy and audit",
+      "evidence_level": "existing_implementation_reference",
+      "evidence": [
+        "org/articles/damage_nsecbunker.org"
+      ],
+      "article_slugs": [
+        "nostr_signing_governance"
+      ],
+      "boundary": "Historical run retains exact release and scope; no new external-client handoff or signing run."
+    },
+    {
+      "id": "custody",
+      "feature_area": "AWS-backed secret retrieval and recovery",
+      "evidence_level": "existing_implementation_reference",
+      "evidence": [
+        "org/articles/damage_nsecbunker.org"
+      ],
+      "article_slugs": [
+        "nostr_signing_governance"
+      ],
+      "boundary": "Secrets Manager retrieval is not an HSM operation. Current state does not prove historical deletion or access revocation."
+    },
+    {
+      "id": "blossom",
+      "feature_area": "Blossom byte-addressed upload/retrieval",
+      "evidence_level": "existing_implementation_reference",
+      "evidence": [
+        "org/articles/blossom_media.org"
+      ],
+      "article_slugs": [
+        "verifiable_media_evidence"
+      ],
+      "boundary": "Documented public reads; signed uploads do not make downloads confidential. No client conformance or load results."
+    },
+    {
+      "id": "ownership",
+      "feature_area": "Shared NIP-96/Blossom claims and retention",
+      "evidence_level": "existing_implementation_reference",
+      "evidence": [
+        "org/articles/blossom_media.org"
+      ],
+      "article_slugs": [
+        "verifiable_media_evidence"
+      ],
+      "boundary": "Deleting one service claim does not wipe every claim or every remote copy; retention remains operational."
+    },
+    {
+      "id": "voice",
+      "feature_area": "erm voice intent, media, native TTS and model assistance",
+      "evidence_level": "existing_implementation_reference",
+      "evidence": [
+        "org/articles/erm_local_voice.org"
+      ],
+      "article_slugs": [
+        "local_operations_workbench"
+      ],
+      "boundary": "No new microphone, player, model, speaker-verification or native UI run; no voice authorisation claim."
+    },
+    {
+      "id": "desktop",
+      "feature_area": "erm supervised workspace and replaceable UI",
+      "evidence_level": "readable_declaration_and_existing_reference",
+      "evidence": [
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/erm/src/erm.app.src",
+        "org/articles/erm_local_voice.org"
+      ],
+      "article_slugs": [
+        "local_operations_workbench"
+      ],
+      "boundary": "Application declaration is not full GTKGS/session/recovery coverage; other recent desktop additions not enumerated."
+    },
+    {
+      "id": "umbrella",
+      "feature_area": "Umbrella app composition",
+      "evidence_level": "readable_source_snapshot",
+      "evidence": [
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/rebar.config",
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/ecai/src/ecai.app.src",
+        "https://raw.githubusercontent.com/DamageBDD/DamageBDD/develop/apps/ecai/src/ecai_sup.erl"
+      ],
+      "article_slugs": [
+        "self_hosted_verification"
+      ],
+      "boundary": "damage, ecai, erm, nosternity, vanillae and bop names/declarations do not constitute a feature audit of all applications."
+    },
+    {
+      "id": "site",
+      "feature_area": "Org site article discovery and evidence metadata",
+      "evidence_level": "supplied_website_source",
+      "evidence": [
+        "scripts/publish.el",
+        "org/articles/index.org"
+      ],
+      "article_slugs": [
+        "solutions_evidence_first"
+      ],
+      "boundary": "This pack changes content/index only; native Org export and deployed discovery generation remain untested here."
+    }
+  ]
+}
