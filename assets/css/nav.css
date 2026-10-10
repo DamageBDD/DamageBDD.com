@@ -1,134 +1,57 @@
-/* Already defined for top level */
-.nav-icon {
-  margin-right: 0.4em;
-  transition: transform 0.3s ease, color 0.3s ease;
-  color: var(--meta);
+/* Shared navigation: a disclosure, not a modal or an ARIA application menu. */
+#preamble { position: sticky; top: 0; z-index: 50; }
+.site-header { border-bottom: 1px solid var(--line); background: var(--page); }
+@supports (backdrop-filter: blur(16px)) {
+  .site-header { background: color-mix(in srgb, var(--page) 94%, transparent); backdrop-filter: blur(16px); }
 }
-.nav-menu {
-  list-style: none;
-  padding: 0;
-  margin: 2rem 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
+.header-inner { display: flex; align-items: center; gap: 2rem; max-width: 1360px; padding: 12px 32px; margin: auto; }
+.site-brand { display: flex; gap: .6rem; align-items: center; color: var(--strong); text-decoration: none; flex-shrink: 0; }
+.site-brand img { width: 52px; height: 52px; object-fit: contain; }
+.brand-copy { display: flex; flex-direction: column; }
+.brand-copy strong { font-size: 1.25rem; letter-spacing: -.045em; line-height: 1.25; }
+.brand-copy strong span { color: var(--accent); }
+.brand-copy small { font: .56rem/1.8 var(--mono); color: var(--muted); letter-spacing: .015em; }
+.primary-nav { display: flex; align-items: center; gap: 1.5rem; margin-left: auto; }
+.primary-nav > a { color: var(--muted); font-size: .79rem; font-weight: 500; text-decoration: none; white-space: nowrap; padding: .5rem 0; }
+.primary-nav > a:hover, .primary-nav > a[aria-current] { color: var(--accent); }
+.primary-nav > a[aria-current] { text-decoration: underline; text-underline-offset: .55em; }
+.header-actions { display: flex; align-items: center; gap: .65rem; }
+.search-trigger { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-height: 40px; color: var(--muted); text-decoration: none; font-size: .76rem; padding: .45rem .65rem; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+.search-trigger kbd { margin-left: .6rem; font-size: .56rem; }
+.icon-button { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 40px; height: 40px; padding: 0; border-radius: 6px; border: 1px solid transparent; background: transparent; color: var(--muted); }
+.icon-button:hover { color: var(--accent); background: var(--surface-alt); }
+.menu-toggle { display: none; }
+.theme-sun { display: none; }
+:root[data-theme="dark"] .theme-moon { display: none; }
+:root[data-theme="dark"] .theme-sun { display: block; }
+@media (max-width: 1180px) {
+  .header-inner { gap: 1.3rem; padding-inline: 24px; }
+  .primary-nav { gap: 1.1rem; }
+  .search-trigger span, .search-trigger kbd { display: none; }
+  .search-trigger { width: 40px; padding: 0; }
 }
-.nav-menu .submenu{
-  margin-top:  0;
+@media (max-width: 900px) {
+  .header-inner { flex-wrap: wrap; gap: 0; padding: 10px 20px; }
+  .header-actions { margin-left: auto; }
+  .site-brand img { width: 46px; height: 46px; }
+  .brand-copy strong { font-size: 1.18rem; }
+  .primary-nav { width: 100%; order: 3; padding: .8rem 0 .5rem; margin: .6rem 0 0; border-top: 1px solid var(--line); justify-content: space-between; }
+  /* Without JS the links remain visible. Hide only after successful setup. */
+  html[data-nav-ready] .primary-nav:not(.is-open) { display: none; }
+  html[data-nav-ready] .menu-toggle { display: inline-flex; }
 }
-
-.nav-menu li {
-  display: flex;
-  align-items: center;
-}
-
-.nav-menu li a {
-  display: inline-flex;
-  align-items: center;
-  font-weight: 500;
-  font-size: 1rem;
-  padding: 0.3em 0.6em;
-  border-radius: 5px;
-  background: transparent;
-  color: var(--fg);
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.nav-menu li a:hover {
-  background: rgba(127,127,127,0.1);
-  color: var(--link);
-}
-
-.nav-menu li a:hover .nav-icon {
-  transform: scale(1.2) rotate(3deg);
-  color: var(--link);
-}
-
-.nav-menu li a.active .nav-icon {
-  color: var(--verified);
-}
-.has-submenu {
-  position: relative;
-}
-
-/* Show on hover (desktop) */
-.nav-menu li:hover > .submenu {
-  display: flex;
+@media (max-width: 580px) {
+  .dashboard-link { display: none; }
+  .header-inner { padding-inline: 16px; }
+  .header-actions { gap: .2rem; }
+  .search-trigger { border: 0; background: transparent; }
+  .brand-copy small { font-size: .51rem; }
+  .primary-nav { display: grid; grid-template-columns: repeat(2,1fr); gap: .3rem 1rem; }
+  .primary-nav > a { padding: .65rem .4rem; }
+  .primary-nav > a[aria-current] { text-decoration: none; background: var(--accent-soft); border-radius: 5px; }
 }
 
-/* Submenu toggle button (mobile) */
-.submenu-toggle {
-  background: none;
-  border: none;
-  font-size: 0.8rem;
-  color: var(--fg-muted);
-  margin-left: 0.3em;
-  cursor: pointer;
-}
-
-/* Show submenu if toggled via JS */
-.has-submenu.open > .submenu {
-  display: flex;
-}
-
-
-
-
-
-.submenu {
-  background-color: var(--bg-alt); /* Add this to your theme variables if not defined */
-  position: absolute;
-  top: calc(100% + 0.0em); /* slight vertical gap */
-  left: 0;
-  display: none;
-  flex-direction: column;
-  background: var(--bg);
-  border: 1px solid rgba(127,127,127,0.15);
-  border-radius: 8px;
-  padding: 0.4rem 0;
-  z-index: 100;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-}
-
-.has-submenu {
-  position: relative; /* Needed to align submenu to the parent */
-}
-
-.submenu-toggle {
-  background: none;
-  border: none;
-  font-size: 0.7em;
-  margin-left: 0.3em;
-  color: var(--fg-muted);
-  cursor: pointer;
-}
-/* Animate icons in submenu too */
-.submenu li a:hover .nav-icon {
-  transform: scale(1.2) rotate(3deg);
-  color: var(--link);
-}
-
-.submenu li a.active .nav-icon {
-  color: var(--verified);
-}
-.submenu li a {
-  font-size: 0.95rem;
-  padding: 0.4em 1em;
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-  color: var(--fg);
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.submenu li a:hover {
-  background: rgba(255,255,255,0.05); /* or rgba(127,127,127,0.1) for light mode */
-  color: var(--link);
-}
-.has-submenu.open > .submenu {
-  display: flex;
-}
-
-.nav-menu li:hover > .submenu {
-  display: flex;
+.primary-nav > .mobile-dashboard { display: none; }
+@media (max-width: 580px) {
+  .primary-nav > .mobile-dashboard { display: block; grid-column: 1 / -1; color: var(--accent); }
 }

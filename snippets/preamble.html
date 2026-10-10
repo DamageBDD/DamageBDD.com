@@ -1,33 +1,30 @@
-<div class='preamble'>
-  <div class='site-header flex-header'>
-    <a href='/'><img src='/assets/img/logo.avif' class='logo' alt='DamageBDD Logo' /></a>
-    <div class='identity-text'>
-      <h1 class='site-title'>DamageBDD</h1>
-      <p class='tagline'>Behaviour Driven Development At Planetary Scale.</p>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="site-brand" href="{{base}}/" aria-label="DamageBDD home">
+      <img src="{{asset:assets/img/logo.avif}}" width="58" height="58" alt="" decoding="async">
+      <span class="brand-copy"><strong>Damage<span>BDD</span></strong><small>Behaviour, verified.</small></span>
+    </a>
+    <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
+      <a href="{{base}}/manual.html" data-section="docs">Documentation</a>
+      <a href="{{base}}/articles/index.html" data-section="articles">Articles</a>
+      <a href="{{base}}/ecai/index.html" data-section="ecai">ECAI</a>
+      <a href="{{base}}/pricing.html" data-section="pricing">Pricing</a>
+      <a class="mobile-dashboard" href="https://run.damagebdd.com">Open dashboard ↗</a>
+    </nav>
+    <div class="header-actions">
+      <a class="search-trigger" id="search-trigger" href="{{base}}/sitemap.html" aria-label="Search documentation">
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+        <span>Search</span><kbd aria-hidden="true">Ctrl K</kbd>
+      </a>
+      <button class="icon-button theme-toggle" id="theme-toggle" type="button" aria-label="Switch colour theme" hidden>
+        <svg class="theme-sun" aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg>
+        <svg class="theme-moon" aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.5 14A8.5 8.5 0 0 1 10 3.5 8.5 8.5 0 1 0 20.5 14Z"/></svg>
+      </button>
+      <a class="button button-small dashboard-link" href="https://run.damagebdd.com">Open dashboard <span aria-hidden="true">↗</span></a>
+      <button class="icon-button menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-controls="primary-nav" aria-expanded="false" hidden>
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
     </div>
   </div>
-
-  <ul id='mainmenu' class='nav-menu'>
-    <li><a href='/'><span class='nav-icon'>🏠</span> Home</a></li>
-    <li class="has-submenu">
-      <a href="#" class="submenu-trigger"><span class="nav-icon">📚</span> Learn</a>
-      <ul class="nav-menu submenu">
-        <li><a href="/manual"><span class="nav-icon">🚀</span> Manual</a></li>
-        <li><a href="/modules"><span class="nav-icon">🧩</span> Module Reference</a></li>
-        <li><a href="/articles"><span class="nav-icon">📚</span> Articles</a></li>
-        <li><a href="/socials"><span class="nav-icon">🌐</span> Socials</a></li>
-      </ul>
-    </li>
-    <li class="has-submenu">
-      <a href="#" class="submenu-trigger"><span class="nav-icon">🔧</span> Use</a>
-      <ul class="nav-menu submenu">
-        <li><a href='https://run.damagebdd.com'><span class='nav-icon'>📊</span> Use Dashboard</a></li>
-        <li><a href='/node'><span class='nav-icon'>🖧</span> Run a node</a></li>
-      </ul>
-    </li>
-
-    
-    <li><a href='/ecai' class='new'><span class='nav-icon'>🧠</span> ECAI <sup class='badge new'>new</sup></a></li>
-    <li><a href='/pricing'><span class='nav-icon'>💸</span> Pricing</a></li>
-  </ul>
-</div>
+</header>

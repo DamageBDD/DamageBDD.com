@@ -7,3 +7,8 @@
 *.fls
 *.fdb*
 public/
+
+.org-timestamps/
+__pycache__/
+*.elc
+site-test-results/

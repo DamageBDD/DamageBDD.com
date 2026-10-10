@@ -1,6 +1,43 @@
-<div class='footer'>
-  <p class='meta'>
-    Last updated %C · Built with ♥ using %c (%v HTML)<br>
-    <a href='/sitemap.html'>Sitemap</a> · <a href='/about'>About</a>
-  </p>
-</div>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a class="wordmark" href="{{base}}/">Damage<span>BDD</span></a>
+      <p>Behaviour Driven Development<br>at Planetary Scale.</p>
+      <p class="footer-principle">Expectations are a starting point.<br>Evidence is the deliverable.</p>
+    </div>
+    <nav aria-label="Documentation links"><h2>Build with it</h2>
+      <a href="{{base}}/manual.html">Quick start</a>
+      <a href="{{base}}/modules/index.html">Module reference</a>
+      <a href="{{base}}/install.html">Installation</a>
+      <a href="https://run.damagebdd.com/api-docs/">API reference ↗</a>
+    </nav>
+    <nav aria-label="Ecosystem links"><h2>Explore the stack</h2>
+      <a href="{{base}}/articles/features_current.html">Component map</a>
+      <a href="{{base}}/ecai/index.html">ECAI</a>
+      <a href="{{base}}/articles/nosternity.html">Nosternity</a>
+      <a href="{{base}}/articles/erm_local_voice.html">erm</a>
+    </nav>
+    <nav aria-label="Project links"><h2>Open by design</h2>
+      <a href="https://github.com/DamageBDD/DamageBDD.git">Source code ↗</a>
+      <a href="{{base}}/about.html">About DamageBDD</a>
+      <a href="{{base}}/socials.html">Community</a>
+      <a href="{{base}}/security/index.html">Security</a>
+    </nav>
+    <div class="footer-bottom">
+      <p>Written in Org. Published as open documents.</p>
+      <nav aria-label="Site formats"><a href="{{base}}/sitemap.html">Sitemap</a><a href="{{base}}/llms.txt">llms.txt</a><a href="{{base}}/docs/index.json">Document inventory</a></nav>
+    </div>
+  </div>
+</footer>
+<dialog id="site-search" class="search-dialog" aria-labelledby="search-title">
+  <div class="search-heading">
+    <h2 id="search-title">Search documentation</h2>
+    <form method="dialog"><button class="icon-button" aria-label="Close search" type="submit">✕</button></form>
+  </div>
+  <label class="sr-only" for="search-input">Search titles, summaries and document paths</label>
+  <input id="search-input" type="search" placeholder="Try “Lightning”, “Nostr” or “installation”…" autocomplete="off" spellcheck="false" aria-describedby="search-status">
+  <p id="search-status" class="search-status" role="status">Search titles, summaries and document paths.</p>
+  <ol id="search-results" class="search-results" aria-label="Search results"></ol>
+  <div class="search-footer"><span><kbd>↑</kbd> <kbd>↓</kbd> navigate · <kbd>Esc</kbd> close</span><a href="{{base}}/sitemap.html">Browse all pages →</a></div>
+</dialog>
+<div id="site-status" class="sr-only" role="status" aria-live="polite"></div>

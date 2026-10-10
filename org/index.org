@@ -1,197 +1,216 @@
-#+TITLE: DamageBDD – Verifying Software Behaviour at Planetary Scale
-
-#+DESCRIPTION: Deterministic BDD verification with cryptographic integrity and Bitcoin-native incentives.
-#+KEYWORDS: BDD, verification, Erlang, Bitcoin, Lightning, deterministic AI
+#+TITLE: DamageBDD — Ship evidence. Not just code.
+#+SITE_LAYOUT: home
+#+DESCRIPTION: Turn plain-language expectations into executable checks and inspectable evidence. Explore DamageBDD, its documentation and the wider Erlang/OTP stack.
+#+KEYWORDS: DamageBDD, behaviour driven development, BDD, verification, Erlang, Lightning, ECAI
 #+INCLUDE: "header.org"
 
-#+BEGIN_COMMENT
-This version simplifies and strengthens the pitch for lay readers and business stakeholders,
-highlighting why DamageBDD is powerful, unique, and viable as a decentralized verification platform.
-#+END_COMMENT
+#+BEGIN_EXPORT html
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-copy">
+    <span class="eyebrow">Behaviour Driven Development · At Planetary Scale</span>
+    <h1 id="hero-title">Don’t just ship code.<br><em>Ship evidence.</em></h1>
+#+END_EXPORT
+
+Turn plain-language expectations into executable checks. Run them against real
+systems, inspect the results, and build a record of what your software actually does.
 
 #+BEGIN_EXPORT html
-<!-- Hero Banner: DamageBDD Book -->
-<section class="hero hero--book">
-  <div class="hero__inner">
-    <div class="hero__text">
-      <h1>DamageBDD: Behaviour Verification at Planetary Scale</h1>
-      <p class="tagline">
-        A beginner-to-advanced guide from BDD → Behaviour-Driven DevOps → the Verification Economy.
-      </p>
-      <div class="cta">
-        <a class="btn btn--primary" href="/assets/damagebdd_book.pdf">
-          ⬇ Download Now (PDF)
-        </a>
-        <a class="btn btn--ghost" href="/damagebdd-book">
-          Read more
-        </a>
-      </div>
+    <div class="hero-actions">
+      <a class="button" href="manual.html">Start building <span aria-hidden="true">→</span></a>
+      <a class="button button-secondary" href="https://github.com/DamageBDD/DamageBDD.git">Explore the source <span aria-hidden="true">↗</span></a>
     </div>
-
-    <div class="hero__cover">
-      <!-- Use your generated cover image path -->
-      <img
-        src="/assets/img/book_front_cover.png"
-        alt="Book cover: DamageBDD — Behaviour Verification at Planetary Scale"
-        width="640" height="1000"
-        loading="eager" decoding="async"
-        srcset="/assets/img/book_front_cover.png 1x, /assets/img/book_front_cover@2x.png 2x">
-    </div>
+    <p class="hero-note">Open source. Erlang/OTP. Evidence over assumptions.</p>
   </div>
-</section>
-
-
-<noscript>
-  <p><a href="/assets/damagebdd_book.pdf">Download the DamageBDD book (PDF)</a></p>
-</noscript>
-
+  <div class="feature-panel" aria-label="Illustrative behaviour specification">
+    <div class="panel-heading"><span class="panel-filename">service-health.feature</span><span class="panel-tag">Executable specification</span></div>
 #+END_EXPORT
-* Find a practical starting point
-
-Start with the [[file:articles/stack_adoption.org][DamageBDD stack adoption guide]]:
-repeatable [[file:articles/damagebdd_evidence_workflows.org][acceptance evidence]],
-[[file:articles/ecai_engineering_memory.org][ECAI engineering memory]],
-[[file:articles/ecai_reviewable_repairs.org][reviewable code repairs]],
-[[file:articles/erm_local_voice.org][erm voice and desktop workflows]], and
-[[file:articles/nosternity.org][Nosternity signed-event retention]].
-Each guide explains a practical use case, links to the implementation and
-suggests a first evaluation. The [[file:articles/features_current.org][component map]]
-shows the repository status and the scope of recorded validation.
-
-* What is DamageBDD?
-
-DamageBDD is a platform that lets anyone – not just programmers – describe how software should behave, using simple sentences. These sentences are written in a format called [[https://en.wikipedia.org/wiki/Behavior-driven_development][BDD]] (Behaviour Driven Development), which turns software testing into a conversation instead of a cryptic task only engineers understand.
-
-Think of it like writing instructions for how an app should work, and DamageBDD automatically checks if the app really does that. This makes it possible for teams of all skill levels – developers, testers, support staff, even end users – to work together and catch problems before they reach the real world.
-
-
-* Why is it powerful?
-
-Unlike traditional testing tools that need experts and manual effort, DamageBDD:
-
-- Uses plain language to define tests
-- Works across technical and non-technical teams
-- Can simulate *massive* user activity to test performance
-- Works automatically inside CI/CD (Continuous Integration/Deployment) systems
-- Can detect performance issues before they go live
-- Enables Bitcoin-based payments for verified contributions
-
-This means DamageBDD isn’t just about testing – it’s about *trust, transparency, and automation at scale.*
-
-* Example
 
 #+BEGIN_SRC gherkin
-Feature: Test echo json functionality of JsonTest.com using HTTP API
+Feature: Service health
 
-  Scenario: GET request to JsonTest.com
-    Given I am using server "http://echo.jsontest.com"
-    When I make a GET request to "/key/value/one/two"
-    Then the json at path "$.one" must be "one"
+  Scenario: The API is available
+    Given I am using server "https://api.example.com"
+    When I make a GET request to "/health"
+    Then the response status must be "200"
 #+END_SRC
 
-This tells DamageBDD what to test – and it does the heavy lifting behind the scenes, checking servers, APIs, and even entire apps.
+#+BEGIN_EXPORT html
+    <div class="feature-flow" aria-label="Verification workflow">
+      <div><span>01 / SPECIFY</span><b>Expected behaviour</b></div>
+      <div><span>02 / EXECUTE</span><b>Actual behaviour</b></div>
+      <div><span>03 / INSPECT</span><b>Recorded evidence</b></div>
+    </div>
+    <p class="example-disclaimer">Illustrative feature, not a live test result. Replace the example endpoint before running.</p>
+  </div>
+</section>
+<div class="foundation-strip" aria-label="Technology foundations">
+  <p>A composable, open stack</p><span>Erlang / OTP</span><span>Bitcoin / Lightning</span><span>IPFS</span><span>Nostr</span>
+</div>
+#+END_EXPORT
 
-* Business Use Cases
+#+BEGIN_EXPORT md
+Start with the [manual](manual.md) or explore the [source repository](https://github.com/DamageBDD/DamageBDD.git).
+The feature above is illustrative, not a live test result. Replace the example endpoint before running.
+#+END_EXPORT
 
-- Web & Mobile Apps: Monitor uptime, load, and functionality
-- Smart Contracts (Web3): Continuously audit decentralized apps
-- Enterprise Systems: Automate QA and compliance checks
-- Infrastructure Teams: Track service availability and performance
-- Product Teams: Capture feature requests and real-world usage
-- AI & Bots: Autogenerate tests and verify their own behavior
+* Plain language in. Verifiable evidence out.
+:PROPERTIES:
+:CUSTOM_ID: workflow
+:HTML_CONTAINER_CLASS: home-section workflow-section
+:END:
 
-* Revenue Streams
+Make the requirement, the execution and the evidence part of the same conversation.
 
-- 🟠 Pay-per-Test: Users pay in Bitcoin or DAMAGE tokens to run tests at scale
-- 🟢 Bug Bounties: Token rewards for contributors who define useful tests
-- 🔵 DeFi Integration: Smart contracts trigger payments only when conditions are verified
-- 🟡 Verification-as-a-Service: Enterprises pay for automated third-party verification
-- 🟣 Token-Governed Test Market: A decentralized ecosystem where testers and developers collaborate, get paid, and build trust
+** Define what matters
+:PROPERTIES:
+:HTML_CONTAINER_CLASS: workflow-step workflow-define
+:END:
 
-* Target User Roles
+Write a feature that describes the behaviour you need. Give developers, testers
+and stakeholders the same concrete expectation to work from.
 
-| Role            | Use Case                                                                       |
-|-----------------+--------------------------------------------------------------------------------|
-| End User        | initial requirements, feature requests, defect reporting                       |
-| Product Support | feature requests, isolating defect behaviour, edge cases, monitoring, alerting|
-| QA              | define expected behaviours, continuous monitoring, reporting, alerts           |
-| Infra           | availability monitoring, endpoint latency reporting, alerts                    |
-| Development     | prototyping, maintenance, verification, continous monitoring                   |
-| Management      | project velocity, current progress, performance metrics, fund allocation       |
+[[file:manual.org][Write your first feature →]]
 
-* Feature Highlights
+** Exercise the real system
+:PROPERTIES:
+:HTML_CONTAINER_CLASS: workflow-step workflow-execute
+:END:
 
-| DamageBDD Feature                                                                 | Status        |
-|-----------------------------------------------------------------------------------+---------------|
-| REST API for test execution                                                      | ✅ Done        |
-| Scheduled testing, continuous testing config                                     | 🧪 Testing     |
-| Bitcoin & DeFi payment system                                                    | 🔨 In progress |
-| Secrets management and variable templates                                        | 🧪 Testing     |
-| CI/CD integration and monitoring                                                 | 🧪 Testing     |
-| AI-generated tests and code suggestions                                          | 🧠 In analysis |
-| Appium and Selenium browser/mobile testing                                       | 🧪 Testing     |
-| IPFS reports, dashboards, alerts                                                 | 🧪 Testing     |
-| Webhook triggers                                                                 | 🧪 Testing     |
-| Zero Knowledge Proof test validation & payouts                                   | 🔍 Researching |
-| DAMAGE Token governance and test ecosystem incentives                            | 🪙 In analysis |
+Run checks through the API and supported modules. Put repeatable verification
+beside the systems and delivery workflows it is meant to test.
 
-* Why DamageBDD is Unique
+[[file:modules/index.org][Explore the modules →]]
 
-- 🧠 Human-readable testing
-- 🚀 Planetary-scale automation
-- ⚡ Bitcoin-native monetization
-- 🕵️ Verifiable trust in every test
-- 🤝 Open contribution and collaboration
+** Keep the evidence
+:PROPERTIES:
+:HTML_CONTAINER_CLASS: workflow-step workflow-inspect
+:END:
 
-* Links
+Review the report, its inputs and its scope. Use recorded results to support
+acceptance decisions instead of relying on a reassuring status update.
 
-- 📄 [[./whitepaper.html][DAMAGE Token Whitepaper]]  
-  The official guide to the DAMAGE Token vision, design, and use cases.
-  
-- 📄 [[./book.html][DamageBDD Book]]  
-  The official book to the DAMAGE Token vision, design, and use cases.
+[[file:articles/damagebdd_evidence_workflows.org][Build an evidence workflow →]]
 
-- 📊 [[https://aescan.io/tokens/ct_m3Cty31JxWHmJFMGuFCTpedDHuMLCit2Qup57qawmEWmcJnCk?type=holders][Explore Token Stats]]  
-  Track live data on DAMAGE token supply, holders, and transactions.
-  
-- 📄 [[./tokenomics.html][DAMAGE Token Tokenomics]]
-  Implemented DAMAGE tokenomics for DamageBDD.
+* Start with a real problem.
+:PROPERTIES:
+:CUSTOM_ID: get-started
+:HTML_CONTAINER_CLASS: home-section path-section
+:END:
 
-- 👛 [[./supported_wallets][Wallets]]  
-  Find supported wallets for storing and managing your DAMAGE tokens safely.
+One stack. Different entry points. Choose a small, testable first evaluation.
 
-- 💬 [[https://t.me/damagebdd][Telegram]]  
-  Join the community chat for real-time discussions and support.
+** Verify a service
+:PROPERTIES:
+:HTML_CONTAINER_CLASS: path-card
+:END:
 
-- 🎮 [[https://discord.gg/ZQHnDqAg][Discord]]  
-  Connect with developers and contributors in our Discord server.
+Turn an API requirement or a recurring production check into a feature.
+Start with the manual, then inspect the HTTP module reference.
 
-- 🧭 [[https://njump.me/npub14ekwjk8gqjlgdv29u6nnehx63fptkhj5yl2sf8lxykdkm58s937sjw99u8][Nostr]]  
-  Follow DamageBDD on Nostr for decentralized updates.
+[[file:manual.org][Open the quick start →]]
 
-- 🔒 [[https://damagebdd.com/security][Security Guidelines]]  
-  Learn best practices to keep your accounts, tokens, and nodes secure.
+** Retrieve engineering knowledge
+:PROPERTIES:
+:HTML_CONTAINER_CLASS: path-card
+:END:
 
-- 💻 [[https://github.com/DamageBDD/DamageBDD][GitHub Repository]]  
-  Explore the open-source code powering DamageBDD.
+Explore ECAI indexing and retrieval for source collections, engineering records
+and evidence-backed answers. Start with a corpus you can inspect.
 
-- 🔗 [[https://www.linkedin.com/company/damagebdd/][LinkedIn Page]]  
-  Follow our LinkedIn for project news, thought leadership, and hiring.
+[[file:articles/ecai_engineering_memory.org][Explore engineering memory →]]
 
-- 📑 [[https://run.damagebdd.com/api-docs/][API Docs]]  
-  Developer documentation for integrating with DamageBDD APIs.
+** Run your own infrastructure
+:PROPERTIES:
+:HTML_CONTAINER_CLASS: path-card
+:END:
 
-- 💱 [[https://www.coinstore.com/spot/DAMAGEUSDT][DAMAGE/USDT on Coinstore]]  
-  Trade DAMAGE tokens directly on the Coinstore exchange.
+Follow the installation and node guides. Understand the configuration,
+operational responsibilities and validation limits before deployment.
 
-- 🎥 [[https://youtu.be/T70txXsSxig][Video: Better Smart Contracts with BDD]]  
-  A short video introduction to BDD for smart contract design.
+[[file:install.org][Read the installation guide →]]
 
-- 📝 [[https://medium.com/coinmonks/design-of-smart-contracts-using-bdd-and-cucumber-4533162fc235][Smart Contract BDD Article]]  
-  Read an in-depth article on using BDD for smarter contracts.
+* A stack you can inspect.
+:PROPERTIES:
+:CUSTOM_ID: explore-the-stack
+:HTML_CONTAINER_CLASS: home-section ecosystem-section
+:END:
 
-- 🛠 [[https://microlancer.io/?page=1&length=25&status=my&showCompleted=1&showHidden=1&minimumAmount=0&user=asyncmind&tag=&category=&search=][DamageBDD Tasks on Microlancer]]  
-  Take on bounties and earn rewards by contributing to DamageBDD.
-  
-- 💻 [[./node][Run a Damage Node]]
-  Participate in the Damage network, spend and earn DAMAGE with you computer.
+The wider project connects verification, knowledge retrieval and signed-event
+workflows. Each component has its own implementation and validation scope.
+
+#+BEGIN_EXPORT html
+<div class="evidence-note">
+#+END_EXPORT
+
+*Implementation is not the same as live verification.* The [[file:articles/features_current.org][component map]]
+and [[file:articles/integration_status_2026_10_07.org][recorded integration review]] distinguish
+what exists, what was exercised and what remains open. A publish date is not proof of a passing test.
+
+#+BEGIN_EXPORT html
+</div>
+#+END_EXPORT
+
+** [[file:ecai/index.org][ECAI]]
+:PROPERTIES:
+:HTML_CONTAINER_CLASS: ecosystem-card
+:END:
+
+Index source collections, retrieve records and explore controlled LLM access.
+Keep the source and its evidence in view.
+
+[[file:articles/ecai_indexing_workflows.org][Indexing workflows →]]
+
+** [[file:articles/nosternity.org][Nosternity]]
+:PROPERTIES:
+:HTML_CONTAINER_CLASS: ecosystem-card
+:END:
+
+Explore Nostr event retention and the integration points around signed records.
+Read the documented limits before choosing a deployment.
+
+[[file:articles/nosternity.org][Read the implementation guide →]]
+
+** [[file:articles/erm_local_voice.org][erm]]
+:PROPERTIES:
+:HTML_CONTAINER_CLASS: ecosystem-card
+:END:
+
+Bring local voice and desktop workflows into an Erlang-managed environment.
+Begin with an observable, bounded action.
+
+[[file:articles/erm_local_voice.org][Explore local workflows →]]
+
+
+
+* Go deeper. Keep it practical.
+:PROPERTIES:
+:CUSTOM_ID: reading
+:HTML_CONTAINER_CLASS: home-section reading-section
+:END:
+
+Follow the [[file:articles/stack_adoption.org][stack adoption guide]], browse the
+[[file:articles/index.org][implementation articles]], or take the longer route through the DamageBDD book.
+
+#+BEGIN_EXPORT html
+<section class="book-section" aria-labelledby="book-heading">
+  <div>
+    <span class="eyebrow">The DamageBDD book</span>
+    <h2 id="book-heading">From behaviour to a<br>verification economy.</h2>
+#+END_EXPORT
+
+A longer-form introduction to BDD, behaviour-driven operations and the ideas
+behind verifiable software delivery.
+
+#+BEGIN_EXPORT html
+    <div class="hero-actions">
+      <a class="button" href="assets/damagebdd_book.pdf">Read the book <span aria-hidden="true">↗</span></a>
+      <a class="button button-secondary" href="book.html">About the book →</a>
+    </div>
+  </div>
+  <img src="assets/img/book_front_cover@2x.png" alt="DamageBDD — Behaviour Verification at Planetary Scale book cover" width="160" height="240" loading="lazy" decoding="async">
+</section>
+#+END_EXPORT
+
+#+BEGIN_EXPORT md
+[Read the DamageBDD book (PDF)](assets/damagebdd_book.pdf) · [About the book](book.md)
+#+END_EXPORT

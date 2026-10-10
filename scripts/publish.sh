@@ -1,56 +1,42 @@
 #!/usr/bin/env sh
-
-PROJECT_NAME="damagebdd"
-PUBLISH_FILE="scripts/publish.el"
-mkdir -p public
-
-# Normalize PWD for Docker on Windows (Git Bash/WSL compatible)
-case "$(uname -s)" in
-  MINGW*|MSYS*|CYGWIN*)
-    PROJECT_DIR=$(pwd -W 2>/dev/null || pwd) # Git Bash & MSYS
-    ;;
-  *)
-    PROJECT_DIR=$(pwd)
-    ;;
+# Build only unless a deployment action is explicitly requested.
+set -eu
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+PROJECT_DIR=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
+cd "$PROJECT_DIR"
+ACTION=${1:-build}
+case "$ACTION" in
+  build|sync|sync_prod) ;;
+  *) printf 'Usage: %s [build|sync|sync_prod]\n' "$0" >&2; exit 2 ;;
 esac
+if [ "$#" -gt 1 ]; then
+  printf 'Only one action may be supplied.\n' >&2
+  exit 2
+fi
 
-# Check for emacs
 if command -v emacs >/dev/null 2>&1; then
-  echo "Emacs found. Running locally..."
-  emacs --batch \
-        -l "$PUBLISH_FILE" \
-        --eval "(damagebdd-publish)"
-
-# Fallback to Docker
+  # Loading in batch normally auto-publishes. Disable that and invoke once.
+  DAMAGEBDD_PUBLISH_NO_AUTO=1 emacs -Q --batch \
+    -l "$SCRIPT_DIR/publish.el" --eval '(damagebdd-publish)'
 elif command -v docker >/dev/null 2>&1; then
-  echo "Emacs not found. Running with Docker..."
-  docker run --rm \
-    -v "$PROJECT_DIR":/project \
-    -w /project \
-    silex/emacs:latest \
-    emacs --batch \
-          -l /project/"$PUBLISH_FILE" \
-          --eval "(damagebdd-publish)"
-
+  case "$(uname -s)" in
+    MINGW*|MSYS*|CYGWIN*) PROJECT_DIR=$(pwd -W 2>/dev/null || pwd) ;;
+  esac
+  docker run --rm -v "$PROJECT_DIR":/project -w /project \
+    -e DAMAGEBDD_PUBLISH_NO_AUTO=1 -e DAMAGEBDD_SITE_URL -e SOURCE_DATE_EPOCH \
+    "${DAMAGEBDD_EMACS_IMAGE:-silex/emacs:latest}" \
+    emacs -Q --batch -l /project/scripts/publish.el --eval '(damagebdd-publish)'
 else
-  echo "Error: Neither Emacs nor Docker is available." >&2
+  printf 'Error: Emacs or Docker is required to publish this Org site.\n' >&2
   exit 1
 fi
 
-sync_to_nginx() {
-  echo "Syncing to Nginx..."
-  sudo rsync -av --delete "$PROJECT_DIR/public/" /var/www/damagebdd/
-}
-
-
-if [ "$1" = "sync" ]; then
-  sync_to_nginx
-fi
-
-sync_to_nginx_prod() {
-  echo "Syncing to Nginx Prod..."
-  rsync -avz --delete -e ssh public/ root@node0:/var/www/damagebdd/
-}
-if [ "$1" = "sync_prod" ]; then
-  sync_to_nginx_prod
-fi
+# set -e prevents deployment after a failed export. No deployment occurs by default.
+case "$ACTION" in
+  sync)
+    sudo rsync -av --delete "$PROJECT_DIR/public/" "${DAMAGEBDD_LOCAL_TARGET:-/var/www/damagebdd/}"
+    ;;
+  sync_prod)
+    rsync -avz --delete -e ssh "$PROJECT_DIR/public/" "${DAMAGEBDD_DEPLOY_TARGET:-root@node0:/var/www/damagebdd/}"
+    ;;
+esac
